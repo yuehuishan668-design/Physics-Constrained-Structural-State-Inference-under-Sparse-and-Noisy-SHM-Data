@@ -1,1 +1,6 @@
-
+openseespy
+numpy
+matplotlib
+pyyaml
+scipy
+jupyter

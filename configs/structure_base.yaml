@@ -1,1 +1,17 @@
+# Base structural configuration for the first OpenSeesPy model.
+# Units are SI units: m, kg, N, Pa.
 
+n_story: 4
+n_bay: 2
+story_height: 3.2
+bay_width: 6.0
+
+E: 2.0e11
+
+A_col: 0.09
+I_col: 6.75e-4
+
+A_beam: 0.075
+I_beam: 4.80e-4
+
+floor_mass: 2.0e5
