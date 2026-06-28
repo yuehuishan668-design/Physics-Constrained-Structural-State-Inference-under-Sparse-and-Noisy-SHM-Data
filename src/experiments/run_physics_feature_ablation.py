@@ -196,7 +196,7 @@ def main() -> None:
             *experiment_dirs,
             "--output",
             str(comparison_csv),
-            "--print-top-k",
+            "--print-top",
             "50",
         ],
         dry_run=args.dry_run,
