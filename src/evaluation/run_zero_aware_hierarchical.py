@@ -1,0 +1,1190 @@
+"""
+Zero-aware hierarchical damage inference experiment.
+
+English:
+This script implements a two-stage zero-aware damage inference pipeline:
+1) zero-vs-damaged classification;
+2) damaged-only regression;
+3) zero-aware final prediction by a damage-probability threshold.
+
+中文：
+本脚本实现“两阶段 zero-aware 分层损伤识别”实验：
+1）先判断构件/楼层是否为 zero-damage；
+2）只在 damaged 样本上训练连续损伤回归器；
+3）根据 damaged 概率阈值输出最终损伤预测。
+
+Why this script is needed:
+The previous threshold-gated high-damage calibration experiment failed because it could
+not control zero-damage false alarms while reducing high-damage underestimation.
+This script explicitly separates zero-state detection from continuous damage regression.
+
+为什么需要本脚本：
+上一轮 threshold-gated high-damage calibration 无法同时控制零损伤误报和高损伤低估。
+因此本脚本先显式识别 zero-damage，再对 damaged subset 进行连续损伤回归。
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, Iterable, List, Tuple
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+from sklearn.base import clone
+from sklearn.ensemble import ExtraTreesClassifier, ExtraTreesRegressor, RandomForestClassifier, RandomForestRegressor
+from sklearn.linear_model import ElasticNet, LogisticRegression, Ridge
+from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+
+
+# ---------------------------------------------------------------------------
+# Basic constants
+# 基础常量
+# ---------------------------------------------------------------------------
+
+BIN_LABELS = ["zero", "low", "medium", "high"]
+
+
+@dataclass(frozen=True)
+class DatasetSplit:
+    """Container for one train/val/test split. / 单个训练、验证、测试划分的数据容器。"""
+
+    X_train: np.ndarray
+    X_val: np.ndarray
+    X_test: np.ndarray
+    y_train: np.ndarray
+    y_val: np.ndarray
+    y_test: np.ndarray
+    train_case_id: np.ndarray
+    val_case_id: np.ndarray
+    test_case_id: np.ndarray
+    feature_names: List[str]
+
+
+@dataclass(frozen=True)
+class ExpandedSplit:
+    """Expanded story-level data. / 展开为楼层级样本后的数据容器。"""
+
+    X_train: np.ndarray
+    X_val: np.ndarray
+    X_test: np.ndarray
+    y_train: np.ndarray
+    y_val: np.ndarray
+    y_test: np.ndarray
+    story_train: np.ndarray
+    story_val: np.ndarray
+    story_test: np.ndarray
+    case_id_train: np.ndarray
+    case_id_val: np.ndarray
+    case_id_test: np.ndarray
+
+
+# ---------------------------------------------------------------------------
+# Loading utilities
+# 数据读取工具
+# ---------------------------------------------------------------------------
+
+
+def _first_existing_key(npz: np.lib.npyio.NpzFile, candidates: Iterable[str]) -> str:
+    """
+    English:
+    Return the first existing key from a list of candidate keys.
+
+    中文：
+    从候选 key 列表中返回第一个真实存在于 npz 文件中的 key。
+    """
+
+    for key in candidates:
+        if key in npz.files:
+            return key
+    raise KeyError(f"None of the candidate keys exists: {list(candidates)}. Available keys: {npz.files}")
+
+
+def read_feature_names(path: Path, n_features: int) -> List[str]:
+    """
+    English:
+    Read feature names from a CSV file. The function is tolerant to different CSV formats.
+
+    中文：
+    从 CSV 文件读取特征名。本函数尽量兼容不同 CSV 格式。
+    """
+
+    if not path.exists():
+        return [f"feature_{i}" for i in range(n_features)]
+
+    rows: List[List[str]] = []
+    with path.open("r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if row:
+                rows.append(row)
+
+    if not rows:
+        return [f"feature_{i}" for i in range(n_features)]
+
+    header = [cell.strip().lower() for cell in rows[0]]
+
+    # Case 1: one column named feature_name/name/feature
+    # 情况1：存在 feature_name/name/feature 这样的列名
+    for candidate in ["feature_name", "name", "feature"]:
+        if candidate in header:
+            idx = header.index(candidate)
+            values = [row[idx].strip() for row in rows[1:] if len(row) > idx and row[idx].strip()]
+            if len(values) >= n_features:
+                return values[:n_features]
+
+    # Case 2: a single-column CSV without header
+    # 情况2：没有表头的单列 CSV
+    if all(len(row) == 1 for row in rows):
+        values = [row[0].strip() for row in rows if row[0].strip()]
+        if len(values) == n_features:
+            return values
+
+    # Case 3: use the last column if it has enough nonempty strings
+    # 情况3：如果最后一列有足够多的非空字符串，则使用最后一列
+    last_col = [row[-1].strip() for row in rows[1:] if row[-1].strip()]
+    if len(last_col) >= n_features:
+        return last_col[:n_features]
+
+    return [f"feature_{i}" for i in range(n_features)]
+
+
+def load_dataset(features_path: Path, feature_names_path: Path | None = None) -> DatasetSplit:
+    """
+    English:
+    Load the physics feature NPZ file generated by previous experiments.
+
+    中文：
+    读取此前实验生成的 physics feature NPZ 文件。
+    """
+
+    if not features_path.exists():
+        raise FileNotFoundError(f"Feature NPZ file does not exist: {features_path}")
+
+    data = np.load(features_path, allow_pickle=True)
+
+    X_train_key = _first_existing_key(data, ["F_train", "X_feature_train", "X_train_features", "features_train", "X_train"])
+    X_val_key = _first_existing_key(data, ["F_val", "X_feature_val", "X_val_features", "features_val", "X_val"])
+    X_test_key = _first_existing_key(data, ["F_test", "X_feature_test", "X_test_features", "features_test", "X_test"])
+
+    y_train_key = _first_existing_key(data, ["y_train", "Y_train", "damage_train", "y_damage_train"])
+    y_val_key = _first_existing_key(data, ["y_val", "Y_val", "damage_val", "y_damage_val"])
+    y_test_key = _first_existing_key(data, ["y_test", "Y_test", "damage_test", "y_damage_test"])
+
+    X_train = np.asarray(data[X_train_key], dtype=float)
+    X_val = np.asarray(data[X_val_key], dtype=float)
+    X_test = np.asarray(data[X_test_key], dtype=float)
+
+    y_train = np.asarray(data[y_train_key], dtype=float)
+    y_val = np.asarray(data[y_val_key], dtype=float)
+    y_test = np.asarray(data[y_test_key], dtype=float)
+
+    # Ensure target shape is [n_case, n_story].
+    # 保证目标数组形状为 [样本数, 楼层数]。
+    if y_train.ndim == 1:
+        raise ValueError(
+            "The target y_train is 1D. This script expects per-case multi-story targets, "
+            "for example shape [n_cases, 4]."
+        )
+
+    train_case_id = np.asarray(data["case_id_train"]) if "case_id_train" in data.files else np.arange(X_train.shape[0])
+    val_case_id = np.asarray(data["case_id_val"]) if "case_id_val" in data.files else np.arange(X_val.shape[0])
+    test_case_id = np.asarray(data["case_id_test"]) if "case_id_test" in data.files else np.arange(X_test.shape[0])
+
+    feature_names = read_feature_names(feature_names_path, X_train.shape[1]) if feature_names_path else [
+        f"feature_{i}" for i in range(X_train.shape[1])
+    ]
+
+    return DatasetSplit(
+        X_train=X_train,
+        X_val=X_val,
+        X_test=X_test,
+        y_train=y_train,
+        y_val=y_val,
+        y_test=y_test,
+        train_case_id=train_case_id,
+        val_case_id=val_case_id,
+        test_case_id=test_case_id,
+        feature_names=feature_names,
+    )
+
+
+def expand_case_features_to_story_entries(
+    X_case: np.ndarray,
+    y_case_story: np.ndarray,
+    case_ids: np.ndarray,
+    add_story_onehot: bool = True,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    English:
+    Convert case-level features into story-level samples.
+
+    Example:
+    If X_case has shape [n_case, n_features] and y has shape [n_case, 4],
+    this function returns X_entry with shape [n_case * 4, n_features + 4].
+
+    中文：
+    将“结构工况级”特征展开为“楼层级”样本。
+
+    例：
+    若 X_case 形状为 [n_case, n_features]，y 形状为 [n_case, 4]，
+    本函数会输出形状为 [n_case * 4, n_features + 4] 的 X_entry。
+    """
+
+    if y_case_story.ndim != 2:
+        raise ValueError(f"Expected y_case_story to be 2D, got shape {y_case_story.shape}")
+
+    n_cases, n_stories = y_case_story.shape
+    if X_case.shape[0] != n_cases:
+        raise ValueError(f"X_case and y_case_story have inconsistent case counts: {X_case.shape[0]} vs {n_cases}")
+
+    repeated_X = np.repeat(X_case, repeats=n_stories, axis=0)
+    y_entry = y_case_story.reshape(-1)
+
+    story_index = np.tile(np.arange(n_stories), reps=n_cases)
+    story_number = story_index + 1
+    repeated_case_ids = np.repeat(case_ids, repeats=n_stories)
+
+    if add_story_onehot:
+        story_onehot = np.eye(n_stories, dtype=float)[story_index]
+        X_entry = np.hstack([repeated_X, story_onehot])
+    else:
+        X_entry = repeated_X
+
+    return X_entry, y_entry, story_number, repeated_case_ids
+
+
+def make_expanded_split(dataset: DatasetSplit, add_story_onehot: bool = True) -> ExpandedSplit:
+    """
+    English:
+    Build expanded train/val/test story-level arrays.
+
+    中文：
+    构造展开后的训练、验证、测试楼层级数组。
+    """
+
+    X_train, y_train, story_train, case_train = expand_case_features_to_story_entries(
+        dataset.X_train, dataset.y_train, dataset.train_case_id, add_story_onehot=add_story_onehot
+    )
+    X_val, y_val, story_val, case_val = expand_case_features_to_story_entries(
+        dataset.X_val, dataset.y_val, dataset.val_case_id, add_story_onehot=add_story_onehot
+    )
+    X_test, y_test, story_test, case_test = expand_case_features_to_story_entries(
+        dataset.X_test, dataset.y_test, dataset.test_case_id, add_story_onehot=add_story_onehot
+    )
+
+    return ExpandedSplit(
+        X_train=X_train,
+        X_val=X_val,
+        X_test=X_test,
+        y_train=y_train,
+        y_val=y_val,
+        y_test=y_test,
+        story_train=story_train,
+        story_val=story_val,
+        story_test=story_test,
+        case_id_train=case_train,
+        case_id_val=case_val,
+        case_id_test=case_test,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Metrics
+# 评价指标
+# ---------------------------------------------------------------------------
+
+
+def damage_bins(y: np.ndarray, zero_eps: float, low_cut: float, medium_cut: float) -> np.ndarray:
+    """
+    English:
+    Convert continuous damage ratios into discrete damage bins.
+
+    中文：
+    将连续损伤值转为离散损伤等级。
+    """
+
+    y = np.asarray(y, dtype=float)
+    labels = np.full(y.shape, "high", dtype=object)
+    labels[y <= zero_eps] = "zero"
+    labels[(y > zero_eps) & (y < low_cut)] = "low"
+    labels[(y >= low_cut) & (y < medium_cut)] = "medium"
+    labels[y >= medium_cut] = "high"
+    return labels
+
+
+def safe_ratio(numerator: float, denominator: float) -> float:
+    """Safe division. / 安全除法。"""
+
+    if denominator == 0:
+        return float("nan")
+    return float(numerator) / float(denominator)
+
+
+def compute_metrics(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    p_damaged: np.ndarray,
+    threshold: float,
+    zero_eps: float,
+    low_cut: float,
+    medium_cut: float,
+) -> Dict[str, float]:
+    """
+    English:
+    Compute overall, zero, damaged, and stratified metrics.
+
+    中文：
+    计算整体、零损伤、非零损伤以及分层损伤指标。
+    """
+
+    y_true = np.asarray(y_true, dtype=float)
+    y_pred = np.asarray(y_pred, dtype=float)
+    error = y_pred - y_true
+    abs_error = np.abs(error)
+
+    true_bin = damage_bins(y_true, zero_eps=zero_eps, low_cut=low_cut, medium_cut=medium_cut)
+    pred_bin = damage_bins(y_pred, zero_eps=zero_eps, low_cut=low_cut, medium_cut=medium_cut)
+
+    is_zero = y_true <= zero_eps
+    is_damaged = y_true > zero_eps
+    is_high = y_true >= medium_cut
+
+    pred_damaged_gate = p_damaged >= threshold
+    true_damaged_gate = is_damaged
+
+    metrics: Dict[str, float] = {
+        "test_mae": float(np.mean(abs_error)),
+        "test_rmse": float(np.sqrt(np.mean(error**2))),
+        "test_bias": float(np.mean(error)),
+        "test_mean_true": float(np.mean(y_true)),
+        "test_mean_pred": float(np.mean(y_pred)),
+        "test_n_entries": int(y_true.size),
+        "damaged_gate_precision": float(precision_score(true_damaged_gate, pred_damaged_gate, zero_division=0)),
+        "damaged_gate_recall": float(recall_score(true_damaged_gate, pred_damaged_gate, zero_division=0)),
+        "damaged_gate_f1": float(f1_score(true_damaged_gate, pred_damaged_gate, zero_division=0)),
+        "damage_bin_macro_f1_from_prediction": float(
+            f1_score(true_bin, pred_bin, labels=BIN_LABELS, average="macro", zero_division=0)
+        ),
+    }
+
+    for name, mask in {
+        "zero": is_zero,
+        "damaged": is_damaged,
+        "low": true_bin == "low",
+        "medium": true_bin == "medium",
+        "high": is_high,
+    }.items():
+        n = int(np.sum(mask))
+        metrics[f"test_{name}_n"] = n
+        if n == 0:
+            metrics[f"test_{name}_mae"] = float("nan")
+            metrics[f"test_{name}_bias"] = float("nan")
+            metrics[f"test_{name}_underestimation_ratio"] = float("nan")
+        else:
+            metrics[f"test_{name}_mae"] = float(np.mean(abs_error[mask]))
+            metrics[f"test_{name}_bias"] = float(np.mean(error[mask]))
+            metrics[f"test_{name}_underestimation_ratio"] = float(np.mean(error[mask] < 0.0))
+
+    for alarm_threshold in [0.005, 0.01, 0.02, 0.05, 0.10]:
+        if np.sum(is_zero) == 0:
+            metrics[f"test_zero_false_alarm_ratio_{str(alarm_threshold).replace('.', '')}"] = float("nan")
+        else:
+            metrics[f"test_zero_false_alarm_ratio_{str(alarm_threshold).replace('.', '')}"] = float(
+                np.mean(y_pred[is_zero] > alarm_threshold)
+            )
+
+    return metrics
+
+
+def build_prediction_dataframe(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    p_damaged: np.ndarray,
+    threshold: float,
+    story: np.ndarray,
+    case_id: np.ndarray,
+    zero_eps: float,
+    low_cut: float,
+    medium_cut: float,
+) -> pd.DataFrame:
+    """
+    English:
+    Build a per-entry prediction CSV.
+
+    中文：
+    构造逐样本预测结果表。
+    """
+
+    return pd.DataFrame(
+        {
+            "case_id": case_id,
+            "story": story,
+            "y_true": y_true,
+            "y_pred": y_pred,
+            "error": y_pred - y_true,
+            "abs_error": np.abs(y_pred - y_true),
+            "p_damaged": p_damaged,
+            "threshold": threshold,
+            "gate_predicts_damaged": (p_damaged >= threshold).astype(int),
+            "true_bin": damage_bins(y_true, zero_eps, low_cut, medium_cut),
+            "pred_bin": damage_bins(y_pred, zero_eps, low_cut, medium_cut),
+        }
+    )
+
+
+# ---------------------------------------------------------------------------
+# Models
+# 模型构建
+# ---------------------------------------------------------------------------
+
+
+def get_classifiers(seed: int) -> Dict[str, object]:
+    """
+    English:
+    Return candidate zero-vs-damaged classifiers.
+
+    中文：
+    返回 zero-vs-damaged 二分类候选模型。
+    """
+
+    return {
+        "logistic_balanced": Pipeline(
+            steps=[
+                ("scaler", StandardScaler()),
+                (
+                    "clf",
+                    LogisticRegression(
+                        class_weight="balanced",
+                        max_iter=5000,
+                        C=1.0,
+                        solver="lbfgs",
+                        random_state=seed,
+                    ),
+                ),
+            ]
+        ),
+        "random_forest_balanced": RandomForestClassifier(
+            n_estimators=600,
+            max_depth=6,
+            min_samples_leaf=2,
+            class_weight="balanced",
+            random_state=seed,
+            n_jobs=-1,
+        ),
+        "extra_trees_balanced": ExtraTreesClassifier(
+            n_estimators=800,
+            max_depth=8,
+            min_samples_leaf=2,
+            class_weight="balanced",
+            random_state=seed,
+            n_jobs=-1,
+        ),
+    }
+
+
+def get_regressors(seed: int) -> Dict[str, object]:
+    """
+    English:
+    Return candidate damaged-only regressors.
+
+    中文：
+    返回 damaged-only 连续损伤回归候选模型。
+    """
+
+    return {
+        "ridge": Pipeline(
+            steps=[
+                ("scaler", StandardScaler()),
+                ("reg", Ridge(alpha=100.0, random_state=seed)),
+            ]
+        ),
+        "elasticnet": Pipeline(
+            steps=[
+                ("scaler", StandardScaler()),
+                ("reg", ElasticNet(alpha=0.01, l1_ratio=0.3, max_iter=50000, random_state=seed)),
+            ]
+        ),
+        "random_forest_reg": RandomForestRegressor(
+            n_estimators=600,
+            max_depth=8,
+            min_samples_leaf=2,
+            random_state=seed,
+            n_jobs=-1,
+        ),
+        "extra_trees_reg": ExtraTreesRegressor(
+            n_estimators=800,
+            max_depth=10,
+            min_samples_leaf=2,
+            random_state=seed,
+            n_jobs=-1,
+        ),
+    }
+
+
+def fit_regressor_with_optional_weight(model: object, X: np.ndarray, y: np.ndarray, sample_weight: np.ndarray) -> object:
+    """
+    English:
+    Fit a regressor. Pipelines require the sample weight to be passed to the final step.
+
+    中文：
+    训练回归器。对于 sklearn Pipeline，需要将 sample_weight 传给最后一个步骤。
+    """
+
+    fitted = clone(model)
+
+    if isinstance(fitted, Pipeline):
+        final_step_name = fitted.steps[-1][0]
+        fitted.fit(X, y, **{f"{final_step_name}__sample_weight": sample_weight})
+    else:
+        fitted.fit(X, y, sample_weight=sample_weight)
+
+    return fitted
+
+
+def fit_classifier(model: object, X: np.ndarray, y_binary: np.ndarray) -> object:
+    """
+    English:
+    Fit a binary classifier.
+
+    中文：
+    训练二分类器。
+    """
+
+    fitted = clone(model)
+    fitted.fit(X, y_binary)
+    return fitted
+
+
+def get_positive_class_probability(classifier: object, X: np.ndarray) -> np.ndarray:
+    """
+    English:
+    Get P(damaged). If the model has no predict_proba, use a hard prediction fallback.
+
+    中文：
+    获取 P(damaged)。如果模型没有 predict_proba，则退化为硬分类输出。
+    """
+
+    if hasattr(classifier, "predict_proba"):
+        proba = classifier.predict_proba(X)
+        if proba.shape[1] == 1:
+            return np.zeros(X.shape[0], dtype=float)
+        return proba[:, 1]
+    return classifier.predict(X).astype(float)
+
+
+# ---------------------------------------------------------------------------
+# Plotting
+# 绘图
+# ---------------------------------------------------------------------------
+
+
+def save_true_pred_plot(
+    df: pd.DataFrame,
+    output_path: Path,
+    title: str,
+    zero_eps: float,
+    low_cut: float,
+    medium_cut: float,
+    max_damage: float,
+) -> None:
+    """
+    English:
+    Save true-vs-predicted damage scatter plot.
+
+    中文：
+    保存真实损伤与预测损伤的散点图。
+    """
+
+    fig, ax = plt.subplots(figsize=(9, 8))
+
+    for label in BIN_LABELS:
+        sub = df[df["true_bin"] == label]
+        if not sub.empty:
+            ax.scatter(sub["y_true"], sub["y_pred"], alpha=0.65, label=label)
+
+    upper = max(max_damage, float(df["y_true"].max()), float(df["y_pred"].max()), 0.1)
+    ax.plot([0.0, upper], [0.0, upper], linestyle="--", label="Ideal y=x")
+    ax.axvline(low_cut, linestyle=":", linewidth=1)
+    ax.axvline(medium_cut, linestyle=":", linewidth=1)
+    ax.axhline(low_cut, linestyle=":", linewidth=1)
+    ax.axhline(medium_cut, linestyle=":", linewidth=1)
+
+    ax.set_xlabel("True damage")
+    ax.set_ylabel("Predicted damage")
+    ax.set_title(title)
+    ax.grid(True, alpha=0.35)
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=200)
+    plt.close(fig)
+
+
+def save_confusion_matrix_plot(
+    df: pd.DataFrame,
+    output_path: Path,
+    title: str,
+) -> None:
+    """
+    English:
+    Save bin confusion matrix plot.
+
+    中文：
+    保存损伤等级混淆矩阵图。
+    """
+
+    cm = confusion_matrix(df["true_bin"], df["pred_bin"], labels=BIN_LABELS)
+
+    fig, ax = plt.subplots(figsize=(8, 7))
+    im = ax.imshow(cm)
+    ax.set_xticks(np.arange(len(BIN_LABELS)))
+    ax.set_yticks(np.arange(len(BIN_LABELS)))
+    ax.set_xticklabels(BIN_LABELS, rotation=45, ha="right")
+    ax.set_yticklabels(BIN_LABELS)
+    ax.set_xlabel("Predicted bin")
+    ax.set_ylabel("True bin")
+    ax.set_title(title)
+
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            ax.text(j, i, str(cm[i, j]), ha="center", va="center")
+
+    fig.colorbar(im, ax=ax, label="Count")
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=200)
+    plt.close(fig)
+
+
+def save_top_bar_plot(
+    df: pd.DataFrame,
+    output_path: Path,
+    metric: str,
+    title: str,
+    top_k: int,
+) -> None:
+    """
+    English:
+    Save a bar chart for the top configurations.
+
+    中文：
+    保存 top configurations 柱状图。
+    """
+
+    plot_df = df.sort_values(metric, ascending=True).head(top_k).copy()
+    fig, ax = plt.subplots(figsize=(max(10, top_k * 0.65), 5))
+    ax.bar(np.arange(len(plot_df)), plot_df[metric].values)
+    ax.set_xticks(np.arange(len(plot_df)))
+    ax.set_xticklabels(plot_df["config_name"].values, rotation=60, ha="right")
+    ax.set_ylabel(metric)
+    ax.set_title(title)
+    ax.grid(True, axis="y", alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=200)
+    plt.close(fig)
+
+
+def save_tradeoff_plot(df: pd.DataFrame, output_path: Path) -> None:
+    """
+    English:
+    Save overall-MAE versus high-damage-MAE trade-off plot.
+
+    中文：
+    保存整体 MAE 与高损伤 MAE 的权衡图。
+    """
+
+    fig, ax = plt.subplots(figsize=(9, 7))
+    ax.scatter(df["test_mae"], df["test_high_mae"], alpha=0.7)
+
+    # Label the best few configurations.
+    # 标注少量最优配置，避免图中标签过多。
+    label_df = pd.concat(
+        [
+            df.sort_values("test_mae", ascending=True).head(5),
+            df.sort_values("test_high_mae", ascending=True).head(5),
+        ],
+        axis=0,
+    ).drop_duplicates(subset=["config_name"])
+
+    for _, row in label_df.iterrows():
+        ax.text(row["test_mae"], row["test_high_mae"], row["config_name"], fontsize=8)
+
+    ax.set_xlabel("Overall test MAE")
+    ax.set_ylabel("High-damage test MAE")
+    ax.set_title("Overall accuracy versus high-damage sensitivity")
+    ax.grid(True, alpha=0.35)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=200)
+    plt.close(fig)
+
+
+def save_zero_tradeoff_plot(df: pd.DataFrame, output_path: Path) -> None:
+    """
+    English:
+    Save zero false alarm versus damaged recall trade-off plot.
+
+    中文：
+    保存零损伤误报率与 damaged 召回率之间的权衡图。
+    """
+
+    fig, ax = plt.subplots(figsize=(9, 7))
+    x = df["test_zero_false_alarm_ratio_005"]
+    y = df["damaged_gate_recall"]
+    ax.scatter(x, y, alpha=0.7)
+
+    label_df = df.sort_values(["test_zero_false_alarm_ratio_005", "test_mae"], ascending=True).head(8)
+    for _, row in label_df.iterrows():
+        ax.text(row["test_zero_false_alarm_ratio_005"], row["damaged_gate_recall"], row["config_name"], fontsize=8)
+
+    ax.set_xlabel("Zero false alarm ratio > 0.05")
+    ax.set_ylabel("Damaged gate recall")
+    ax.set_title("Zero false alarm versus damaged recall")
+    ax.grid(True, alpha=0.35)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=200)
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# Reporting
+# 报告输出
+# ---------------------------------------------------------------------------
+
+
+def dataframe_to_markdown(df: pd.DataFrame, max_rows: int = 20) -> str:
+    """
+    English:
+    Convert a dataframe to markdown without requiring the external tabulate package.
+
+    中文：
+    不依赖 tabulate 包，将 dataframe 转成 markdown 表格。
+    """
+
+    if df.empty:
+        return "_No rows._"
+
+    show_df = df.head(max_rows).copy()
+
+    def fmt_value(x: object) -> str:
+        if isinstance(x, float):
+            if np.isnan(x):
+                return "nan"
+            return f"{x:.6f}"
+        return str(x)
+
+    columns = list(show_df.columns)
+    header = "| " + " | ".join(columns) + " |"
+    separator = "| " + " | ".join(["---"] * len(columns)) + " |"
+    rows = []
+    for _, row in show_df.iterrows():
+        rows.append("| " + " | ".join(fmt_value(row[col]) for col in columns) + " |")
+    return "\n".join([header, separator] + rows)
+
+
+def write_report(
+    output_path: Path,
+    all_results: pd.DataFrame,
+    selected_overall: pd.Series,
+    selected_zero_safe: pd.Series,
+    selected_high: pd.Series,
+    args: argparse.Namespace,
+) -> None:
+    """
+    English:
+    Write a markdown summary report.
+
+    中文：
+    写出 markdown 总结报告。
+    """
+
+    cols = [
+        "config_name",
+        "classifier",
+        "regressor",
+        "threshold",
+        "high_weight",
+        "test_mae",
+        "test_rmse",
+        "test_zero_false_alarm_ratio_005",
+        "damaged_gate_precision",
+        "damaged_gate_recall",
+        "test_high_mae",
+        "test_high_bias",
+        "test_high_underestimation_ratio",
+        "damage_bin_macro_f1_from_prediction",
+    ]
+
+    lines = [
+        "# Zero-aware Hierarchical Damage Inference Summary",
+        "",
+        "## 1. Purpose",
+        "",
+        "This experiment explicitly separates zero-damage detection from damaged-only continuous damage regression.",
+        "",
+        "中文解释：本实验将 zero-damage 识别与 damaged-only 连续损伤回归显式拆开，避免把 zero 和 damaged 样本混在同一个普通回归空间内处理。",
+        "",
+        "## 2. Dataset and settings",
+        "",
+        f"- Features: `{args.features}`",
+        f"- Feature names: `{args.feature_names}`",
+        f"- Zero epsilon: `{args.zero_eps}`",
+        f"- Low cut: `{args.low_cut}`",
+        f"- Medium/high cut: `{args.medium_cut}`",
+        f"- Threshold candidates: `{args.thresholds}`",
+        f"- High-damage weights: `{args.high_weights}`",
+        "",
+        "## 3. Selected by overall test MAE",
+        "",
+        dataframe_to_markdown(pd.DataFrame([selected_overall[cols]]), max_rows=1),
+        "",
+        "## 4. Selected by zero-safe rule",
+        "",
+        "Selection rule: prioritize lower zero false alarm ratio, then lower overall MAE, then lower high-damage MAE.",
+        "",
+        "中文解释：该选择规则优先考虑更低的 zero false alarm，然后考虑整体 MAE 和高损伤 MAE。",
+        "",
+        dataframe_to_markdown(pd.DataFrame([selected_zero_safe[cols]]), max_rows=1),
+        "",
+        "## 5. Selected by high-damage MAE",
+        "",
+        dataframe_to_markdown(pd.DataFrame([selected_high[cols]]), max_rows=1),
+        "",
+        "## 6. Top configurations by overall test MAE",
+        "",
+        dataframe_to_markdown(all_results.sort_values("test_mae", ascending=True)[cols], max_rows=20),
+        "",
+        "## 7. Top configurations by zero false alarm ratio > 0.05",
+        "",
+        dataframe_to_markdown(
+            all_results.sort_values(["test_zero_false_alarm_ratio_005", "test_mae"], ascending=True)[cols],
+            max_rows=20,
+        ),
+        "",
+        "## 8. Top configurations by high-damage MAE",
+        "",
+        dataframe_to_markdown(all_results.sort_values("test_high_mae", ascending=True)[cols], max_rows=20),
+        "",
+        "## 9. Interpretation guide",
+        "",
+        "- If zero false alarm is still high, the zero-vs-damaged classifier is the bottleneck.",
+        "- If high-damage MAE is still high but zero false alarm becomes acceptable, the damaged-only regressor is the bottleneck.",
+        "- If both become acceptable, this zero-aware hierarchical route can become the main paper result.",
+        "",
+        "中文解释：如果 zero false alarm 仍高，瓶颈在 zero-vs-damaged 分类器；如果 zero false alarm 可控但 high-damage MAE 仍高，瓶颈在 damaged-only 回归器；如果二者同时改善，这条 zero-aware hierarchical route 就可以作为论文主结果。",
+        "",
+    ]
+
+    output_path.write_text("\n".join(lines), encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# Main experiment
+# 主实验
+# ---------------------------------------------------------------------------
+
+
+def run_experiment(args: argparse.Namespace) -> None:
+    """
+    English:
+    Run the complete zero-aware hierarchical experiment.
+
+    中文：
+    运行完整 zero-aware hierarchical 实验。
+    """
+
+    output_dir = Path(args.output_dir)
+    figures_dir = Path(args.figures_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    figures_dir.mkdir(parents=True, exist_ok=True)
+
+    dataset = load_dataset(Path(args.features), Path(args.feature_names) if args.feature_names else None)
+    split = make_expanded_split(dataset, add_story_onehot=not args.no_story_onehot)
+
+    y_train_binary = (split.y_train > args.zero_eps).astype(int)
+    y_val_binary = (split.y_val > args.zero_eps).astype(int)
+    y_test_binary = (split.y_test > args.zero_eps).astype(int)
+
+    X_train_all = np.vstack([split.X_train, split.X_val])
+    y_train_all = np.concatenate([split.y_train, split.y_val])
+    y_binary_all = np.concatenate([y_train_binary, y_val_binary])
+
+    classifiers = get_classifiers(seed=args.seed)
+    regressors = get_regressors(seed=args.seed)
+
+    thresholds = [float(x) for x in args.thresholds.split(",")]
+    high_weights = [float(x) for x in args.high_weights.split(",")]
+
+    result_rows: List[Dict[str, object]] = []
+    prediction_frames: Dict[str, pd.DataFrame] = {}
+
+    damaged_mask_train = y_train_all > args.zero_eps
+    if np.sum(damaged_mask_train) == 0:
+        raise ValueError("No damaged samples exist in train+val data. Cannot train damaged-only regressor.")
+
+    X_damaged = X_train_all[damaged_mask_train]
+    y_damaged = y_train_all[damaged_mask_train]
+
+    for classifier_name, classifier_template in classifiers.items():
+        print(f"Training classifier: {classifier_name}")
+        classifier = fit_classifier(classifier_template, X_train_all, y_binary_all)
+        p_test_damaged = get_positive_class_probability(classifier, split.X_test)
+
+        for regressor_name, regressor_template in regressors.items():
+            for high_weight in high_weights:
+                sample_weight = np.ones_like(y_damaged, dtype=float)
+                sample_weight[y_damaged >= args.medium_cut] = high_weight
+
+                print(f"Running {classifier_name} + {regressor_name} + high_weight={high_weight}")
+                regressor = fit_regressor_with_optional_weight(regressor_template, X_damaged, y_damaged, sample_weight)
+
+                raw_pred = np.asarray(regressor.predict(split.X_test), dtype=float)
+                raw_pred = np.clip(raw_pred, 0.0, args.max_damage)
+
+                for threshold in thresholds:
+                    y_pred = np.where(p_test_damaged >= threshold, raw_pred, 0.0)
+                    y_pred = np.clip(y_pred, 0.0, args.max_damage)
+
+                    metrics = compute_metrics(
+                        y_true=split.y_test,
+                        y_pred=y_pred,
+                        p_damaged=p_test_damaged,
+                        threshold=threshold,
+                        zero_eps=args.zero_eps,
+                        low_cut=args.low_cut,
+                        medium_cut=args.medium_cut,
+                    )
+
+                    config_name = (
+                        f"{classifier_name}__{regressor_name}"
+                        f"__hw{str(high_weight).replace('.', 'p')}"
+                        f"__thr{str(threshold).replace('.', 'p')}"
+                    )
+
+                    row: Dict[str, object] = {
+                        "config_name": config_name,
+                        "classifier": classifier_name,
+                        "regressor": regressor_name,
+                        "threshold": threshold,
+                        "high_weight": high_weight,
+                        "n_train_entries": int(split.y_train.size),
+                        "n_val_entries": int(split.y_val.size),
+                        "n_test_entries": int(split.y_test.size),
+                        "n_features": int(split.X_train.shape[1]),
+                        **metrics,
+                    }
+                    result_rows.append(row)
+
+                    pred_df = build_prediction_dataframe(
+                        y_true=split.y_test,
+                        y_pred=y_pred,
+                        p_damaged=p_test_damaged,
+                        threshold=threshold,
+                        story=split.story_test,
+                        case_id=split.case_id_test,
+                        zero_eps=args.zero_eps,
+                        low_cut=args.low_cut,
+                        medium_cut=args.medium_cut,
+                    )
+                    prediction_frames[config_name] = pred_df
+
+    all_results = pd.DataFrame(result_rows)
+    all_results = all_results.sort_values("test_mae", ascending=True).reset_index(drop=True)
+    comparison_path = output_dir / "zero_aware_hierarchical_model_comparison.csv"
+    all_results.to_csv(comparison_path, index=False)
+
+    selected_overall = all_results.sort_values("test_mae", ascending=True).iloc[0]
+
+    selected_zero_safe = all_results.sort_values(
+        ["test_zero_false_alarm_ratio_005", "test_mae", "test_high_mae"],
+        ascending=[True, True, True],
+    ).iloc[0]
+
+    selected_high = all_results.sort_values("test_high_mae", ascending=True).iloc[0]
+
+    selected_configs = {
+        "selected_overall": selected_overall["config_name"],
+        "selected_zero_safe": selected_zero_safe["config_name"],
+        "selected_high": selected_high["config_name"],
+    }
+    (output_dir / "selected_zero_aware_configs.json").write_text(
+        json.dumps(selected_configs, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    for key, config_name in selected_configs.items():
+        pred_df = prediction_frames[str(config_name)]
+        pred_df.to_csv(output_dir / f"{key}_predictions_test.csv", index=False)
+
+        save_true_pred_plot(
+            pred_df,
+            figures_dir / f"{key}_true_vs_pred.png",
+            title=f"{key}: {config_name}",
+            zero_eps=args.zero_eps,
+            low_cut=args.low_cut,
+            medium_cut=args.medium_cut,
+            max_damage=args.max_damage,
+        )
+        save_confusion_matrix_plot(
+            pred_df,
+            figures_dir / f"{key}_bin_confusion.png",
+            title=f"{key} bin confusion: {config_name}",
+        )
+
+    save_top_bar_plot(
+        all_results,
+        figures_dir / "top_overall_mae.png",
+        metric="test_mae",
+        title="Top configurations by overall test MAE",
+        top_k=args.top_k,
+    )
+    save_top_bar_plot(
+        all_results,
+        figures_dir / "top_high_damage_mae.png",
+        metric="test_high_mae",
+        title="Top configurations by high-damage test MAE",
+        top_k=args.top_k,
+    )
+    save_top_bar_plot(
+        all_results,
+        figures_dir / "top_zero_false_alarm_ratio_005.png",
+        metric="test_zero_false_alarm_ratio_005",
+        title="Top configurations by zero false alarm ratio > 0.05",
+        top_k=args.top_k,
+    )
+    save_tradeoff_plot(all_results, figures_dir / "overall_vs_high_damage_mae.png")
+    save_zero_tradeoff_plot(all_results, figures_dir / "zero_false_alarm_vs_damaged_recall.png")
+
+    write_report(
+        output_path=output_dir / "zero_aware_hierarchical_report.md",
+        all_results=all_results,
+        selected_overall=selected_overall,
+        selected_zero_safe=selected_zero_safe,
+        selected_high=selected_high,
+        args=args,
+    )
+
+    print("=" * 100)
+    print("Zero-aware hierarchical experiment completed.")
+    print(f"Comparison CSV: {comparison_path}")
+    print(f"Report: {output_dir / 'zero_aware_hierarchical_report.md'}")
+    print(f"Selected configs: {output_dir / 'selected_zero_aware_configs.json'}")
+    print(f"Figures directory: {figures_dir}")
+    print("=" * 100)
+    print("Selected by overall MAE:")
+    print(selected_overall[["config_name", "test_mae", "test_high_mae", "test_zero_false_alarm_ratio_005"]].to_string())
+    print("-" * 100)
+    print("Selected by zero-safe rule:")
+    print(selected_zero_safe[["config_name", "test_mae", "test_high_mae", "test_zero_false_alarm_ratio_005"]].to_string())
+    print("-" * 100)
+    print("Selected by high-damage MAE:")
+    print(selected_high[["config_name", "test_mae", "test_high_mae", "test_zero_false_alarm_ratio_005"]].to_string())
+
+
+def parse_args() -> argparse.Namespace:
+    """
+    English:
+    Parse command-line arguments.
+
+    中文：
+    解析命令行参数。
+    """
+
+    parser = argparse.ArgumentParser(
+        description="Run zero-aware hierarchical damage inference experiment."
+    )
+    parser.add_argument(
+        "--features",
+        type=str,
+        required=True,
+        help="Path to feature NPZ, for example data_processed/debug_plus_500_physics_features_mlp.npz.",
+    )
+    parser.add_argument(
+        "--feature-names",
+        type=str,
+        required=False,
+        default="",
+        help="Path to feature-name CSV.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        default="results/tables/zero_aware_hierarchical/debug_plus_500",
+        help="Directory for output CSV and markdown report.",
+    )
+    parser.add_argument(
+        "--figures-dir",
+        type=str,
+        default="results/figures/zero_aware_hierarchical/debug_plus_500",
+        help="Directory for output figures.",
+    )
+    parser.add_argument(
+        "--thresholds",
+        type=str,
+        default="0.30,0.40,0.50,0.60,0.70,0.80",
+        help="Comma-separated damaged-probability thresholds.",
+    )
+    parser.add_argument(
+        "--high-weights",
+        type=str,
+        default="1,2,4,6,8",
+        help="Comma-separated sample weights for high-damage samples in damaged-only regression.",
+    )
+    parser.add_argument(
+        "--zero-eps",
+        type=float,
+        default=1e-8,
+        help="Damage value <= zero_eps is treated as zero.",
+    )
+    parser.add_argument(
+        "--low-cut",
+        type=float,
+        default=0.10,
+        help="Boundary between low and medium damage.",
+    )
+    parser.add_argument(
+        "--medium-cut",
+        type=float,
+        default=0.20,
+        help="Boundary between medium and high damage.",
+    )
+    parser.add_argument(
+        "--max-damage",
+        type=float,
+        default=0.50,
+        help="Maximum clipped predicted damage.",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=42,
+        help="Random seed.",
+    )
+    parser.add_argument(
+        "--top-k",
+        type=int,
+        default=20,
+        help="Number of configurations shown in top bar plots and report sections.",
+    )
+    parser.add_argument(
+        "--no-story-onehot",
+        action="store_true",
+        help="Disable story one-hot expansion. Usually keep it disabled only for debugging.",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    """Entry point. / 程序入口。"""
+
+    args = parse_args()
+    run_experiment(args)
+
+
+if __name__ == "__main__":
+    main()
