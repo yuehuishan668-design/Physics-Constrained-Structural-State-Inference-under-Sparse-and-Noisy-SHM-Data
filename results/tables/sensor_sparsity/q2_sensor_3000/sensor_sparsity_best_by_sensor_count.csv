@@ -1,0 +1,5 @@
+sensor_count,sensor_layout,tag,feature_set,model,test_mae,source_table,test_rmse,n_features,mae_on_damaged_entries,mean_prediction_on_zero_entries,config_label
+4,1-2-3-4,debug_sensors_1234_3000,full,ridge,0.039335715058946,results/tables/physics_ablation/debug_sensors_1234_3000/ablation_model_comparison_fixed.csv,0.0585480689150012,92,0.0634314341956954,0.0285942499015999,full + ridge
+3,1-2-4,debug_sensors_124_3000,full,ridge,0.0612044239878265,results/tables/physics_ablation/debug_sensors_124_3000/ablation_model_comparison_fixed.csv,0.083586756708791,92,0.1006314001439153,0.0436285430507749,full + ridge
+2,1-4,debug_sensors_14_3000,full,random_forest,0.0763734479441385,results/tables/physics_ablation/debug_sensors_14_3000/ablation_model_comparison_fixed.csv,0.0977174641216894,92,0.126960615881704,0.0538225417551033,full + random_forest
+1,4,debug_sensors_4_3000,full,random_forest,0.0801413755624158,results/tables/physics_ablation/debug_sensors_4_3000/ablation_model_comparison_fixed.csv,0.1010899983378665,92,0.1322971086412988,0.0568912294911065,full + random_forest

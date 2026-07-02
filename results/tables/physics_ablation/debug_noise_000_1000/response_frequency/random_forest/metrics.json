@@ -1,0 +1,95 @@
+{
+  "model": "PhysicsSklearnRegressor",
+  "estimator": "random_forest",
+  "best_candidate": "random_forest_depth_None_leaf_1",
+  "clip_predictions": true,
+  "max_damage": 0.5,
+  "n_features": 75,
+  "n_train": 700,
+  "n_val": 150,
+  "n_test": 150,
+  "best_val_loss_mse": 0.008797686228478938,
+  "train_loss_mse": 0.00125465509101568,
+  "val_loss_mse": 0.008797686228478938,
+  "test_loss_mse": 0.009282777348723122,
+  "train_metrics": {
+    "mse_overall": 0.00125465509101568,
+    "mae_overall": 0.027587572838055466,
+    "rmse_overall": 0.035421110810019495,
+    "mae_per_story": [
+      0.02674201956769597,
+      0.028430867631781338,
+      0.02820616584932642,
+      0.026971238303418146
+    ],
+    "rmse_per_story": [
+      0.03547867810235439,
+      0.036056217927354854,
+      0.03597301541875309,
+      0.03414344848765992
+    ],
+    "negative_prediction_ratio_raw": 0.0,
+    "negative_prediction_ratio": 0.0,
+    "over_max_prediction_ratio_raw": 0.0,
+    "mean_true_damage": 0.06329026428380218,
+    "mean_pred_damage": 0.06326555344283885,
+    "max_true_damage": 0.34909551063939065,
+    "max_pred_damage": 0.31042536108933305,
+    "mae_on_damaged_entries": 0.04422479987421418,
+    "mean_prediction_on_zero_entries": 0.019796779055522833
+  },
+  "val_metrics": {
+    "mse_overall": 0.008797686228478938,
+    "mae_overall": 0.07284812847839009,
+    "rmse_overall": 0.09379598194207968,
+    "mae_per_story": [
+      0.06927231016947238,
+      0.07132375325075666,
+      0.07860287265811637,
+      0.07219357783521495
+    ],
+    "rmse_per_story": [
+      0.0917452871863648,
+      0.09071446462055774,
+      0.10090478270953895,
+      0.09144756928400831
+    ],
+    "negative_prediction_ratio_raw": 0.0,
+    "negative_prediction_ratio": 0.0,
+    "over_max_prediction_ratio_raw": 0.0,
+    "mean_true_damage": 0.06162443365726517,
+    "mean_pred_damage": 0.06004323273801764,
+    "max_true_damage": 0.34826333413641125,
+    "max_pred_damage": 0.2364838289807477,
+    "mae_on_damaged_entries": 0.1192392821651664,
+    "mean_prediction_on_zero_entries": 0.05118379998407646
+  },
+  "test_metrics": {
+    "mse_overall": 0.009282777348723122,
+    "mae_overall": 0.07628548096127685,
+    "rmse_overall": 0.09634717094301795,
+    "mae_per_story": [
+      0.07757151600770056,
+      0.07630448753088945,
+      0.06923820805077471,
+      0.08202771225574274
+    ],
+    "rmse_per_story": [
+      0.10118062318789296,
+      0.09306153283959921,
+      0.09003962864292561,
+      0.10062806400597384
+    ],
+    "negative_prediction_ratio_raw": 0.0,
+    "negative_prediction_ratio": 0.0,
+    "over_max_prediction_ratio_raw": 0.0,
+    "mean_true_damage": 0.06508058598871913,
+    "mean_pred_damage": 0.06199431669186412,
+    "max_true_damage": 0.3481692598178057,
+    "max_pred_damage": 0.20047948371550778,
+    "mae_on_damaged_entries": 0.12205974497447428,
+    "mean_prediction_on_zero_entries": 0.05373994793985124
+  },
+  "output_mode": "clipped",
+  "negative_prediction_ratio": 0.0
+}

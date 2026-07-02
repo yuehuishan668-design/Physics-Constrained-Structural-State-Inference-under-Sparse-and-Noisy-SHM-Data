@@ -1,0 +1,29 @@
+{
+  "raw_dataset": "data_processed/_tmp_sensor_sparsity/debug_sensors_14_3000_dataset.npz",
+  "split_dataset": "data_processed/_tmp_sensor_sparsity/debug_sensors_14_3000_split_normalized.npz",
+  "output": "data_processed/debug_sensors_14_3000_physics_features_mlp.npz",
+  "response_key": "X_abs_accel",
+  "ground_key": "ground_accel",
+  "y_key": "y_damage",
+  "n_cases": 3000,
+  "n_steps": 2000,
+  "n_stories": 4,
+  "n_features": 92,
+  "dt": 0.01,
+  "healthy_first_frequency_hz": 0.7873752223272414,
+  "F_train_shape": [
+    2100,
+    92
+  ],
+  "F_val_shape": [
+    450,
+    92
+  ],
+  "F_test_shape": [
+    450,
+    92
+  ],
+  "train_feature_mean_after_standardization": 1.7314881987363104e-16,
+  "train_feature_std_after_standardization": 0.7445453821540743,
+  "feature_name_csv": "data_processed/debug_sensors_14_3000_physics_feature_names.csv"
+}

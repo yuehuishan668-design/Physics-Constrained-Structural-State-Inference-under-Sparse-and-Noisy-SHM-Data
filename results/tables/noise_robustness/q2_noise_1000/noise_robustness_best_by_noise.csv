@@ -1,0 +1,7 @@
+noise_percent,noise_level,tag,feature_set,model,test_mae,source_table,test_rmse,n_features,mae_on_damaged_entries,mean_prediction_on_zero_entries,config_label
+0.0,0.0,debug_noise_000_1000,full,ridge,0.0344682037338973,results/tables/physics_ablation/debug_noise_000_1000/ablation_model_comparison_fixed.csv,0.0513008276757704,92,0.0526344910972076,0.0255206293609236,full + ridge
+2.0,0.02,debug_noise_002_1000,full,ridge,0.0361333614613091,results/tables/physics_ablation/debug_noise_002_1000/ablation_model_comparison_fixed.csv,0.0534990108296584,92,0.0499892289229477,0.03014789126905,full + ridge
+5.0,0.05,debug_noise_005_1000,full,ridge,0.0375457865221562,results/tables/physics_ablation/debug_noise_005_1000/ablation_model_comparison_fixed.csv,0.0557757893180006,92,0.059942654393031,0.0280987664249626,full + ridge
+10.0,0.1,debug_noise_010_1000,full,ridge,0.0394483473342642,results/tables/physics_ablation/debug_noise_010_1000/ablation_model_comparison_fixed.csv,0.0591805641752405,92,0.0633879116081559,0.0289424953867289,full + ridge
+15.0,0.15,debug_noise_015_1000,full,ridge,0.0431411638192448,results/tables/physics_ablation/debug_noise_015_1000/ablation_model_comparison_fixed.csv,0.064543121116709,92,0.0688997784927005,0.0310194627964421,full + ridge
+20.0,0.2,debug_noise_020_1000,full,ridge,0.0419664671908993,results/tables/physics_ablation/debug_noise_020_1000/ablation_model_comparison_fixed.csv,0.0649814956818765,92,0.067486722327711,0.0306584606774935,full + ridge

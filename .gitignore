@@ -244,3 +244,38 @@ results/logs/
 *.png
 *.csv
 *.json
+
+# Large generated datasets
+data_processed/*.npz
+data_processed/_tmp_sensor_sparsity/
+data_raw/
+opensees_models/**/*.out
+
+# Large or temporary raw outputs
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+
+# Python cache
+__pycache__/
+*.pyc
+.DS_Store
+EOFcat >> .gitignore <<'EOF'
+
+# Large generated datasets
+data_processed/*.npz
+data_processed/_tmp_sensor_sparsity/
+data_raw/
+opensees_models/**/*.out
+
+# Large or temporary raw outputs
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+
+# Python cache
+__pycache__/
+*.pyc
+.DS_Store

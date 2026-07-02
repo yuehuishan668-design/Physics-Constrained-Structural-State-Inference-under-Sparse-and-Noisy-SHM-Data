@@ -1,0 +1,29 @@
+{
+  "raw_dataset": "data_processed/debug_noise_010_1000_dataset.npz",
+  "split_dataset": "data_processed/debug_noise_010_1000_split_normalized.npz",
+  "output": "data_processed/debug_noise_010_1000_physics_features_mlp.npz",
+  "response_key": "X_abs_accel",
+  "ground_key": "ground_accel",
+  "y_key": "y_damage",
+  "n_cases": 1000,
+  "n_steps": 2000,
+  "n_stories": 4,
+  "n_features": 92,
+  "dt": 0.01,
+  "healthy_first_frequency_hz": 0.7873752223272414,
+  "F_train_shape": [
+    700,
+    92
+  ],
+  "F_val_shape": [
+    150,
+    92
+  ],
+  "F_test_shape": [
+    150,
+    92
+  ],
+  "train_feature_mean_after_standardization": -1.611740416767631e-15,
+  "train_feature_std_after_standardization": 0.9945503681476411,
+  "feature_name_csv": "data_processed/debug_noise_010_1000_physics_feature_names.csv"
+}
