@@ -1,0 +1,556 @@
+{
+  "source_npz": "data_inputs/aes_frozen/debug_plus_3000_physics_features_mlp.npz",
+  "source_npz_sha256": "9ba75a02f7737da532b51f247b15641e0d1c7073dabe38b6443ff37a5cfd564a",
+  "source_feature_names": "data_inputs/aes_frozen/debug_plus_3000_physics_feature_names.csv",
+  "source_feature_names_sha256": "428c433a1fb2cd431caf59100ec97c751819fb23b12941aa0e1e9056ba1abf91",
+  "source_feature_count": 92,
+  "outputs": {
+    "oracle_full": {
+      "descriptor_set": "oracle_full",
+      "n_features": 92,
+      "selected_original_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91
+      ],
+      "output_npz": "data_processed/sss_fast_revision/descriptor_sets/oracle_full/debug_plus_3000_oracle_full_features.npz",
+      "output_feature_names": "data_processed/sss_fast_revision/descriptor_sets/oracle_full/debug_plus_3000_oracle_full_feature_names.csv",
+      "output_npz_size_bytes": 4070382,
+      "output_npz_sha256": "389b9311d37fdd5846b7698114b69f7837b50c6d147debc1a8616ae95f1448f7",
+      "validation": {
+        "feature_count": 92,
+        "feature_matrix_shapes": {
+          "F_test": [
+            450,
+            92
+          ],
+          "F_test_raw": [
+            450,
+            92
+          ],
+          "F_train": [
+            2100,
+            92
+          ],
+          "F_train_raw": [
+            2100,
+            92
+          ],
+          "F_val": [
+            450,
+            92
+          ],
+          "F_val_raw": [
+            450,
+            92
+          ]
+        },
+        "label_shapes": {
+          "y_train": [
+            2100,
+            4
+          ],
+          "y_val": [
+            450,
+            4
+          ],
+          "y_test": [
+            450,
+            4
+          ]
+        },
+        "standardisation_max_abs_error": {
+          "train": 0.0,
+          "val": 0.0,
+          "test": 0.0
+        }
+      }
+    },
+    "legacy_no_meta": {
+      "descriptor_set": "legacy_no_meta",
+      "n_features": 86,
+      "selected_original_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85
+      ],
+      "output_npz": "data_processed/sss_fast_revision/descriptor_sets/legacy_no_meta/debug_plus_3000_legacy_no_meta_features.npz",
+      "output_feature_names": "data_processed/sss_fast_revision/descriptor_sets/legacy_no_meta/debug_plus_3000_legacy_no_meta_feature_names.csv",
+      "output_npz_size_bytes": 3840119,
+      "output_npz_sha256": "ab7b8fcfbf4d3ce9299a0eef4ec1a9d6576dd437a899af320173654c55a0792b",
+      "validation": {
+        "feature_count": 86,
+        "feature_matrix_shapes": {
+          "F_test": [
+            450,
+            86
+          ],
+          "F_test_raw": [
+            450,
+            86
+          ],
+          "F_train": [
+            2100,
+            86
+          ],
+          "F_train_raw": [
+            2100,
+            86
+          ],
+          "F_val": [
+            450,
+            86
+          ],
+          "F_val_raw": [
+            450,
+            86
+          ]
+        },
+        "label_shapes": {
+          "y_train": [
+            2100,
+            4
+          ],
+          "y_val": [
+            450,
+            4
+          ],
+          "y_test": [
+            450,
+            4
+          ]
+        },
+        "standardisation_max_abs_error": {
+          "train": 0.0,
+          "val": 0.0,
+          "test": 0.0
+        }
+      }
+    },
+    "signal_derived_with_ground": {
+      "descriptor_set": "signal_derived_with_ground",
+      "n_features": 78,
+      "selected_original_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        64,
+        65,
+        66,
+        69,
+        70,
+        71,
+        74,
+        75,
+        76,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85
+      ],
+      "output_npz": "data_processed/sss_fast_revision/descriptor_sets/signal_derived_with_ground/debug_plus_3000_signal_derived_with_ground_features.npz",
+      "output_feature_names": "data_processed/sss_fast_revision/descriptor_sets/signal_derived_with_ground/debug_plus_3000_signal_derived_with_ground_feature_names.csv",
+      "output_npz_size_bytes": 3490258,
+      "output_npz_sha256": "62bca74c0fe43d04b50bc12c3f6d904014b6964df64b264fbc2f749b3e65ccf2",
+      "validation": {
+        "feature_count": 78,
+        "feature_matrix_shapes": {
+          "F_test": [
+            450,
+            78
+          ],
+          "F_test_raw": [
+            450,
+            78
+          ],
+          "F_train": [
+            2100,
+            78
+          ],
+          "F_train_raw": [
+            2100,
+            78
+          ],
+          "F_val": [
+            450,
+            78
+          ],
+          "F_val_raw": [
+            450,
+            78
+          ]
+        },
+        "label_shapes": {
+          "y_train": [
+            2100,
+            4
+          ],
+          "y_val": [
+            450,
+            4
+          ],
+          "y_test": [
+            450,
+            4
+          ]
+        },
+        "standardisation_max_abs_error": {
+          "train": 0.0,
+          "val": 0.0,
+          "test": 0.0
+        }
+      }
+    },
+    "structural_response_only": {
+      "descriptor_set": "structural_response_only",
+      "n_features": 59,
+      "selected_original_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        59,
+        60,
+        61,
+        64,
+        65,
+        66,
+        69,
+        70,
+        71,
+        74,
+        75,
+        76,
+        83,
+        84,
+        85
+      ],
+      "output_npz": "data_processed/sss_fast_revision/descriptor_sets/structural_response_only/debug_plus_3000_structural_response_only_features.npz",
+      "output_feature_names": "data_processed/sss_fast_revision/descriptor_sets/structural_response_only/debug_plus_3000_structural_response_only_feature_names.csv",
+      "output_npz_size_bytes": 2658114,
+      "output_npz_sha256": "b59c589042ddb3dbd87f34931da6991651a0ba2b8686329c41e5f75c107aeb07",
+      "validation": {
+        "feature_count": 59,
+        "feature_matrix_shapes": {
+          "F_test": [
+            450,
+            59
+          ],
+          "F_test_raw": [
+            450,
+            59
+          ],
+          "F_train": [
+            2100,
+            59
+          ],
+          "F_train_raw": [
+            2100,
+            59
+          ],
+          "F_val": [
+            450,
+            59
+          ],
+          "F_val_raw": [
+            450,
+            59
+          ]
+        },
+        "label_shapes": {
+          "y_train": [
+            2100,
+            4
+          ],
+          "y_val": [
+            450,
+            4
+          ],
+          "y_test": [
+            450,
+            4
+          ]
+        },
+        "standardisation_max_abs_error": {
+          "train": 0.0,
+          "val": 0.0,
+          "test": 0.0
+        }
+      }
+    }
+  }
+}
