@@ -1,0 +1,225 @@
+{
+  "source_dataset": "data_processed/sss_fast_revision/descriptor_sets/signal_derived_with_ground/debug_plus_3000_signal_derived_with_ground_features.npz",
+  "source_sha256": "62bca74c0fe43d04b50bc12c3f6d904014b6964df64b264fbc2f749b3e65ccf2",
+  "output_dataset": "data_processed/sss_fast_revision/descriptor_sets/measured_ground_augmented/debug_plus_3000_measured_ground_augmented_features.npz",
+  "output_sha256": "1eb1de764172d481ff50fbaafd76e79e141bdcd846da918a0a076bab81403ed3",
+  "output_feature_names": "data_processed/sss_fast_revision/descriptor_sets/measured_ground_augmented/debug_plus_3000_measured_ground_augmented_feature_names.csv",
+  "audit_csv": "results/sss_fast_revision/tables/measured_ground_augmented_feature_audit.csv",
+  "base_feature_count": 78,
+  "added_feature_count": 8,
+  "total_feature_count": 86,
+  "ratio_epsilon": 1e-12,
+  "denominator_threshold": 1e-08,
+  "added_feature_names": [
+    "story_1_dominant_frequency_to_measured_ground_ratio",
+    "story_1_centroid_to_measured_ground_ratio",
+    "story_2_dominant_frequency_to_measured_ground_ratio",
+    "story_2_centroid_to_measured_ground_ratio",
+    "story_3_dominant_frequency_to_measured_ground_ratio",
+    "story_3_centroid_to_measured_ground_ratio",
+    "story_4_dominant_frequency_to_measured_ground_ratio",
+    "story_4_centroid_to_measured_ground_ratio"
+  ],
+  "added_feature_formulas": {
+    "story_1_dominant_frequency_to_measured_ground_ratio": "story dominant frequency / measured-ground dominant frequency",
+    "story_1_centroid_to_measured_ground_ratio": "story spectral centroid / measured-ground spectral centroid",
+    "story_2_dominant_frequency_to_measured_ground_ratio": "story dominant frequency / measured-ground dominant frequency",
+    "story_2_centroid_to_measured_ground_ratio": "story spectral centroid / measured-ground spectral centroid",
+    "story_3_dominant_frequency_to_measured_ground_ratio": "story dominant frequency / measured-ground dominant frequency",
+    "story_3_centroid_to_measured_ground_ratio": "story spectral centroid / measured-ground spectral centroid",
+    "story_4_dominant_frequency_to_measured_ground_ratio": "story dominant frequency / measured-ground dominant frequency",
+    "story_4_centroid_to_measured_ground_ratio": "story spectral centroid / measured-ground spectral centroid"
+  },
+  "denominator_audit": {
+    "train": {
+      "ground_dominant_frequency": {
+        "minimum": 0.5,
+        "p01": 0.5,
+        "p05": 0.55,
+        "median": 1.25,
+        "p95": 1.9500000000000002,
+        "p99": 2.0,
+        "maximum": 2.0,
+        "mean": 1.2491904761904762,
+        "standard_deviation": 0.4423657309391146,
+        "count_abs_le_1e_minus_12": 0,
+        "count_abs_le_1e_minus_8": 0,
+        "count_abs_le_1e_minus_6": 0
+      },
+      "ground_spectral_centroid": {
+        "minimum": 0.5184974674910358,
+        "p01": 0.7118146426728647,
+        "p05": 0.8860281489631281,
+        "median": 1.6628737292182705,
+        "p95": 2.302992537955568,
+        "p99": 2.443673898766092,
+        "maximum": 2.543033307684128,
+        "mean": 1.6378063746620275,
+        "standard_deviation": 0.42373393629200695,
+        "count_abs_le_1e_minus_12": 0,
+        "count_abs_le_1e_minus_8": 0,
+        "count_abs_le_1e_minus_6": 0
+      }
+    },
+    "val": {
+      "ground_dominant_frequency": {
+        "minimum": 0.5,
+        "p01": 0.5,
+        "p05": 0.6000000000000001,
+        "median": 1.25,
+        "p95": 1.9500000000000002,
+        "p99": 2.0,
+        "maximum": 2.0,
+        "mean": 1.2665555555555557,
+        "standard_deviation": 0.43383089667931707,
+        "count_abs_le_1e_minus_12": 0,
+        "count_abs_le_1e_minus_8": 0,
+        "count_abs_le_1e_minus_6": 0
+      },
+      "ground_spectral_centroid": {
+        "minimum": 0.518091907155621,
+        "p01": 0.6863163905894019,
+        "p05": 0.9601881545313069,
+        "median": 1.67160964564681,
+        "p95": 2.289401022274707,
+        "p99": 2.449122297667875,
+        "maximum": 2.509178118439923,
+        "mean": 1.650227461572506,
+        "standard_deviation": 0.41704533869822036,
+        "count_abs_le_1e_minus_12": 0,
+        "count_abs_le_1e_minus_8": 0,
+        "count_abs_le_1e_minus_6": 0
+      }
+    },
+    "test": {
+      "ground_dominant_frequency": {
+        "minimum": 0.5,
+        "p01": 0.5,
+        "p05": 0.55,
+        "median": 1.2000000000000002,
+        "p95": 1.9000000000000001,
+        "p99": 2.0,
+        "maximum": 2.0,
+        "mean": 1.2218888888888892,
+        "standard_deviation": 0.43646787954733074,
+        "count_abs_le_1e_minus_12": 0,
+        "count_abs_le_1e_minus_8": 0,
+        "count_abs_le_1e_minus_6": 0
+      },
+      "ground_spectral_centroid": {
+        "minimum": 0.637164848064839,
+        "p01": 0.7242564191300839,
+        "p05": 0.9181015762164613,
+        "median": 1.6142564251403508,
+        "p95": 2.2861960762035256,
+        "p99": 2.398931433568449,
+        "maximum": 2.471862000563797,
+        "mean": 1.61866881016438,
+        "standard_deviation": 0.42761447733707325,
+        "count_abs_le_1e_minus_12": 0,
+        "count_abs_le_1e_minus_8": 0,
+        "count_abs_le_1e_minus_6": 0
+      }
+    }
+  },
+  "exact_duplicate_columns": [],
+  "maximum_existing_correlations": [
+    {
+      "feature_name": "story_1_dominant_frequency_to_measured_ground_ratio",
+      "most_correlated_existing_feature": "story_2_to_story_1_rms_ratio",
+      "correlation": -0.5380861117612523,
+      "absolute_correlation": 0.5380861117612523
+    },
+    {
+      "feature_name": "story_1_centroid_to_measured_ground_ratio",
+      "most_correlated_existing_feature": "ground_spectral_centroid",
+      "correlation": -0.6678494152523174,
+      "absolute_correlation": 0.6678494152523174
+    },
+    {
+      "feature_name": "story_2_dominant_frequency_to_measured_ground_ratio",
+      "most_correlated_existing_feature": "story_2_rms_spatial_fraction",
+      "correlation": 0.6405655950359627,
+      "absolute_correlation": 0.6405655950359627
+    },
+    {
+      "feature_name": "story_2_centroid_to_measured_ground_ratio",
+      "most_correlated_existing_feature": "ground_spectral_centroid",
+      "correlation": -0.5473174871381962,
+      "absolute_correlation": 0.5473174871381962
+    },
+    {
+      "feature_name": "story_3_dominant_frequency_to_measured_ground_ratio",
+      "most_correlated_existing_feature": "story_4_story_3_correlation",
+      "correlation": 0.2484030788807367,
+      "absolute_correlation": 0.2484030788807367
+    },
+    {
+      "feature_name": "story_3_centroid_to_measured_ground_ratio",
+      "most_correlated_existing_feature": "ground_spectral_centroid",
+      "correlation": -0.46068689745436997,
+      "absolute_correlation": 0.46068689745436997
+    },
+    {
+      "feature_name": "story_4_dominant_frequency_to_measured_ground_ratio",
+      "most_correlated_existing_feature": "story_3_ground_correlation",
+      "correlation": 0.2184512792291909,
+      "absolute_correlation": 0.2184512792291909
+    },
+    {
+      "feature_name": "story_4_centroid_to_measured_ground_ratio",
+      "most_correlated_existing_feature": "ground_spectral_centroid",
+      "correlation": -0.5962757538392816,
+      "absolute_correlation": 0.5962757538392816
+    }
+  ],
+  "base_standardisation_max_abs_error": {
+    "train": 0.0,
+    "val": 0.0,
+    "test": 0.0
+  },
+  "design_matrix_diagnostics": {
+    "sample_count": 2100,
+    "feature_count": 86,
+    "numerical_rank": 86,
+    "full_column_rank": true,
+    "largest_singular_value": 290.7334525892248,
+    "smallest_nonzero_singular_value": 1.2925467365541638e-08,
+    "condition_number_nonzero_spectrum": 22493070801.00633,
+    "rank_tolerance": 1.3556716869919594e-10
+  },
+  "matrix_shapes": {
+    "F_train": [
+      2100,
+      86
+    ],
+    "F_val": [
+      450,
+      86
+    ],
+    "F_test": [
+      450,
+      86
+    ],
+    "F_train_raw": [
+      2100,
+      86
+    ],
+    "F_val_raw": [
+      450,
+      86
+    ],
+    "F_test_raw": [
+      450,
+      86
+    ],
+    "F_mean": [
+      1,
+      86
+    ],
+    "F_std": [
+      1,
+      86
+    ]
+  }
+}
