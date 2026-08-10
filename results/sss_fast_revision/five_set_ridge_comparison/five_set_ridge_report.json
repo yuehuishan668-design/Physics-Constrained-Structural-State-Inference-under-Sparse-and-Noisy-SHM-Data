@@ -1,0 +1,48 @@
+{
+  "protocol": {
+    "estimator": "Ridge",
+    "alpha_candidates": [
+      1e-06,
+      3e-06,
+      1e-05,
+      3e-05,
+      0.0001,
+      0.0003,
+      0.001,
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      1.0,
+      10.0,
+      100.0,
+      300.0
+    ],
+    "selection_criterion": "clipped validation MSE",
+    "prediction_clip": [
+      0.0,
+      0.5
+    ],
+    "dataset_split": "frozen 2100/450/450"
+  },
+  "feature_counts": {
+    "oracle_full": 92,
+    "legacy_no_meta": 86,
+    "measured_ground_augmented": 86,
+    "signal_derived_with_ground": 78,
+    "structural_response_only": 59
+  },
+  "measured_ground_augmented_analysis": {
+    "test_mae_change_vs_78_percent": -0.5249833690142074,
+    "test_mae_change_vs_legacy_percent": 5.917797727020541,
+    "test_mae_change_vs_oracle_percent": 14.176401133551607,
+    "augmentation_interpretation": "modest_improvement"
+  },
+  "lower_boundary_sets": [
+    "structural_response_only"
+  ],
+  "upper_boundary_sets": [],
+  "summary_csv": "results/sss_fast_revision/five_set_ridge_comparison/five_set_ridge_summary.csv",
+  "candidate_csv": "results/sss_fast_revision/five_set_ridge_comparison/five_set_ridge_candidates.csv",
+  "pairwise_csv": "results/sss_fast_revision/five_set_ridge_comparison/five_set_pairwise_comparison.csv"
+}

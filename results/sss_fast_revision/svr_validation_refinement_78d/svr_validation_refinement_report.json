@@ -1,0 +1,85 @@
+{
+  "input_dataset": "data_processed/sss_fast_revision/descriptor_sets/signal_derived_with_ground/debug_plus_3000_signal_derived_with_ground_features.npz",
+  "feature_set": "signal_derived_with_ground",
+  "feature_count": 78,
+  "test_arrays_accessed": false,
+  "selection_criterion": "clipped validation MSE",
+  "search_space": {
+    "C": [
+      50.0,
+      100.0,
+      200.0,
+      300.0
+    ],
+    "gamma": [
+      0.0005,
+      0.001,
+      0.002,
+      0.003,
+      0.005,
+      0.01
+    ],
+    "epsilon": [
+      0.02,
+      0.03,
+      0.04,
+      0.05
+    ],
+    "candidate_count": 96
+  },
+  "anchor_reproduction_passed": true,
+  "anchor": {
+    "candidate": "rbf_svr_C_100_gamma_0p003_eps_0.03",
+    "C": 100.0,
+    "gamma": 0.003,
+    "epsilon": 0.03,
+    "val_mse": 0.002480928318839576,
+    "val_mae": 0.03187263734314331,
+    "fit_seconds": 2.4424423329764977,
+    "support_vectors_story_1": 978,
+    "support_vectors_story_2": 1026,
+    "support_vectors_story_3": 930,
+    "support_vectors_story_4": 1109,
+    "mean_support_vector_count": 1010.75,
+    "mean_support_vector_ratio": 0.4813095238095238,
+    "selected": false
+  },
+  "selected_candidate": {
+    "candidate": "rbf_svr_C_300_gamma_0p001_eps_0.03",
+    "C": 300.0,
+    "gamma": 0.001,
+    "epsilon": 0.03,
+    "val_mse": 0.002408918560974952,
+    "val_mae": 0.03184929961339126,
+    "fit_seconds": 3.053447165992111,
+    "support_vectors_story_1": 1000,
+    "support_vectors_story_2": 1041,
+    "support_vectors_story_3": 961,
+    "support_vectors_story_4": 1130,
+    "mean_support_vector_count": 1033.0,
+    "mean_support_vector_ratio": 0.4919047619047619,
+    "selected": false
+  },
+  "boundary_checks": {
+    "C_at_lower_boundary": false,
+    "C_at_upper_boundary": true,
+    "gamma_at_lower_boundary": false,
+    "gamma_at_upper_boundary": false,
+    "epsilon_at_lower_boundary": false,
+    "epsilon_at_upper_boundary": false
+  },
+  "lower_gamma_diagnostic": {
+    "best_val_mse_gamma_0.0005": 0.002812313384715893,
+    "best_val_mse_gamma_0.001": 0.002408918560974952,
+    "gamma_0.0005_improvement_vs_0.001_percent": -16.745888809859828
+  },
+  "stop_decision": "STOP_SEARCH_INTERNAL_GAMMA_OPTIMUM",
+  "additional_lower_gamma_search_needed": false,
+  "output_files": {
+    "candidates": "results/sss_fast_revision/svr_validation_refinement_78d/svr_validation_refinement_candidates.csv",
+    "validation_damage_bins": "results/sss_fast_revision/svr_validation_refinement_78d/svr_validation_selected_damage_bins.csv",
+    "best_by_C": "results/sss_fast_revision/svr_validation_refinement_78d/svr_validation_best_by_C.csv",
+    "best_by_gamma": "results/sss_fast_revision/svr_validation_refinement_78d/svr_validation_best_by_gamma.csv",
+    "best_by_epsilon": "results/sss_fast_revision/svr_validation_refinement_78d/svr_validation_best_by_epsilon.csv"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "feature_set": "signal_derived_with_ground",
+  "feature_count": 78,
+  "test_arrays_accessed": false,
+  "selection_criterion": "clipped validation MSE",
+  "search_space": {
+    "C": [
+      300.0,
+      500.0,
+      750.0,
+      1000.0
+    ],
+    "gamma": [
+      0.0003,
+      0.0005,
+      0.00075,
+      0.001,
+      0.0015
+    ],
+    "epsilon": [
+      0.02,
+      0.03,
+      0.04
+    ],
+    "candidate_count": 60
+  },
+  "anchor_reproduction_passed": true,
+  "anchor": {
+    "candidate": "rbf_svr_C_300_gamma_0p001_eps_0.03",
+    "C": 300.0,
+    "gamma": 0.001,
+    "epsilon": 0.03,
+    "val_mse": 0.002408918560974952,
+    "val_mae": 0.03184929961339126,
+    "fit_seconds": 3.0198827090207487,
+    "support_vectors_story_1": 1000,
+    "support_vectors_story_2": 1041,
+    "support_vectors_story_3": 961,
+    "support_vectors_story_4": 1130,
+    "mean_support_vector_count": 1033.0,
+    "mean_support_vector_ratio": 0.4919047619047619,
+    "selected": false
+  },
+  "selected_candidate": {
+    "candidate": "rbf_svr_C_1000_gamma_0p00075_eps_0.03",
+    "C": 1000.0,
+    "gamma": 0.00075,
+    "epsilon": 0.03,
+    "val_mse": 0.002256262230781473,
+    "val_mae": 0.03071469315782859,
+    "fit_seconds": 7.101679874991532,
+    "support_vectors_story_1": 1012,
+    "support_vectors_story_2": 1023,
+    "support_vectors_story_3": 923,
+    "support_vectors_story_4": 1106,
+    "mean_support_vector_count": 1016.0,
+    "mean_support_vector_ratio": 0.4838095238095238,
+    "selected": false
+  },
+  "boundary_checks": {
+    "C_at_lower_boundary": false,
+    "C_at_upper_boundary": true,
+    "gamma_at_lower_boundary": false,
+    "gamma_at_upper_boundary": false,
+    "epsilon_at_lower_boundary": false,
+    "epsilon_at_upper_boundary": false
+  },
+  "upper_C_diagnostic": {
+    "best_interior_C": 750.0,
+    "best_interior_val_mse": 0.0022656100908216795,
+    "C1000_val_mse": 0.002256262230781473,
+    "C1000_improvement_vs_best_interior_percent": 0.41259791691765385
+  },
+  "stop_decision": "STOP_UPPER_C_PLATEAU",
+  "fixed_split_tuning_complete": true,
+  "next_stage": "92D SVR comparison and 10-seed repeated-split validation"
+}

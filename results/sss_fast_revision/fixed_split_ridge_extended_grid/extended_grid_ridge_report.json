@@ -1,0 +1,34 @@
+{
+  "protocol": {
+    "estimator": "Ridge",
+    "alpha_candidates": [
+      1e-06,
+      3e-06,
+      1e-05,
+      3e-05,
+      0.0001,
+      0.0003,
+      0.001,
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      1.0,
+      10.0,
+      100.0,
+      300.0
+    ],
+    "selection_criterion": "clipped validation MSE",
+    "prediction_clip": [
+      0.0,
+      0.5
+    ],
+    "dataset_split": "frozen 2100/450/450"
+  },
+  "selected_alpha_lower_boundary_sets": [
+    "structural_response_only"
+  ],
+  "selected_alpha_upper_boundary_sets": [],
+  "summary_csv": "results/sss_fast_revision/fixed_split_ridge_extended_grid/extended_grid_ridge_summary.csv",
+  "candidate_csv": "results/sss_fast_revision/fixed_split_ridge_extended_grid/extended_grid_ridge_candidates.csv"
+}

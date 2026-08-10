@@ -1,0 +1,54 @@
+{
+  "experiment": "10_seed_standard_vs_severity_weighted_78D_RBF_SVR",
+  "descriptor_set": "signal_derived_with_ground",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "split_reuse": true,
+  "weight_multiplier": 1.5,
+  "high_damage_threshold": 0.2,
+  "weight_normalisation": "storey-specific mean weight = 1",
+  "weighted_grid": {
+    "C": [
+      100.0,
+      300.0,
+      500.0,
+      750.0,
+      1000.0
+    ],
+    "gamma": [
+      0.00075,
+      0.001,
+      0.003
+    ],
+    "epsilon": [
+      0.02,
+      0.03,
+      0.04
+    ],
+    "candidate_count_per_seed": 45
+  },
+  "eligibility": {
+    "overall_mse_budget": 1.05,
+    "zero_mae_budget": 1.1,
+    "low_mae_budget": 1.1
+  },
+  "selection_rule": "Among eligible weighted candidates: min high MAE, then min |high bias|, then min high underestimation, then min validation MSE.",
+  "fallback_rule": "If no weighted candidate satisfies validation constraints, use the frozen standard SVR for that seed.",
+  "fallback_count": 1,
+  "interpretation_decision": "WEIGHTING_NOT_ROBUST_ENOUGH_FOR_FORMAL_METHOD_EXTENSION",
+  "overall_test_mae_change_percent": -1.2838845091808866,
+  "high_damage_mae_improvement_percent": 9.634615359508103,
+  "high_damage_abs_bias_improvement_percent": 18.802388585985916,
+  "high_damage_underestimation_change_percentage_points": -3.856131486673975,
+  "statistical_note": "Ten repeated paired holdout splits reuse the same 3000 simulated cases. Effect sizes, paired direction and intervals are primary; p-values are supportive."
+}

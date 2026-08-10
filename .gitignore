@@ -254,3 +254,17 @@ opensees_models/**/*.out
 *.pkl
 *.pickle
 
+
+# ============================================================
+# Generated fast-revision experiment artifacts
+# Source code, CSV summaries and JSON reports remain trackable.
+# ============================================================
+results/sss_fast_revision/**/*.npz
+results/sss_fast_revision/**/*.npy
+results/sss_fast_revision/**/*.pkl
+results/sss_fast_revision/**/*.joblib
+results/sss_fast_revision/**/*.log
+results/sss_fast_revision/**/*.png
+results/sss_fast_revision/**/*.jpg
+results/sss_fast_revision/**/*.pdf
+results/sss_fast_revision/logs/

@@ -1,0 +1,52 @@
+{
+  "experiment": "78D_damage_weighted_RBF_SVR_validation_only_pilot",
+  "test_arrays_accessed": false,
+  "feature_count": 78,
+  "weighting": {
+    "type": "storey_specific_high_damage_weight",
+    "threshold": 0.2,
+    "multipliers": [
+      1.0,
+      1.5,
+      2.0,
+      3.0,
+      4.0,
+      6.0
+    ],
+    "normalisation": "per-storey mean weight = 1"
+  },
+  "search_space": {
+    "C": [
+      100.0,
+      300.0,
+      500.0,
+      750.0,
+      1000.0
+    ],
+    "gamma": [
+      0.00075,
+      0.001,
+      0.003
+    ],
+    "epsilon": [
+      0.02,
+      0.03,
+      0.04
+    ],
+    "candidate_count": 270
+  },
+  "baseline_selection": "minimum clipped validation MSE among multiplier=1 candidates",
+  "baseline_anchor_reproduced": true,
+  "eligibility_constraints": {
+    "overall_mse_multiplier": 1.05,
+    "zero_mae_multiplier": 1.1,
+    "low_mae_multiplier": 1.1
+  },
+  "weighted_selection": "min high-damage MAE, then min |high bias|, then min underestimation ratio, then min overall validation MSE",
+  "decision": "WEIGHTED_CANDIDATE_SELECTED",
+  "next_stage": "PROCEED_TO_10_SEED_WEIGHTED_SVR_VALIDATION",
+  "high_damage_mae_improvement_percent": 13.925789813611111,
+  "high_damage_abs_bias_improvement_percent": 16.380483178507887,
+  "high_damage_underestimation_change_percentage_points": -2.9962546816479363,
+  "overall_validation_mse_change_percent": 2.317332583400508
+}

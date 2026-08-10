@@ -1,0 +1,54 @@
+{
+  "experiment": "10_seed_complete_2x2_78D_92D_x_Ridge_SVR",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "missing_cell_trained": "92D_oracle_full_Ridge",
+  "previous_cells_reused": [
+    "78D_Ridge",
+    "78D_RBF_SVR",
+    "92D_RBF_SVR"
+  ],
+  "canonical_alignment_passed": true,
+  "same_split_files_reused": true,
+  "per_seed_92d_scaling": true,
+  "ridge_selection": "clipped validation MSE",
+  "ridge_grid": [
+    1e-06,
+    3e-06,
+    1e-05,
+    3e-05,
+    0.0001,
+    0.0003,
+    0.001,
+    0.003,
+    0.01,
+    0.03,
+    0.1,
+    1.0,
+    10.0,
+    100.0,
+    300.0
+  ],
+  "interaction_definition": "(92D_SVR - 78D_SVR) - (92D_Ridge - 78D_Ridge)",
+  "interaction_interpretation": "For lower-is-better metrics, negative interaction means the 92D information benefit is larger under SVR than under Ridge.",
+  "statistical_note": "Ten paired repeated holdout splits reuse the same 3000 simulated cases. Effect sizes, paired consistency and intervals are primary; p-values are supportive and should not be treated as ten independent experiments.",
+  "output_files": {
+    "92d_ridge_metrics": "results/sss_fast_revision/repeated_factorial_78d_92d_ridge_svr/oracle92_ridge_seed_metrics.csv",
+    "92d_ridge_candidates": "results/sss_fast_revision/repeated_factorial_78d_92d_ridge_svr/oracle92_ridge_candidates.csv",
+    "92d_ridge_damage_bins": "results/sss_fast_revision/repeated_factorial_78d_92d_ridge_svr/oracle92_ridge_damage_bins.csv",
+    "92d_ridge_alpha_frequency": "results/sss_fast_revision/repeated_factorial_78d_92d_ridge_svr/oracle92_ridge_alpha_frequency.csv",
+    "factorial_seed_effects": "results/sss_fast_revision/repeated_factorial_78d_92d_ridge_svr/repeated_factorial_seed_effects.csv",
+    "factorial_mean_table": "results/sss_fast_revision/repeated_factorial_78d_92d_ridge_svr/repeated_factorial_mean_table.csv",
+    "factorial_effect_summary": "results/sss_fast_revision/repeated_factorial_78d_92d_ridge_svr/repeated_factorial_effect_summary.csv"
+  }
+}

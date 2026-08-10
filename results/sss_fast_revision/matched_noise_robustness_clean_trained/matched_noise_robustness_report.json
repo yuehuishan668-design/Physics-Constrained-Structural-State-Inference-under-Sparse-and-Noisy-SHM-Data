@@ -1,0 +1,128 @@
+{
+  "experiment": "clean_trained_matched_measurement_noise_robustness",
+  "training_distribution": "clean 78D descriptors only",
+  "validation_distribution": "clean 78D descriptors only",
+  "test_distribution": "matched 0/5/10/20% structural-response measurement noise",
+  "ground_signal_perturbed": false,
+  "scaler": "StandardScaler fitted on clean training only",
+  "prediction_clip": [
+    0.0,
+    0.5
+  ],
+  "svr_grid": {
+    "C": [
+      100.0,
+      300.0,
+      500.0,
+      750.0,
+      1000.0
+    ],
+    "gamma": [
+      0.0005,
+      0.00075,
+      0.001,
+      0.003,
+      0.01
+    ],
+    "epsilon": [
+      0.02,
+      0.03,
+      0.04
+    ],
+    "selection_metric": "clean validation MSE"
+  },
+  "selected_svr": {
+    "C": 1000.0,
+    "gamma": 0.003,
+    "epsilon": 0.03,
+    "clean_validation_metrics": {
+      "mse": 0.0012512588241516056,
+      "mae": 0.02174091191585765,
+      "rmse": 0.03537313704142744,
+      "bias": 0.007660344417533212,
+      "damaged_mae": 0.03097343691193951,
+      "zero_mae": 0.017846624121301793,
+      "low_mae": 0.02774023309215071,
+      "medium_mae": 0.0272949392670894,
+      "high_mae": 0.034501835514634115,
+      "high_bias": -0.01840473516832802,
+      "high_abs_bias": 0.01840473516832802,
+      "high_underestimation": 0.6591760299625468,
+      "n_zero": 1266,
+      "n_low": 90,
+      "n_medium": 177,
+      "n_high": 267
+    }
+  },
+  "calibration": {
+    "type": "training-only one-sided monotone residual calibration",
+    "oof_folds": 5,
+    "oof_random_state": 20260809,
+    "alpha_grid": [
+      0.25,
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5
+    ],
+    "selected_alpha": 1.5,
+    "fallback_to_standard": false,
+    "clean_validation_metrics": {
+      "mse": 0.0012837128199720935,
+      "mae": 0.021792833771058683,
+      "rmse": 0.03582893830372445,
+      "bias": 0.011839378580520601,
+      "damaged_mae": 0.030597302384614156,
+      "zero_mae": 0.0180791005643931,
+      "low_mae": 0.029748617938799956,
+      "medium_mae": 0.026279072548492155,
+      "high_mae": 0.033746022538609935,
+      "high_bias": -1.0402475022623477e-05,
+      "high_abs_bias": 1.0402475022623477e-05,
+      "high_underestimation": 0.45318352059925093,
+      "n_zero": 1266,
+      "n_low": 90,
+      "n_medium": 177,
+      "n_high": 267
+    },
+    "oof_story_diagnostics": [
+      {
+        "story": 1,
+        "high_residual_mean": 0.018248816318806083,
+        "high_underestimation": 0.6589403973509934
+      },
+      {
+        "story": 2,
+        "high_residual_mean": 0.023062322637090554,
+        "high_underestimation": 0.6823529411764706
+      },
+      {
+        "story": 3,
+        "high_residual_mean": 0.024371403462476453,
+        "high_underestimation": 0.7171052631578947
+      },
+      {
+        "story": 4,
+        "high_residual_mean": 0.036814797163139665,
+        "high_underestimation": 0.7470588235294118
+      }
+    ]
+  },
+  "n_test_conditions": 16,
+  "n_test_cases_per_condition": 450,
+  "condition_metric_rows_ok": true,
+  "prediction_shape_ok": true,
+  "all_metrics_finite": true,
+  "overall_passed": true,
+  "outputs": {
+    "svr_grid": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_robustness_clean_trained/clean_svr_grid_results.csv",
+    "alpha_grid": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_robustness_clean_trained/clean_calibration_alpha_results.csv",
+    "condition_metrics": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_robustness_clean_trained/condition_metrics.csv",
+    "noise_summary": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_robustness_clean_trained/noise_level_summary.csv",
+    "degradation_vs_clean": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_robustness_clean_trained/degradation_vs_clean.csv",
+    "calibration_benefit": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_robustness_clean_trained/calibration_benefit.csv",
+    "calibration_benefit_summary": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_robustness_clean_trained/calibration_benefit_summary.csv",
+    "test_predictions": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_robustness_clean_trained/matched_noise_test_predictions.npz"
+  }
+}

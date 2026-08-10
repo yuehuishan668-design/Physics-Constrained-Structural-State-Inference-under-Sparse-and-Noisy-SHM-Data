@@ -1,0 +1,168 @@
+{
+  "experiment": "historical_92D_descriptor_reproduction_lock",
+  "raw_dataset": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/Physics-Constrained-Structural-State-Inference-under-Sparse-and-Noisy-SHM-Data/data_processed/debug_plus_3000_dataset.npz",
+  "frozen_feature_dataset": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/data_inputs/aes_frozen/debug_plus_3000_physics_features_mlp.npz",
+  "extractor": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/src/preprocessing/extract_physics_features.py",
+  "extractor_sha256": "70efcf45e079a8d02ffa5e248e6c30c05415b90085fff48746e3a242f434cdd1",
+  "response_source": "X_abs_accel",
+  "historical_distribution": "mixed measurement-noise response distribution",
+  "numerical_settings": {
+    "dt": 0.01,
+    "healthy_first_frequency_hz": 0.7873752223272414,
+    "min_fft_freq": 0.05,
+    "max_fft_freq": 8.0,
+    "eps": 1e-08,
+    "comparison_atol": 1e-09,
+    "comparison_rtol": 1e-10
+  },
+  "checks": {
+    "split_integrity": true,
+    "dt_match": true,
+    "metadata": {
+      "y_train_exact": true,
+      "y_val_exact": true,
+      "y_test_exact": true,
+      "case_id_train_exact": true,
+      "case_id_val_exact": true,
+      "case_id_test_exact": true,
+      "amplitude_train_exact": true,
+      "amplitude_val_exact": true,
+      "amplitude_test_exact": true,
+      "frequency_train_exact": true,
+      "frequency_val_exact": true,
+      "frequency_test_exact": true,
+      "noise_train_exact": true,
+      "noise_val_exact": true,
+      "noise_test_exact": true
+    },
+    "feature_names_exact": true,
+    "raw_allclose": true,
+    "standardized_allclose": true
+  },
+  "raw_comparisons": {
+    "F_train_raw": {
+      "shape_match": true,
+      "actual_shape": [
+        2100,
+        92
+      ],
+      "expected_shape": [
+        2100,
+        92
+      ],
+      "allclose": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_scaled_error": 0.0
+    },
+    "F_val_raw": {
+      "shape_match": true,
+      "actual_shape": [
+        450,
+        92
+      ],
+      "expected_shape": [
+        450,
+        92
+      ],
+      "allclose": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_scaled_error": 0.0
+    },
+    "F_test_raw": {
+      "shape_match": true,
+      "actual_shape": [
+        450,
+        92
+      ],
+      "expected_shape": [
+        450,
+        92
+      ],
+      "allclose": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_scaled_error": 0.0
+    }
+  },
+  "standardized_comparisons": {
+    "F_train": {
+      "shape_match": true,
+      "actual_shape": [
+        2100,
+        92
+      ],
+      "expected_shape": [
+        2100,
+        92
+      ],
+      "allclose": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_scaled_error": 0.0
+    },
+    "F_val": {
+      "shape_match": true,
+      "actual_shape": [
+        450,
+        92
+      ],
+      "expected_shape": [
+        450,
+        92
+      ],
+      "allclose": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_scaled_error": 0.0
+    },
+    "F_test": {
+      "shape_match": true,
+      "actual_shape": [
+        450,
+        92
+      ],
+      "expected_shape": [
+        450,
+        92
+      ],
+      "allclose": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_scaled_error": 0.0
+    },
+    "F_mean": {
+      "shape_match": true,
+      "actual_shape": [
+        1,
+        92
+      ],
+      "expected_shape": [
+        1,
+        92
+      ],
+      "allclose": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_scaled_error": 0.0
+    },
+    "F_std": {
+      "shape_match": true,
+      "actual_shape": [
+        1,
+        92
+      ],
+      "expected_shape": [
+        1,
+        92
+      ],
+      "allclose": true,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_scaled_error": 0.0
+    }
+  },
+  "elapsed_seconds": 1.2696552909910679,
+  "overall_passed": true
+}

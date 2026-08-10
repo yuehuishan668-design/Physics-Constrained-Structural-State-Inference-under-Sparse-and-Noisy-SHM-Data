@@ -1,0 +1,68 @@
+{
+  "experiment": "10_seed_standard_vs_one_sided_residual_calibrated_78D_RBF_SVR",
+  "descriptor_set": "signal_derived_with_ground",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "exact_outer_splits_reused": true,
+  "base_hyperparameters": "reused from each seed's frozen standard-SVR validation selection",
+  "oof": {
+    "fold_count": 5,
+    "shuffle": true,
+    "random_state": 20260809,
+    "per_fold_scaling": "fold-training only"
+  },
+  "calibration": {
+    "type": "storey-specific non-negative monotone isotonic residual correction",
+    "residual": "truth_minus_OOF_prediction",
+    "direction": "upward_only",
+    "alpha_candidates": [
+      0.25,
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5
+    ]
+  },
+  "validation_constraints": {
+    "overall_mse_multiplier": 1.05,
+    "zero_mae_multiplier": 1.1,
+    "low_mae_multiplier": 1.1,
+    "high_mae_multiplier": 1.0,
+    "high_abs_bias_multiplier": 1.0
+  },
+  "selection_rule": "minimum high-damage underestimation; then high MAE; then |high bias|; then validation MSE",
+  "fallback_rule": "use frozen standard SVR if no alpha is validation-eligible",
+  "fallback_count": 0,
+  "formal_success_criteria": {
+    "high_underestimation_change_pp_max": -7.5,
+    "high_underestimation_wins_min": 8,
+    "high_abs_bias_improvement_percent_min": 20.0,
+    "high_abs_bias_wins_min": 8,
+    "high_mae_improvement_percent_min": 7.5,
+    "high_mae_wins_min": 8,
+    "overall_test_mae_change_percent_max": 5.0,
+    "low_mae_change_percent_max": 10.0,
+    "fallback_count_max": 2
+  },
+  "method_decision": "ASYMMETRIC_CALIBRATION_ROBUST_FORMAL_EXTENSION",
+  "overall_test_mae_change_percent": -1.4166837855828343,
+  "low_mae_change_percent": 7.520711661201157,
+  "high_damage_mae_improvement_percent": 7.692797641287162,
+  "high_damage_abs_bias_improvement_percent": 28.457953060512477,
+  "high_damage_underestimation_change_percentage_points": -10.370590069124352,
+  "high_mae_wins": 10,
+  "high_abs_bias_wins": 10,
+  "high_underestimation_wins": 10,
+  "statistical_note": "The ten repeated holdout partitions reuse the same 3000 simulated cases. Effect sizes, paired direction and confidence intervals are primary; p-values are supportive."
+}

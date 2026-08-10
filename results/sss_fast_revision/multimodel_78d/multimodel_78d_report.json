@@ -1,0 +1,29 @@
+{
+  "input_dataset": "data_processed/sss_fast_revision/descriptor_sets/signal_derived_with_ground/debug_plus_3000_signal_derived_with_ground_features.npz",
+  "feature_set": "signal_derived_with_ground",
+  "feature_count": 78,
+  "sklearn_version": "1.9.0",
+  "protocol": {
+    "train_validation_test": [
+      2100,
+      450,
+      450
+    ],
+    "selection_criterion": "clipped validation MSE",
+    "prediction_clip": [
+      0.0,
+      0.5
+    ],
+    "test_evaluations_per_model_family": 1,
+    "random_state_where_applicable": 42
+  },
+  "ridge_reproduction_passed": true,
+  "best_overall_test_mae_model": "rbf_svr",
+  "best_high_damage_mae_model": "rbf_svr",
+  "lowest_high_damage_underestimation_model": "rbf_svr",
+  "output_files": {
+    "summary": "results/sss_fast_revision/multimodel_78d/multimodel_78d_summary.csv",
+    "candidates": "results/sss_fast_revision/multimodel_78d/multimodel_78d_candidates.csv",
+    "damage_bins": "results/sss_fast_revision/multimodel_78d/multimodel_78d_damage_bins.csv"
+  }
+}

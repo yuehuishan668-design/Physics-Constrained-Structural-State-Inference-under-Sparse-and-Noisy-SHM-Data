@@ -1,0 +1,46 @@
+{
+  "experiment": "78D_one_sided_monotone_residual_calibration_validation_pilot",
+  "test_arrays_accessed": false,
+  "base_model": {
+    "C": 1000.0,
+    "gamma": 0.00075,
+    "epsilon": 0.03
+  },
+  "base_anchor_reproduced": true,
+  "oof": {
+    "folds": 5,
+    "shuffle": true,
+    "random_state": 20260809,
+    "per_fold_scaling": "training-fold only"
+  },
+  "calibration": {
+    "type": "storey-specific non-negative monotone isotonic residual correction",
+    "residual_definition": "truth_minus_OOF_prediction",
+    "correction_direction": "upward_only",
+    "alpha_candidates": [
+      0.25,
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5
+    ]
+  },
+  "eligibility_constraints": {
+    "overall_mse_multiplier": 1.05,
+    "zero_mae_multiplier": 1.1,
+    "low_mae_multiplier": 1.1,
+    "high_mae_multiplier": 1.0,
+    "high_abs_bias_multiplier": 1.0
+  },
+  "selection_rule": "min high-damage underestimation, then high MAE, |high bias|, overall validation MSE",
+  "decision": "ASYMMETRIC_CALIBRATION_SELECTED",
+  "next_stage": "PROCEED_TO_10_SEED_ASYMMETRIC_CALIBRATION",
+  "selected_alpha": 0.75,
+  "underestimation_change_percentage_points": -12.35955056179775,
+  "high_mae_improvement_percent": 13.78565825252583,
+  "high_abs_bias_improvement_percent": 36.26387401699178,
+  "overall_mse_change_percent": -5.649908467356584,
+  "zero_mae_change_percent": 1.149186123801109,
+  "low_mae_change_percent": 7.818639214239148
+}

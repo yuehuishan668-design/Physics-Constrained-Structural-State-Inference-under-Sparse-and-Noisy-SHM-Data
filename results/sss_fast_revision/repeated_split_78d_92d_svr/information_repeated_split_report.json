@@ -1,0 +1,56 @@
+{
+  "experiment": "10_seed_78D_vs_92D_RBF_SVR",
+  "question": "information availability under fixed estimator family",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "split_reuse": "Exact split NPZ files from repeated_split_78d_ridge_svr",
+  "canonical_alignment_passed": true,
+  "78d_results_reused": "results/sss_fast_revision/repeated_split_78d_ridge_svr/repeated_split_seed_metrics.csv",
+  "92d_feature_count": 92,
+  "selection_criterion": "clipped validation MSE",
+  "prediction_clip": [
+    0.0,
+    0.5
+  ],
+  "svr_search_space": {
+    "C": [
+      100.0,
+      300.0,
+      500.0,
+      750.0,
+      1000.0
+    ],
+    "gamma": [
+      0.0005,
+      0.00075,
+      0.001,
+      0.003,
+      0.01
+    ],
+    "epsilon": [
+      0.02,
+      0.03,
+      0.04
+    ],
+    "candidate_count": 75
+  },
+  "92d_boundary_selection_counts": {
+    "C_lower": 0,
+    "C_upper": 5,
+    "gamma_lower": 0,
+    "gamma_upper": 0,
+    "epsilon_lower": 10,
+    "epsilon_upper": 0
+  },
+  "statistical_note": "Ten paired repeated holdout partitions reuse the same 3000 simulated cases. Effect sizes and paired consistency are primary; inferential p-values are supportive rather than evidence of independent experiments."
+}

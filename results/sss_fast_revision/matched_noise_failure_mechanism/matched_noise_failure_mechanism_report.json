@@ -1,0 +1,27 @@
+{
+  "experiment": "matched_noise_failure_mechanism_diagnostic",
+  "training_or_tuning_performed": false,
+  "questions": [
+    "signed bias reversal",
+    "under/overestimation transition",
+    "prediction clipping/saturation",
+    "paired 78D descriptor distribution shift",
+    "descriptor-shift/error association"
+  ],
+  "clean_descriptor_shift_exact_zero": true,
+  "directional_metrics_finite": true,
+  "descriptor_metrics_finite": true,
+  "overall_passed": true,
+  "outputs": {
+    "directional_metrics": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_failure_mechanism/severity_directional_metrics.csv",
+    "directional_summary": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_failure_mechanism/severity_directional_summary.csv",
+    "prediction_distribution": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_failure_mechanism/prediction_distribution_metrics.csv",
+    "prediction_distribution_summary": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_failure_mechanism/prediction_distribution_summary.csv",
+    "descriptor_shift": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_failure_mechanism/descriptor_shift_by_condition.csv",
+    "descriptor_shift_summary": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_failure_mechanism/descriptor_shift_summary.csv",
+    "case_shift": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_failure_mechanism/case_level_descriptor_shift_and_error.csv",
+    "association": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_failure_mechanism/descriptor_shift_error_association.csv",
+    "association_summary": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_failure_mechanism/descriptor_shift_error_association_summary.csv",
+    "bias_reversal": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/matched_noise_failure_mechanism/high_damage_bias_reversal.csv"
+  }
+}

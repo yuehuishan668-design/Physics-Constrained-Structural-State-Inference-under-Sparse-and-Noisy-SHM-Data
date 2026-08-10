@@ -1,0 +1,47 @@
+{
+  "experiment": "10_seed_78D_Ridge_vs_RBF_SVR",
+  "descriptor_set": "signal_derived_with_ground",
+  "feature_count": 78,
+  "case_count": 3000,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "split_sizes": {
+    "train": 2100,
+    "validation": 450,
+    "test": 450
+  },
+  "preprocessing": "StandardScaler fitted separately on each seed's training fold only.",
+  "selection_criterion": "clipped validation MSE",
+  "prediction_clip": [
+    0.0,
+    0.5
+  ],
+  "ridge_candidate_count": 15,
+  "svr_candidate_count": 75,
+  "raw_dataset_loading": {
+    "reconstruction_mode": "explicit_raw_arrays",
+    "n_cases": 3000,
+    "n_features": 78
+  },
+  "statistical_note": "Paired tests are descriptive robustness evidence across ten repeated holdout splits; they should not be interpreted as proving population-level superiority in isolation.",
+  "output_files": {
+    "seed_metrics": "results/sss_fast_revision/repeated_split_78d_ridge_svr/repeated_split_seed_metrics.csv",
+    "summary": "results/sss_fast_revision/repeated_split_78d_ridge_svr/repeated_split_metric_summary.csv",
+    "paired_statistics": "results/sss_fast_revision/repeated_split_78d_ridge_svr/repeated_split_paired_statistics.csv",
+    "candidates": "results/sss_fast_revision/repeated_split_78d_ridge_svr/repeated_split_candidates.csv",
+    "damage_bins": "results/sss_fast_revision/repeated_split_78d_ridge_svr/repeated_split_damage_bins.csv",
+    "selected_hyperparameters": "results/sss_fast_revision/repeated_split_78d_ridge_svr/repeated_split_selected_hyperparameters.csv",
+    "ridge_frequency": "results/sss_fast_revision/repeated_split_78d_ridge_svr/ridge_alpha_frequency.csv",
+    "svr_frequency": "results/sss_fast_revision/repeated_split_78d_ridge_svr/svr_hyperparameter_frequency.csv"
+  }
+}

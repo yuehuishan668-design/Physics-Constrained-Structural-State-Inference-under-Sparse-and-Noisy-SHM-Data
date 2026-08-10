@@ -1,0 +1,82 @@
+{
+  "input_dataset": "data_processed/sss_fast_revision/descriptor_sets/signal_derived_with_ground/debug_plus_3000_signal_derived_with_ground_features.npz",
+  "feature_count": 78,
+  "protocol": {
+    "selection_criterion": "clipped validation MSE",
+    "prediction_clip": [
+      0.0,
+      0.5
+    ],
+    "test_evaluations": 1
+  },
+  "search_space": {
+    "C": [
+      30.0,
+      100.0,
+      300.0,
+      1000.0
+    ],
+    "gamma": [
+      "0.003",
+      "0.01",
+      "0.03",
+      "scale"
+    ],
+    "epsilon": [
+      0.01,
+      0.02,
+      0.03,
+      0.05
+    ]
+  },
+  "anchor_reproduction_passed": true,
+  "anchor": {
+    "candidate": "rbf_svr_C_100_gamma_0p01_eps_0.03",
+    "C": 100.0,
+    "gamma": 0.01,
+    "gamma_display": "0.01",
+    "epsilon": 0.03,
+    "val_mse": 0.0028005556048304268,
+    "val_mae": 0.03258004271511441,
+    "fit_seconds": 4.9120151669485494,
+    "support_vectors_story_1": 964,
+    "support_vectors_story_2": 1079,
+    "support_vectors_story_3": 998,
+    "support_vectors_story_4": 1132,
+    "mean_support_vector_count": 1043.25,
+    "mean_support_vector_ratio": 0.4967857142857143,
+    "selected": false
+  },
+  "selected_candidate": "rbf_svr_C_100_gamma_0p003_eps_0.03",
+  "selected_validation": {
+    "C": 100.0,
+    "gamma": 0.003,
+    "epsilon": 0.03,
+    "val_mse": 0.002480928318839576,
+    "val_mae": 0.03187263734314331,
+    "mean_support_vector_ratio": 0.48130952380952374
+  },
+  "test_metrics": {
+    "test_mae": 0.03348516328678455,
+    "test_rmse": 0.05266521485083778,
+    "test_bias": 0.0030270715386351704,
+    "damaged_entry_mae": 0.05495190368041316,
+    "zero_damage_mae": 0.02391565250890192,
+    "high_damage_mae": 0.06831712507334992,
+    "high_damage_bias": -0.05793596565466972,
+    "high_damage_underestimation_ratio": 0.8029197080291971
+  },
+  "boundary_checks": {
+    "C_at_lower_boundary": false,
+    "C_at_upper_boundary": false,
+    "gamma_at_numeric_lower_boundary": true,
+    "gamma_at_numeric_upper_boundary": false,
+    "epsilon_at_lower_boundary": false,
+    "epsilon_at_upper_boundary": false
+  },
+  "output_files": {
+    "candidate_csv": "results/sss_fast_revision/svr_local_search_78d/svr_local_search_candidates.csv",
+    "damage_bin_csv": "results/sss_fast_revision/svr_local_search_78d/svr_local_search_damage_bins.csv",
+    "prediction_npz": "results/sss_fast_revision/svr_local_search_78d/selected_svr_test_predictions.npz"
+  }
+}

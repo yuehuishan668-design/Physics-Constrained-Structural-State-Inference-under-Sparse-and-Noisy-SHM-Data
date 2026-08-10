@@ -1,0 +1,65 @@
+{
+  "protocol": {
+    "estimator": "Ridge",
+    "alpha_candidates": [
+      0.01,
+      0.1,
+      1.0,
+      10.0,
+      100.0,
+      300.0
+    ],
+    "selection_criterion": "clipped validation MSE",
+    "prediction_clip": [
+      0.0,
+      0.5
+    ],
+    "fit_data": "training split only",
+    "test_evaluations_per_configuration": 1
+  },
+  "reproduction_passed": true,
+  "reproduction_checks": {
+    "oracle_full": {
+      "test_mae": {
+        "actual_full_precision": 0.03933571505892584,
+        "actual_four_decimals": "0.0393",
+        "expected_four_decimals": "0.0393",
+        "passed": true
+      },
+      "test_rmse": {
+        "actual_full_precision": 0.05854806891498964,
+        "actual_four_decimals": "0.0585",
+        "expected_four_decimals": "0.0585",
+        "passed": true
+      },
+      "damaged_entry_mae": {
+        "actual_full_precision": 0.0634314341956843,
+        "actual_four_decimals": "0.0634",
+        "expected_four_decimals": "0.0634",
+        "passed": true
+      }
+    },
+    "legacy_no_meta": {
+      "test_mae": {
+        "actual_full_precision": 0.042457719638487074,
+        "actual_four_decimals": "0.0425",
+        "expected_four_decimals": "0.0425",
+        "passed": true
+      },
+      "test_rmse": {
+        "actual_full_precision": 0.061706303536575274,
+        "actual_four_decimals": "0.0617",
+        "expected_four_decimals": "0.0617",
+        "passed": true
+      },
+      "damaged_entry_mae": {
+        "actual_full_precision": 0.0696519575149201,
+        "actual_four_decimals": "0.0697",
+        "expected_four_decimals": "0.0697",
+        "passed": true
+      }
+    }
+  },
+  "summary_csv": "results/sss_fast_revision/fixed_split_ridge/fixed_split_ridge_summary.csv",
+  "candidate_csv": "results/sss_fast_revision/fixed_split_ridge/fixed_split_ridge_candidates.csv"
+}

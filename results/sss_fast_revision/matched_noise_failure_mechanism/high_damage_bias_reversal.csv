@@ -1,0 +1,9 @@
+method,noise_level,noise_percent,high_signed_bias,bias_sign,clean_bias,sign_differs_from_clean
+standard_svr,0.0,0,-0.02133730479685522,negative,-0.02133730479685522,False
+standard_svr,0.05,5,-0.004789494185237728,negative,-0.02133730479685522,False
+standard_svr,0.1,10,0.042574920761648025,positive,-0.02133730479685522,True
+standard_svr,0.2,20,0.1285342351836434,positive,-0.02133730479685522,True
+calibrated_svr,0.0,0,-0.0028639517247114137,negative,-0.0028639517247114137,False
+calibrated_svr,0.05,5,0.012823792468871059,positive,-0.0028639517247114137,True
+calibrated_svr,0.1,10,0.05705172288735623,positive,-0.0028639517247114137,True
+calibrated_svr,0.2,20,0.13233787657209797,positive,-0.0028639517247114137,True

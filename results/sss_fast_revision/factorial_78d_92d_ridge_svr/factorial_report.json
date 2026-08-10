@@ -1,0 +1,35 @@
+{
+  "experiment": "78D_92D_x_Ridge_SVR",
+  "shared_partitions_passed": true,
+  "ridge_locks_passed": true,
+  "svr_78d_anchor_passed": true,
+  "selection_criterion": "clipped validation MSE",
+  "prediction_clip": [
+    0.0,
+    0.5
+  ],
+  "svr_search_space": {
+    "C": [
+      100.0,
+      300.0,
+      500.0,
+      750.0,
+      1000.0
+    ],
+    "gamma": [
+      0.0005,
+      0.00075,
+      0.001,
+      0.003,
+      0.01
+    ],
+    "epsilon": [
+      0.02,
+      0.03,
+      0.04
+    ],
+    "candidates_per_descriptor": 75
+  },
+  "interaction_test_mae": -0.0028516420943841547,
+  "interpretation_note": "Fixed-split diagnostic only; repeated-split validation is required for robustness claims."
+}

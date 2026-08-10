@@ -1,0 +1,78 @@
+{
+  "experiment": "exhaustive_dependency_aware_sensor_layout_rbf_svr",
+  "n_layouts": 15,
+  "structural_sensor_layouts": [
+    "1234",
+    "1",
+    "2",
+    "3",
+    "4",
+    "12",
+    "13",
+    "14",
+    "23",
+    "24",
+    "34",
+    "123",
+    "124",
+    "134",
+    "234"
+  ],
+  "ground_sensor_assumed_available": true,
+  "zero_masking_used": false,
+  "descriptor_redefinition_used": false,
+  "calibration_used": false,
+  "split": {
+    "train": 2100,
+    "validation": 450,
+    "test": 450
+  },
+  "svr_grid": {
+    "C": [
+      100.0,
+      300.0,
+      500.0,
+      750.0,
+      1000.0
+    ],
+    "gamma": [
+      0.0005,
+      0.00075,
+      0.001,
+      0.003,
+      0.01
+    ],
+    "epsilon": [
+      0.02,
+      0.03,
+      0.04
+    ],
+    "candidate_count": 75,
+    "selection_metric": "validation MSE"
+  },
+  "full_layout_model_anchor": {
+    "reference_C": 1000.0,
+    "reference_gamma": 0.003,
+    "reference_epsilon": 0.03,
+    "passed": true
+  },
+  "grid_row_count_expected": 1125,
+  "grid_row_count_actual": 1125,
+  "grid_row_count_ok": true,
+  "layout_row_count_ok": true,
+  "metrics_finite": true,
+  "marginal_edge_count_expected": 28,
+  "marginal_edge_count_actual": 28,
+  "marginal_edge_count_ok": true,
+  "overall_passed": true,
+  "outputs": {
+    "validation_grid": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/exhaustive_sensor_layout_svr/all_layout_validation_grid_results.csv",
+    "layout_results": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/exhaustive_sensor_layout_svr/sensor_layout_results.csv",
+    "ranking": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/exhaustive_sensor_layout_svr/sensor_layout_ranking.csv",
+    "sensor_count_summary": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/exhaustive_sensor_layout_svr/sensor_count_summary.csv",
+    "placement_spread": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/exhaustive_sensor_layout_svr/sensor_placement_spread.csv",
+    "marginal_sensor_value": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/exhaustive_sensor_layout_svr/marginal_sensor_value.csv",
+    "marginal_sensor_value_summary": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/exhaustive_sensor_layout_svr/marginal_sensor_value_summary.csv",
+    "test_predictions": "/Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/results/sss_fast_revision/exhaustive_sensor_layout_svr/sensor_layout_test_predictions.npz"
+  }
+}
