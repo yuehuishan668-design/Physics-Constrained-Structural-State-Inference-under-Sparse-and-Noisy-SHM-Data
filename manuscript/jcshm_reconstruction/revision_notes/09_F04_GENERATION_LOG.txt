@@ -1,0 +1,40 @@
+Preview: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/preview/F04_severity_failure_calibration.png
+PDF: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F04_severity_failure_calibration.pdf
+SVG: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F04_severity_failure_calibration.svg
+
+============================================================================================
+FIGURE 4 CHECK
+============================================================================================
+Training performed: False
+Hyperparameter tuning performed: False
+Calibration fitting performed: False
+Statistical re-testing performed: False
+Damage bins changed: False
+Repeated severity rows: 80
+Repeated seeds: 10
+Models: ['rbf_svr', 'ridge']
+Damage bins: ['zero', 'low', 'medium', 'high']
+
+Mean high-damage signed bias | Ridge: -0.0828037902
+Mean high-damage signed bias | RBF-SVR: -0.0474323965
+
+Calibration high-damage MAE: 0.0603373847 -> 0.0556957518
+Calibration high-damage |bias|: 0.0474323965 -> 0.0339341074
+Calibration high-damage underestimation: 0.7610611425 -> 0.6573552418
+
+Zero-damage relative calibration effect: -1.0187%
+Low-damage relative calibration effect: -7.7109%
+Medium-damage relative calibration effect: +0.5899%
+High-damage relative calibration effect: +7.6297%
+
+high_mae_10_of_10: True
+high_abs_bias_10_of_10: True
+high_underestimation_10_of_10: True
+high_mae_CI_beneficial: True
+high_abs_bias_CI_beneficial: True
+high_underestimation_CI_beneficial: True
+low_damage_CI_detrimental: True
+medium_damage_CI_crosses_zero: True
+
+Numerical anchors passed: True
+OVERALL PASSED: True

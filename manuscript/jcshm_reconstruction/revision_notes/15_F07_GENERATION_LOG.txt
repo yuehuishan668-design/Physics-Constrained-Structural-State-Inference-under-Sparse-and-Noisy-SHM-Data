@@ -1,0 +1,47 @@
+Preview: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/preview/F07_sensor_subset_lattice.png
+PDF: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F07_sensor_subset_lattice.pdf
+SVG: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F07_sensor_subset_lattice.svg
+
+====================================================================================================
+FIGURE 7 CHECK
+====================================================================================================
+Training performed: False
+Hyperparameter tuning performed: False
+Statistical re-testing performed: False
+Sensor-layout optimization performed: False
+
+Sensor-count effects:
+ from_sensor_count  to_sensor_count  mae_improvement_point  mae_improvement_percent_point  mae_ci_lower  mae_ci_upper  mae_bootstrap_positive_fraction  high_mae_improvement_point  high_mae_improvement_percent_point  high_mae_ci_lower  high_mae_ci_upper  high_mae_bootstrap_positive_fraction
+                 1                2               0.015188                      20.698999      0.013709      0.016736                              1.0                    0.073176                           33.458648           0.068918           0.077712                                   1.0
+                 2                3               0.018145                      31.184753      0.016815      0.019464                              1.0                    0.061440                           42.218008           0.058012           0.064876                                   1.0
+                 3                4               0.017994                      44.938979      0.016535      0.019430                              1.0                    0.047310                           56.261060           0.043087           0.051581                                   1.0
+
+Lattice nodes: 15
+Lattice edges: 28
+All one-sensor additions valid: True
+Complete 15-node lattice: True
+
+Overall-MAE marginal edge range:
+  min: 0.0098172947
+  max: 0.0229987531
+
+High-damage-MAE marginal edge range:
+  min: 0.0421965652
+  max: 0.0886032050
+
+3_overall_count_CI_positive: True
+3_high_count_CI_positive: True
+3_overall_bootstrap_fraction_1: True
+3_high_bootstrap_fraction_1: True
+28_MAE_point_positive: True
+28_MAE_CI_positive: True
+28_MAE_bootstrap_fraction_1: True
+28_high_MAE_point_positive: True
+28_high_MAE_CI_positive: True
+28_high_MAE_bootstrap_fraction_1: True
+
+28/28 overall-MAE edges beneficial: 28 / 28
+28/28 high-damage-MAE edges beneficial: 28 / 28
+
+Numerical anchors passed: True
+OVERALL PASSED: True

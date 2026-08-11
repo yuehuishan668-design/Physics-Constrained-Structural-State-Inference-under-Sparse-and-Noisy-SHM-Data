@@ -1,0 +1,72 @@
+Preview: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/preview/F05_noise_failure_mechanism.png
+PDF: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F05_noise_failure_mechanism.pdf
+SVG: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F05_noise_failure_mechanism.svg
+
+================================================================================================
+FIGURE 5 CHECK
+================================================================================================
+Training performed: False
+Hyperparameter tuning performed: False
+Calibration fitting performed: False
+Statistical re-testing performed: False
+Descriptor ablation performed: False
+Descriptor redesign performed: False
+
+Standard-SVR overall MAE:
+   0%: 0.0220471401
+   5%: 0.0443593523
+  10%: 0.1118056216
+  20%: 0.2838931183
+
+Standard-SVR high-damage MAE:
+   0%: 0.0367799556
+   5%: 0.0582184324
+  10%: 0.1140226844
+  20%: 0.2069806408
+
+High-damage signed bias | Standard:
+   0%: -0.0213373048
+   5%: -0.0047894942
+  10%: +0.0425749208
+  20%: +0.1285342352
+
+High-damage signed bias | Calibrated:
+   0%: -0.0028639517
+   5%: +0.0128237925
+  10%: +0.0570517229
+  20%: +0.1323378766
+
+Standard bias sign flip interval: (5, 10)
+Calibrated bias sign flip interval: (0, 5)
+
+20% standard-SVR saturation:
+  All predictions upper clipping: 0.3225555556
+  High-damage upper clipping: 0.6408759124
+  High-damage prediction median: 0.5000000000
+
+Top six descriptors by mean |delta z| at 20% noise:
+ feature_index                      feature_name  rank_by_mean_abs_shift  mean_abs_delta_z_mean  fraction_abs_delta_z_gt_1_mean  fraction_abs_delta_z_gt_2_mean
+            60         story_1_spectral_centroid                       1               1.461050                        0.505778                        0.293333
+            40 story_4_relative_to_lower_max_abs                       2               1.318925                        0.281333                        0.176000
+            63         story_2_spectral_centroid                       3               1.101471                        0.561778                        0.028889
+            66         story_3_spectral_centroid                       4               0.901308                        0.305333                        0.000000
+            38 story_3_relative_to_lower_max_abs                       5               0.816943                        0.206222                        0.111556
+            69         story_4_spectral_centroid                       6               0.797907                        0.196000                        0.000000
+
+Top descriptor:
+  name: story_1_spectral_centroid
+  mean |delta z|: 1.4610497750
+  fraction |delta z| > 1: 0.5057777778
+  fraction |delta z| > 2: 0.2933333333
+
+standard_flip_5_to_10: True
+calibrated_flip_0_to_5: True
+top6_count: True
+tracked_shift_rows: True
+heatmap_complete: True
+all_case_saturation_increases: True
+high_damage_saturation_increases: True
+high_20pct_median_at_upper_bound: True
+
+Numerical anchors passed: True
+OVERALL PASSED: True

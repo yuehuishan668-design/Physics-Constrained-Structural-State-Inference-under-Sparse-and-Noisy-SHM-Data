@@ -1,0 +1,26 @@
+Preview: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/preview/F01_scientific_architecture.png
+PDF: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F01_scientific_architecture.pdf
+SVG: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F01_scientific_architecture.svg
+
+====================================================================================================
+FIGURE 1 CHECK
+====================================================================================================
+Conceptual figure: True
+Training performed: False
+Statistical testing performed: False
+Experimental modification: False
+
+main_representation_78D: True
+92D_labelled_privileged_reference: True
+ridge_labelled_baseline: True
+base_input_sensor_assumption_visible: True
+noise_pathway_present: True
+sensor_sparsity_pathway_present: True
+noise_bias_reversal_present: True
+noise_saturation_present: True
+sparsity_observability_loss_present: True
+sparsity_underprediction_present: True
+no_claim_of_noise_robustness: True
+no_claim_of_universal_sensor_optimality: True
+
+OVERALL PASSED: True

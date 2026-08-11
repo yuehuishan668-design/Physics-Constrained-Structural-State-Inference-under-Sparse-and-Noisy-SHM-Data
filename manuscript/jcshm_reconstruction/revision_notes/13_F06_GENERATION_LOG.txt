@@ -1,0 +1,62 @@
+Preview: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/preview/F06_sensor_layout_observability.png
+PDF: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F06_sensor_layout_observability.pdf
+SVG: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F06_sensor_layout_observability.svg
+
+====================================================================================================
+FIGURE 6 CHECK
+====================================================================================================
+Training performed: False
+Hyperparameter tuning performed: False
+Statistical re-testing performed: False
+Sensor layouts evaluated: 15
+Sensor-count levels: [np.int64(1), np.int64(2), np.int64(3), np.int64(4)]
+
+Best overall-MAE layout by sensor count:
+ sensor_count layout_tag  test_mae
+            1          1  0.071268
+            2         12  0.054581
+            3        123  0.034562
+            4       1234  0.022047
+
+Best high-damage-MAE layout by sensor count:
+ sensor_count layout_tag  test_high_mae
+            1          1       0.207388
+            2         13       0.138246
+            3        123       0.078977
+            4       1234       0.036780
+
+Full-layout anchor:
+  layout: 1234
+  features: 78
+  overall MAE: 0.0220471401
+  high-damage MAE: 0.0367799556
+  high underestimation: 0.6824817518
+
+Single-sensor layouts:
+layout_tag  feature_count  test_mae  test_high_mae  test_high_underestimation
+         1             19  0.071268       0.207388                   0.981752
+         2             17  0.073616       0.217088                   1.000000
+         3             17  0.073026       0.221450                   0.992701
+         4             17  0.075587       0.228895                   0.996350
+
+Equal-dimensional layout checks:
+  13_vs_14: True
+  23_vs_34: True
+  124_vs_134: True
+
+Objective-dependence check | 2 sensors:
+  overall-MAE best: 12
+  high-damage-MAE best: 13
+
+15_layouts_complete: True
+full_layout_78_features: True
+best_overall_chain: True
+best_high_chain: True
+two_sensor_objective_dependence: True
+all_single_sensor_high_under_gt_0.98: True
+all_equal_dimension_checks: True
+bootstrap_point_anchor_MAE: True
+bootstrap_point_anchor_high_MAE: True
+
+Numerical anchors passed: True
+OVERALL PASSED: True

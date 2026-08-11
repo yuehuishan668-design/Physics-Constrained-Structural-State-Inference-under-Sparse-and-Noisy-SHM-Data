@@ -1,0 +1,43 @@
+Preview: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/preview/F02_information_provenance_observability.png
+PDF: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F02_information_provenance_observability.pdf
+SVG: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F02_information_provenance_observability.svg
+
+====================================================================================================
+FIGURE 2 CHECK
+====================================================================================================
+Training performed: False
+Hyperparameter tuning performed: False
+Statistical testing performed: False
+Sensor zero masking used: False
+Descriptor redefinition used: False
+
+Descriptor hierarchy:
+  92D: 92D
+  86D legacy: 86D
+  78D: 78D
+  59D: 59D
+
+Source decomposition:
+  Structural-response-derived: 59
+  Base-input-dependent: 19
+  Generator-frequency-derived: 8
+  Generator metadata: 6
+  total: 92
+
+Representative layout dimensions:
+  1: 19D
+  12: 36D
+  24: 29D
+  123: 53D
+  1234: 78D
+
+hierarchy_92_86_78_59: True
+source_decomposition_sums_92: True
+92_minus_86_is_6: True
+86_minus_78_is_8: True
+78_minus_59_is_19: True
+representative_dimensions: True
+full_layout_is_78D: True
+noncontiguous_24_is_29D: True
+
+OVERALL PASSED: True

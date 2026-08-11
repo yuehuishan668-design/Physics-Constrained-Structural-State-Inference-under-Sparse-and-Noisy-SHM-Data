@@ -1,0 +1,103 @@
+src/preprocessing/create_split_normalized_dataset.py:22:def find_required_key(data: Dict[str, np.ndarray], candidates: List[str], purpose: str) -> str:
+src/preprocessing/create_split_normalized_dataset.py:141:    parser.add_argument("--raw-dataset", required=True, type=Path)
+src/preprocessing/create_split_normalized_dataset.py:142:    parser.add_argument("--output", required=True, type=Path)
+src/preprocessing/create_split_normalized_dataset.py:155:    x_key = find_required_key(
+src/preprocessing/create_split_normalized_dataset.py:160:    y_key = find_required_key(
+src/preprocessing/extract_features.py:46:    """Check required train/val/test arrays. 中文说明：检查必要数组是否存在。"""
+src/preprocessing/extract_features.py:47:    required = ["X_train", "X_val", "X_test", "y_train", "y_val", "y_test"]
+src/preprocessing/extract_features.py:48:    for key in required:
+Binary file src/preprocessing/__pycache__/extract_physics_features.cpython-313.pyc matches
+Binary file src/preprocessing/__pycache__/create_split_normalized_dataset.cpython-313.pyc matches
+Binary file src/preprocessing/__pycache__/descriptor_sets.cpython-313.pyc matches
+Binary file src/preprocessing/__pycache__/create_sensor_masked_dataset.cpython-313.pyc matches
+Binary file src/preprocessing/__pycache__/extract_features.cpython-313.pyc matches
+Binary file src/preprocessing/__pycache__/filter_physics_features.cpython-313.pyc matches
+src/preprocessing/create_sensor_masked_dataset.py:99:    parser.add_argument("--raw-dataset", required=True, type=Path)
+src/preprocessing/create_sensor_masked_dataset.py:100:    parser.add_argument("--split-dataset", required=True, type=Path)
+src/preprocessing/create_sensor_masked_dataset.py:101:    parser.add_argument("--output-raw", required=True, type=Path)
+src/preprocessing/create_sensor_masked_dataset.py:102:    parser.add_argument("--output-split", required=True, type=Path)
+src/preprocessing/create_sensor_masked_dataset.py:103:    parser.add_argument("--keep-sensors", nargs="+", required=True, type=int)
+src/preprocessing/filter_physics_features.py:21:    - response + spatial features
+src/preprocessing/filter_physics_features.py:88:    # Spatial response distribution across stories.
+src/preprocessing/filter_physics_features.py:90:    if "spatial_fraction" in n:
+src/preprocessing/filter_physics_features.py:91:        groups.add("spatial")
+src/preprocessing/filter_physics_features.py:128:    "spatial",
+src/preprocessing/filter_physics_features.py:246:    required = ["F_train", "F_val", "F_test", "y_train", "y_val", "y_test"]
+src/preprocessing/filter_physics_features.py:247:    for key in required:
+src/preprocessing/filter_physics_features.py:249:            raise KeyError(f"Input NPZ is missing required key: {key}")
+src/preprocessing/filter_physics_features.py:275:    parser.add_argument("--input", required=True, type=Path, help="Input feature .npz")
+src/preprocessing/filter_physics_features.py:276:    parser.add_argument("--feature-names", required=True, type=Path, help="Input feature-name CSV")
+src/preprocessing/filter_physics_features.py:277:    parser.add_argument("--output", required=True, type=Path, help="Output filtered .npz")
+src/preprocessing/filter_physics_features.py:278:    parser.add_argument("--output-feature-names", required=True, type=Path, help="Output filtered feature-name CSV")
+src/preprocessing/extract_physics_features.py:268:        names.extend([f"story_{story_id}_relative_to_lower_max_abs", f"story_{story_id}_relative_to_lower_rms"])
+src/preprocessing/extract_physics_features.py:278:        # English: Adjacent-story response ratios.
+src/preprocessing/extract_physics_features.py:283:    # English: Denominators for spatial response fractions.
+src/preprocessing/extract_physics_features.py:288:        names.extend([f"story_{story_id}_max_abs_spatial_fraction", f"story_{story_id}_rms_spatial_fraction"])
+src/preprocessing/extract_physics_features.py:289:        # English: Spatial response distribution over stories.
+src/preprocessing/extract_physics_features.py:324:        # English: Correlation between adjacent stories.
+src/preprocessing/extract_physics_features.py:464:    for required_key in ["train_idx", "val_idx", "test_idx"]:
+src/preprocessing/extract_physics_features.py:465:        if required_key not in split_data:
+src/preprocessing/extract_physics_features.py:466:            raise KeyError(f"Required split key '{required_key}' not found in {args.split_dataset}")
+src/preprocessing/descriptor_sets.py:108:    if normalized.startswith("story_1_relative_to_lower_"):
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:2:Build exhaustive dependency-aware structural sensor-layout descriptor datasets.
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:15:required by its original physical definition are present.
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:26:story_1_relative_to_lower_rms
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:29:story_3_relative_to_lower_rms
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:35:story_2_rms_spatial_fraction
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:44:feature dependency manifest
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:114:def required_structural_sensors(
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:118:    Return structural sensors required by the descriptor's
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:142:    # Spatial fractions.
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:150:        r"story_(\d+)_(?:max_abs|rms)_spatial_fraction",
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:168:        r"story_(\d+)_relative_to_lower_(?:max_abs|rms)",
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:194:    # Adjacent-story amplitude/RMS ratios.
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:220:    # Adjacent-story correlations.
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:305:        "Could not determine sensor dependency "
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:310:def dependency_string(
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:311:    required: frozenset[int],
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:314:    if not required:
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:320:            required
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:356:            "sensor_layouts_dependency_aware"
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:401:    required_keys = {
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:413:        required_keys
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:480:    # Build explicit dependency manifest.
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:485:    dependency_rows = []
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:491:        required = (
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:492:            required_structural_sensors(
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:498:            required
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:501:        dependency_rows.append(
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:509:                "required_structural_sensors": (
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:510:                    dependency_string(
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:511:                        required
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:514:                "required_sensor_count": (
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:516:                        required
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:520:                    1 in required
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:523:                    2 in required
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:526:                    3 in required
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:529:                    4 in required
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:534:    dependency_frame = (
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:536:            dependency_rows
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:540:    dependency_path = (
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:542:        / "sensor_feature_dependency_manifest.csv"
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:545:    dependency_frame.to_csv(
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:546:        dependency_path,
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:551:    # Dependency-level sanity checks.
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:556:            len(required) == 0
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:557:            for required
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:562:    full_dependency_count = int(
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:564:            required
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:568:            for required
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:585:        full_dependency_count
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:591:            "all-story spatial-fraction "
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:593:            f"got {full_dependency_count}."
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:636:        full_dependency_count,
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:671:                for index, required
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:675:                if required.issubset(
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:987:            "dependency_aware_exhaustive_"
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:1007:            "required structural sensors "
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:1022:            full_dependency_count
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:1051:        "dependency_manifest": str(
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:1052:            dependency_path
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:1183:            "dependency-aware sensor-layout "
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:1202:        "Dependency manifest:",
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:1203:        dependency_path,

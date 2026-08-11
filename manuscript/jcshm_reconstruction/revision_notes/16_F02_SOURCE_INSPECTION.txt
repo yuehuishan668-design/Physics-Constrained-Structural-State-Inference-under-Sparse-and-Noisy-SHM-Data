@@ -1,0 +1,123 @@
+==============================================================================================================
+FIGURE 2 — INFORMATION PROVENANCE / OBSERVABILITY SOURCE INSPECTION
+==============================================================================================================
+
+==============================================================================================================
+T01_descriptor_provenance.csv
+==============================================================================================================
+Shape: (4, 9)
+
+Columns:
+[00] descriptor_set
+[01] short_label
+[02] dimension
+[03] generator_metadata
+[04] exact_generator_frequency_derived
+[05] base_input_dependent_descriptors
+[06] structural_response_descriptors
+[07] deployment_interpretation
+[08] manuscript_role
+
+FULL DATA:
+                       descriptor_set short_label  dimension  generator_metadata  exact_generator_frequency_derived  base_input_dependent_descriptors  structural_response_descriptors                                             deployment_interpretation                                manuscript_role
+     Privileged-information reference         92D         92                True                               True                              True                             True        Simulation-privileged reference; not deployment representation               Privileged-information reference
+ Legacy simulation-informed reference  86D legacy         86               False                               True                              True                             True   Legacy reference retaining exact generator-frequency-derived ratios  Historical comparison / supplementary support
+Signal-derived with sensed base input         78D         78               False                              False                              True                             True Primary signal-derived representation under assumed sensed base input     Primary deployment-oriented representation
+             Structural-response-only         59D         59               False                              False                             False                             True          Strict output-only representation without base-input sensing Pressure-test baseline / supplementary support
+
+==============================================================================================================
+FULL DESCRIPTOR AUDIT
+==============================================================================================================
+Shape: (92, 14)
+
+Columns:
+[00] feature_index
+[01] feature_name
+[02] descriptor_family
+[03] information_status
+[04] provisional_response_only
+[05] provisional_with_conditions
+[06] oracle_full
+[07] variance
+[08] near_zero_variance
+[09] finite_ratio
+[10] manual_review_required
+[11] review_note
+[12] duplicate_feature_name
+[13] exact_duplicate_numeric_column
+
+LOW-CARDINALITY COLUMNS:
+
+descriptor_family (n_unique=6):
+<StringArray>
+[  'response_time_or_statistical',               'response_spatial',
+             'response_frequency',           'response_correlation',
+                'input_condition', 'privileged_simulation_metadata']
+Length: 6, dtype: str
+
+information_status (n_unique=3):
+<StringArray>
+['deployable', 'conditional', 'oracle_only']
+Length: 3, dtype: str
+
+provisional_response_only (n_unique=2):
+[ True False]
+
+provisional_with_conditions (n_unique=2):
+[ True False]
+
+oracle_full (n_unique=1):
+[ True]
+
+near_zero_variance (n_unique=1):
+[False]
+
+finite_ratio (n_unique=1):
+[1.]
+
+manual_review_required (n_unique=2):
+[False  True]
+
+review_note (n_unique=6):
+<StringArray>
+[                                                      'Provisionally derived from measured structural responses.',
+                                                    'Derived from the spatial distribution of measured responses.',
+                                     'Provisionally response-derived; verify that no generator parameter is used.',
+                                                                     'Derived from measured structural responses.',
+ 'Deployable only if obtained from a measured input signal; not deployable when copied from generator parameters.',
+                                                                             'Exclude from deployable main model.']
+Length: 6, dtype: str
+
+duplicate_feature_name (n_unique=1):
+[False]
+
+exact_duplicate_numeric_column (n_unique=1):
+[False]
+
+==============================================================================================================
+CANONICAL DESCRIPTOR CONFIG FILES
+==============================================================================================================
+configs/sss_fast_revision/descriptor_dataset_build_manifest.json
+configs/sss_fast_revision/descriptor_set_manifest.csv
+configs/sss_fast_revision/descriptor_set_summary.json
+
+==============================================================================================================
+SENSOR-LAYOUT OBSERVABLE DIMENSIONS
+==============================================================================================================
+layout_tag  sensor_count  feature_count
+         1             1             19
+         2             1             17
+         3             1             17
+         4             1             17
+        12             2             36
+        13             2             31
+        14             2             31
+        23             2             34
+        24             2             29
+        34             2             34
+       123             3             53
+       124             3             48
+       134             3             48
+       234             3             51
+      1234             4             78
+
