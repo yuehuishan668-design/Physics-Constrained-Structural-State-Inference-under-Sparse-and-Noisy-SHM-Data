@@ -1,0 +1,66 @@
+====================================================================================================
+JCSHM MANUSCRIPT DATA PREPARATION
+====================================================================================================
+Training performed: False
+Hyperparameter tuning performed: False
+Experimental source files modified: False
+
+====================================================================================================
+NUMERICAL CLAIM ANCHOR CHECK
+====================================================================================================
+factorial_78D_Ridge_MAE: True
+factorial_78D_SVR_MAE: True
+factorial_92D_Ridge_MAE: True
+factorial_92D_SVR_MAE: True
+controlled_clean_MAE_0.0220471401: True
+noise_20pct_high_bias_0.1285342352: True
+sensor_1_mean_MAE_0.0733744166: True
+sensor_4_MAE_0.0220471401: True
+sensor_layout_count_15: True
+sensor_count_rows_4: True
+sensor_count_contrasts_3: True
+marginal_sensor_edges_28: True
+all_count_MAE_step_CI_positive: True
+all_count_high_MAE_step_CI_positive: True
+28_of_28_MAE_point_positive: True
+28_of_28_MAE_CI_positive: True
+28_of_28_high_MAE_point_positive: True
+28_of_28_high_MAE_CI_positive: True
+
+====================================================================================================
+GENERATED MANUSCRIPT DATA
+====================================================================================================
+                                                                      file  rows  columns
+    manuscript/jcshm_reconstruction/figures/data/F03_factorial_effects.csv    35       15
+manuscript/jcshm_reconstruction/figures/data/F03_factorial_performance.csv     7        5
+  manuscript/jcshm_reconstruction/figures/data/F04_calibration_effects.csv    10       16
+ manuscript/jcshm_reconstruction/figures/data/F04_severity_performance.csv    80       10
+        manuscript/jcshm_reconstruction/figures/data/F05_bias_reversal.csv     8        7
+     manuscript/jcshm_reconstruction/figures/data/F05_descriptor_shift.csv   312       20
+    manuscript/jcshm_reconstruction/figures/data/F05_noise_performance.csv     8       24
+manuscript/jcshm_reconstruction/figures/data/F05_prediction_saturation.csv    48       23
+       manuscript/jcshm_reconstruction/figures/data/F06_sensor_layouts.csv    15       69
+manuscript/jcshm_reconstruction/figures/data/F07_best_layout_stability.csv    14        5
+manuscript/jcshm_reconstruction/figures/data/F07_marginal_sensor_edges.csv    28       19
+ manuscript/jcshm_reconstruction/figures/data/F07_sensor_count_effects.csv     3       12
+      manuscript/jcshm_reconstruction/tables/T01_descriptor_provenance.csv     4        9
+          manuscript/jcshm_reconstruction/tables/T02_factorial_effects.csv    35       15
+      manuscript/jcshm_reconstruction/tables/T02_factorial_performance.csv     7        5
+      manuscript/jcshm_reconstruction/tables/T03_matched_noise_summary.csv     8       24
+       manuscript/jcshm_reconstruction/tables/T04_sensor_observability.csv     4       20
+
+====================================================================================================
+FINAL MANUSCRIPT DATA CHECK
+====================================================================================================
+Training performed: False
+Hyperparameter tuning performed: False
+Experimental source files modified: False
+Generated manuscript files: 17
+All numerical anchors passed: True
+OVERALL PASSED: True
+
+CHECK PASSED: frozen experimental evidence has been converted into JCSHM manuscript data.
+Figure/table production may proceed.
+
+Manifest: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/revision_notes/06_MANUSCRIPT_DATA_MANIFEST.csv
+Report: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/revision_notes/06_MANUSCRIPT_DATA_PREPARATION_REPORT.json

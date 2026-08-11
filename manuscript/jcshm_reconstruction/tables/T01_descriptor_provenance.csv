@@ -1,0 +1,5 @@
+descriptor_set,short_label,dimension,generator_metadata,exact_generator_frequency_derived,base_input_dependent_descriptors,structural_response_descriptors,deployment_interpretation,manuscript_role
+Privileged-information reference,92D,92,True,True,True,True,Simulation-privileged reference; not deployment representation,Privileged-information reference
+Legacy simulation-informed reference,86D legacy,86,False,True,True,True,Legacy reference retaining exact generator-frequency-derived ratios,Historical comparison / supplementary support
+Signal-derived with sensed base input,78D,78,False,False,True,True,Primary signal-derived representation under assumed sensed base input,Primary deployment-oriented representation
+Structural-response-only,59D,59,False,False,False,True,Strict output-only representation without base-input sensing,Pressure-test baseline / supplementary support

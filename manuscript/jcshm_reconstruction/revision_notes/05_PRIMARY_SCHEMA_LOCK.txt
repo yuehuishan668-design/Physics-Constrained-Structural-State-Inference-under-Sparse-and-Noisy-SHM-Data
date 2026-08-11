@@ -1,0 +1,346 @@
+# JCSHM Primary Schema Lock
+
+====================================================================================================
+descriptor_audit
+====================================================================================================
+File: results/sss_fast_revision/tables/T01_descriptor_audit.csv
+Exists: True
+Shape: 92 x 14
+Columns:
+  [00] feature_index
+  [01] feature_name
+  [02] descriptor_family
+  [03] information_status
+  [04] provisional_response_only
+  [05] provisional_with_conditions
+  [06] oracle_full
+  [07] variance
+  [08] near_zero_variance
+  [09] finite_ratio
+  [10] manual_review_required
+  [11] review_note
+  [12] duplicate_feature_name
+  [13] exact_duplicate_numeric_column
+
+====================================================================================================
+factorial_mean
+====================================================================================================
+File: results/sss_fast_revision/repeated_factorial_78d_92d_ridge_svr/repeated_factorial_mean_table.csv
+Exists: True
+Shape: 7 x 5
+Columns:
+  [00] metric
+  [01] 78D_Ridge
+  [02] 78D_SVR
+  [03] 92D_Ridge
+  [04] 92D_SVR
+
+====================================================================================================
+factorial_effects
+====================================================================================================
+File: results/sss_fast_revision/repeated_factorial_78d_92d_ridge_svr/repeated_factorial_effect_summary.csv
+Exists: True
+Shape: 35 x 15
+Columns:
+  [00] metric
+  [01] effect
+  [02] definition
+  [03] n_seeds
+  [04] mean_effect
+  [05] std_effect
+  [06] ci95_low
+  [07] ci95_high
+  [08] negative_seeds
+  [09] positive_seeds
+  [10] mean_relative_improvement_percent
+  [11] one_sample_t_statistic
+  [12] one_sample_t_pvalue
+  [13] wilcoxon_statistic
+  [14] wilcoxon_pvalue
+
+====================================================================================================
+ridge_svr_damage_bins
+====================================================================================================
+File: results/sss_fast_revision/repeated_split_78d_ridge_svr/repeated_split_damage_bins.csv
+Exists: True
+Shape: 80 x 10
+Columns:
+  [00] seed
+  [01] model
+  [02] damage_bin
+  [03] n_entries
+  [04] mae
+  [05] rmse
+  [06] bias
+  [07] mean_true
+  [08] mean_prediction
+  [09] underestimation_ratio
+
+====================================================================================================
+calibration_statistics
+====================================================================================================
+File: results/sss_fast_revision/repeated_split_asymmetric_calibration_78d/calibration_paired_statistics.csv
+Exists: True
+Shape: 10 x 16
+Columns:
+  [00] metric
+  [01] difference_definition
+  [02] n_seeds
+  [03] standard_mean
+  [04] calibrated_mean
+  [05] mean_difference
+  [06] std_difference
+  [07] ci95_difference_low
+  [08] ci95_difference_high
+  [09] calibrated_wins
+  [10] standard_wins
+  [11] ties
+  [12] mean_relative_improvement_percent
+  [13] paired_t_pvalue
+  [14] wilcoxon_statistic
+  [15] wilcoxon_pvalue
+
+====================================================================================================
+noise_level_summary
+====================================================================================================
+File: results/sss_fast_revision/matched_noise_robustness_clean_trained/noise_level_summary.csv
+Exists: True
+Shape: 8 x 24
+Columns:
+  [00] method
+  [01] noise_level
+  [02] noise_percent
+  [03] n_replicates
+  [04] mse_mean
+  [05] mse_std
+  [06] mae_mean
+  [07] mae_std
+  [08] rmse_mean
+  [09] rmse_std
+  [10] damaged_mae_mean
+  [11] damaged_mae_std
+  [12] zero_mae_mean
+  [13] zero_mae_std
+  [14] low_mae_mean
+  [15] low_mae_std
+  [16] medium_mae_mean
+  [17] medium_mae_std
+  [18] high_mae_mean
+  [19] high_mae_std
+  [20] high_abs_bias_mean
+  [21] high_abs_bias_std
+  [22] high_underestimation_mean
+  [23] high_underestimation_std
+
+====================================================================================================
+noise_directional_summary
+====================================================================================================
+File: results/sss_fast_revision/matched_noise_failure_mechanism/severity_directional_summary.csv
+Exists: True
+Shape: 48 x 17
+Columns:
+  [00] method
+  [01] noise_level
+  [02] noise_percent
+  [03] severity
+  [04] n_replicates
+  [05] signed_bias_mean
+  [06] signed_bias_std
+  [07] mae_mean
+  [08] mae_std
+  [09] rmse_mean
+  [10] rmse_std
+  [11] underestimation_ratio_mean
+  [12] underestimation_ratio_std
+  [13] overestimation_ratio_mean
+  [14] overestimation_ratio_std
+  [15] equal_ratio_mean
+  [16] equal_ratio_std
+
+====================================================================================================
+noise_prediction_distribution
+====================================================================================================
+File: results/sss_fast_revision/matched_noise_failure_mechanism/prediction_distribution_summary.csv
+Exists: True
+Shape: 48 x 23
+Columns:
+  [00] method
+  [01] noise_level
+  [02] noise_percent
+  [03] severity
+  [04] n_replicates
+  [05] prediction_mean_mean
+  [06] prediction_mean_std
+  [07] prediction_std_mean
+  [08] prediction_std_std
+  [09] prediction_q05_mean
+  [10] prediction_q05_std
+  [11] prediction_q25_mean
+  [12] prediction_q25_std
+  [13] prediction_q50_mean
+  [14] prediction_q50_std
+  [15] prediction_q75_mean
+  [16] prediction_q75_std
+  [17] prediction_q95_mean
+  [18] prediction_q95_std
+  [19] clip_low_ratio_mean
+  [20] clip_low_ratio_std
+  [21] clip_high_ratio_mean
+  [22] clip_high_ratio_std
+
+====================================================================================================
+noise_descriptor_shift
+====================================================================================================
+File: results/sss_fast_revision/matched_noise_failure_mechanism/descriptor_shift_summary.csv
+Exists: True
+Shape: 312 x 20
+Columns:
+  [00] noise_level
+  [01] noise_percent
+  [02] feature_index
+  [03] feature_name
+  [04] n_replicates
+  [05] signed_mean_delta_z_mean
+  [06] signed_mean_delta_z_std
+  [07] mean_abs_delta_z_mean
+  [08] mean_abs_delta_z_std
+  [09] median_abs_delta_z_mean
+  [10] median_abs_delta_z_std
+  [11] rms_delta_z_mean
+  [12] rms_delta_z_std
+  [13] p95_abs_delta_z_mean
+  [14] p95_abs_delta_z_std
+  [15] fraction_abs_delta_z_gt_1_mean
+  [16] fraction_abs_delta_z_gt_1_std
+  [17] fraction_abs_delta_z_gt_2_mean
+  [18] fraction_abs_delta_z_gt_2_std
+  [19] rank_by_mean_abs_shift
+
+====================================================================================================
+sensor_layout_results
+====================================================================================================
+File: results/sss_fast_revision/exhaustive_sensor_layout_svr/sensor_layout_results.csv
+Exists: True
+Shape: 15 x 47
+Columns:
+  [00] layout_tag
+  [01] sensor_layout
+  [02] sensor_count
+  [03] feature_count
+  [04] feature_fraction_of_full
+  [05] selected_C
+  [06] selected_gamma
+  [07] selected_epsilon
+  [08] val_mse
+  [09] val_mae
+  [10] val_rmse
+  [11] val_bias
+  [12] val_damaged_mae
+  [13] val_zero_mae
+  [14] val_low_mae
+  [15] val_medium_mae
+  [16] val_high_mae
+  [17] val_high_bias
+  [18] val_high_abs_bias
+  [19] val_high_underestimation
+  [20] val_n_zero
+  [21] val_n_low
+  [22] val_n_medium
+  [23] val_n_high
+  [24] test_mse
+  [25] test_mae
+  [26] test_rmse
+  [27] test_bias
+  [28] test_damaged_mae
+  [29] test_zero_mae
+  [30] test_low_mae
+  [31] test_medium_mae
+  [32] test_high_mae
+  [33] test_high_bias
+  [34] test_high_abs_bias
+  [35] test_high_underestimation
+  [36] test_n_zero
+  [37] test_n_low
+  [38] test_n_medium
+  [39] test_n_high
+  [40] dataset_file
+  [41] test_mae_ratio_to_full
+  [42] test_mae_excess_vs_full_percent
+  [43] test_high_mae_ratio_to_full
+  [44] test_high_mae_excess_vs_full_percent
+  [45] test_mae_rank
+  [46] test_high_mae_rank
+
+====================================================================================================
+sensor_count_bootstrap
+====================================================================================================
+File: results/sss_fast_revision/sensor_layout_paired_bootstrap_closure/sensor_count_bootstrap_ci.csv
+Exists: True
+Shape: 4 x 12
+Columns:
+  [00] sensor_count
+  [01] n_layouts
+  [02] mae_point
+  [03] mae_bootstrap_mean
+  [04] mae_bootstrap_sd
+  [05] mae_ci_lower
+  [06] mae_ci_upper
+  [07] high_mae_point
+  [08] high_mae_bootstrap_mean
+  [09] high_mae_bootstrap_sd
+  [10] high_mae_ci_lower
+  [11] high_mae_ci_upper
+
+====================================================================================================
+sensor_count_contrasts
+====================================================================================================
+File: results/sss_fast_revision/sensor_layout_paired_bootstrap_closure/sensor_count_step_contrasts.csv
+Exists: True
+Shape: 3 x 12
+Columns:
+  [00] from_sensor_count
+  [01] to_sensor_count
+  [02] mae_improvement_point
+  [03] mae_improvement_percent_point
+  [04] mae_ci_lower
+  [05] mae_ci_upper
+  [06] mae_bootstrap_positive_fraction
+  [07] high_mae_improvement_point
+  [08] high_mae_improvement_percent_point
+  [09] high_mae_ci_lower
+  [10] high_mae_ci_upper
+  [11] high_mae_bootstrap_positive_fraction
+
+====================================================================================================
+sensor_marginal_edges
+====================================================================================================
+File: results/sss_fast_revision/sensor_layout_paired_bootstrap_closure/marginal_sensor_edge_bootstrap_ci.csv
+Exists: True
+Shape: 28 x 19
+Columns:
+  [00] base_layout
+  [01] base_sensor_count
+  [02] added_sensor
+  [03] augmented_layout
+  [04] base_feature_count
+  [05] augmented_feature_count
+  [06] feature_gain
+  [07] mae_improvement_point
+  [08] mae_relative_improvement_percent_point
+  [09] mae_ci_lower
+  [10] mae_ci_upper
+  [11] mae_ci_entirely_positive
+  [12] mae_bootstrap_positive_fraction
+  [13] high_mae_improvement_point
+  [14] high_mae_relative_improvement_percent_point
+  [15] high_mae_ci_lower
+  [16] high_mae_ci_upper
+  [17] high_mae_ci_entirely_positive
+  [18] high_mae_bootstrap_positive_fraction
+
+====================================================================================================
+FINAL PRIMARY SCHEMA LOCK
+====================================================================================================
+Required schemas: 13
+All required schemas available: True
+CHECK PASSED: manuscript data-preparation script may now be written against frozen schemas.

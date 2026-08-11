@@ -1,0 +1,30 @@
+{
+  "experiment_status": "frozen",
+  "training_performed": false,
+  "hyperparameter_tuning_performed": false,
+  "experimental_source_files_modified": false,
+  "source_file_count": 18,
+  "generated_manuscript_file_count": 17,
+  "numerical_anchor_checks": {
+    "factorial_78D_Ridge_MAE": true,
+    "factorial_78D_SVR_MAE": true,
+    "factorial_92D_Ridge_MAE": true,
+    "factorial_92D_SVR_MAE": true,
+    "controlled_clean_MAE_0.0220471401": true,
+    "noise_20pct_high_bias_0.1285342352": true,
+    "sensor_1_mean_MAE_0.0733744166": true,
+    "sensor_4_MAE_0.0220471401": true,
+    "sensor_layout_count_15": true,
+    "sensor_count_rows_4": true,
+    "sensor_count_contrasts_3": true,
+    "marginal_sensor_edges_28": true,
+    "all_count_MAE_step_CI_positive": true,
+    "all_count_high_MAE_step_CI_positive": true,
+    "28_of_28_MAE_point_positive": true,
+    "28_of_28_MAE_CI_positive": true,
+    "28_of_28_high_MAE_point_positive": true,
+    "28_of_28_high_MAE_CI_positive": true
+  },
+  "overall_passed": true,
+  "manifest": "manuscript/jcshm_reconstruction/revision_notes/06_MANUSCRIPT_DATA_MANIFEST.csv"
+}

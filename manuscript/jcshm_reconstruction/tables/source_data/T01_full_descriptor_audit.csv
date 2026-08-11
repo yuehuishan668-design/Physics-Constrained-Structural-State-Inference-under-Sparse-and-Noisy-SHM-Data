@@ -1,0 +1,93 @@
+feature_index,feature_name,descriptor_family,information_status,provisional_response_only,provisional_with_conditions,oracle_full,variance,near_zero_variance,finite_ratio,manual_review_required,review_note,duplicate_feature_name,exact_duplicate_numeric_column
+0,story_1_mean,response_time_or_statistical,deployable,True,True,True,0.0004601373595168,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+1,story_1_std,response_time_or_statistical,deployable,True,True,True,1.0675957236228348,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+2,story_1_max_abs,response_time_or_statistical,deployable,True,True,True,6.20725487215013,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+3,story_1_rms,response_time_or_statistical,deployable,True,True,True,1.0678233161197543,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+4,story_1_peak_to_peak,response_time_or_statistical,deployable,True,True,True,23.585368636188825,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+5,story_1_crest_factor,response_time_or_statistical,deployable,True,True,True,0.3004756325614692,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+6,story_2_mean,response_time_or_statistical,deployable,True,True,True,0.0013511831961001,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+7,story_2_std,response_time_or_statistical,deployable,True,True,True,6.491429790127111,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+8,story_2_max_abs,response_time_or_statistical,deployable,True,True,True,26.666212549969877,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+9,story_2_rms,response_time_or_statistical,deployable,True,True,True,6.49236141253965,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+10,story_2_peak_to_peak,response_time_or_statistical,deployable,True,True,True,104.81010896425528,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+11,story_2_crest_factor,response_time_or_statistical,deployable,True,True,True,0.7159528582141973,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+12,story_3_mean,response_time_or_statistical,deployable,True,True,True,0.0027470958851834,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+13,story_3_std,response_time_or_statistical,deployable,True,True,True,14.793887917352333,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+14,story_3_max_abs,response_time_or_statistical,deployable,True,True,True,58.05552074355861,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+15,story_3_rms,response_time_or_statistical,deployable,True,True,True,14.795893028825532,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+16,story_3_peak_to_peak,response_time_or_statistical,deployable,True,True,True,228.3046980302296,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+17,story_3_crest_factor,response_time_or_statistical,deployable,True,True,True,0.4537535084269074,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+18,story_4_mean,response_time_or_statistical,deployable,True,True,True,0.0038159544377822,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+19,story_4_std,response_time_or_statistical,deployable,True,True,True,20.454619620655603,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+20,story_4_max_abs,response_time_or_statistical,deployable,True,True,True,78.28799228518947,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+21,story_4_rms,response_time_or_statistical,deployable,True,True,True,20.457370645552015,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+22,story_4_peak_to_peak,response_time_or_statistical,deployable,True,True,True,309.36523775616024,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+23,story_4_crest_factor,response_time_or_statistical,deployable,True,True,True,0.0536780271586984,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+24,ground_max_abs,response_time_or_statistical,deployable,True,True,True,0.3249242541126313,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+25,ground_rms,response_time_or_statistical,deployable,True,True,True,0.1624506153087379,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+26,story_1_max_ground_amplification,response_time_or_statistical,deployable,True,True,True,1.9114003810725029,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+27,story_1_rms_ground_amplification,response_time_or_statistical,deployable,True,True,True,0.6677749612159848,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+28,story_2_max_ground_amplification,response_time_or_statistical,deployable,True,True,True,9.634842725414028,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+29,story_2_rms_ground_amplification,response_time_or_statistical,deployable,True,True,True,4.864467530031096,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+30,story_3_max_ground_amplification,response_time_or_statistical,deployable,True,True,True,21.473058749575245,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+31,story_3_rms_ground_amplification,response_time_or_statistical,deployable,True,True,True,11.202538231465471,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+32,story_4_max_ground_amplification,response_time_or_statistical,deployable,True,True,True,28.376499719786462,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+33,story_4_rms_ground_amplification,response_time_or_statistical,deployable,True,True,True,15.280986932015246,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+34,story_1_relative_to_lower_max_abs,response_time_or_statistical,deployable,True,True,True,6.340848622206336,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+35,story_1_relative_to_lower_rms,response_time_or_statistical,deployable,True,True,True,1.0695234705735286,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+36,story_2_relative_to_lower_max_abs,response_time_or_statistical,deployable,True,True,True,14.895070935733813,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+37,story_2_relative_to_lower_rms,response_time_or_statistical,deployable,True,True,True,2.378121636366191,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+38,story_3_relative_to_lower_max_abs,response_time_or_statistical,deployable,True,True,True,11.095262287755004,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+39,story_3_relative_to_lower_rms,response_time_or_statistical,deployable,True,True,True,1.6601146292807707,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+40,story_4_relative_to_lower_max_abs,response_time_or_statistical,deployable,True,True,True,6.795447594045927,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+41,story_4_relative_to_lower_rms,response_time_or_statistical,deployable,True,True,True,0.7785393145203957,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+42,story_2_to_story_1_max_abs_ratio,response_time_or_statistical,deployable,True,True,True,0.3365673155709848,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+43,story_2_to_story_1_rms_ratio,response_time_or_statistical,deployable,True,True,True,0.7745440921340196,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+44,story_3_to_story_2_max_abs_ratio,response_time_or_statistical,deployable,True,True,True,0.1703145311954391,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+45,story_3_to_story_2_rms_ratio,response_time_or_statistical,deployable,True,True,True,0.382110606661297,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+46,story_4_to_story_3_max_abs_ratio,response_time_or_statistical,deployable,True,True,True,0.1188631144802993,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+47,story_4_to_story_3_rms_ratio,response_time_or_statistical,deployable,True,True,True,0.478315840801841,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+48,story_1_max_abs_spatial_fraction,response_spatial,deployable,True,True,True,0.0057944524524652,False,1.0,False,Derived from the spatial distribution of measured responses.,False,False
+49,story_1_rms_spatial_fraction,response_spatial,deployable,True,True,True,0.0103041544701768,False,1.0,False,Derived from the spatial distribution of measured responses.,False,False
+50,story_2_max_abs_spatial_fraction,response_spatial,deployable,True,True,True,0.0009630009330937,False,1.0,False,Derived from the spatial distribution of measured responses.,False,False
+51,story_2_rms_spatial_fraction,response_spatial,deployable,True,True,True,0.0019139285230027,False,1.0,False,Derived from the spatial distribution of measured responses.,False,False
+52,story_3_max_abs_spatial_fraction,response_spatial,deployable,True,True,True,0.0039693342495012,False,1.0,False,Derived from the spatial distribution of measured responses.,False,False
+53,story_3_rms_spatial_fraction,response_spatial,deployable,True,True,True,0.0064129924829333,False,1.0,False,Derived from the spatial distribution of measured responses.,False,False
+54,story_4_max_abs_spatial_fraction,response_spatial,deployable,True,True,True,0.0013640100133507,False,1.0,False,Derived from the spatial distribution of measured responses.,False,False
+55,story_4_rms_spatial_fraction,response_spatial,deployable,True,True,True,0.0016141907848797,False,1.0,False,Derived from the spatial distribution of measured responses.,False,False
+56,ground_dominant_frequency,response_frequency,deployable,True,True,True,0.1939430433333318,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+57,ground_spectral_centroid,response_frequency,deployable,True,True,True,0.1792795219667282,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+58,ground_band_energy,response_frequency,deployable,True,True,True,2880763891061.823,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+59,story_1_dominant_frequency,response_frequency,deployable,True,True,True,0.1982221955555543,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+60,story_1_spectral_centroid,response_frequency,deployable,True,True,True,0.1577860047312662,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+61,story_1_band_energy,response_frequency,deployable,True,True,True,123177260666368.4,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+62,story_1_dominant_frequency_to_input_ratio,response_frequency,deployable,True,True,True,0.0009691185558084,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+63,story_1_centroid_to_input_ratio,response_time_or_statistical,deployable,True,True,True,0.4562203672843713,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+64,story_2_dominant_frequency,response_frequency,deployable,True,True,True,0.2260724488888905,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+65,story_2_spectral_centroid,response_frequency,deployable,True,True,True,0.1976585862718249,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+66,story_2_band_energy,response_frequency,deployable,True,True,True,3998077570325614.5,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+67,story_2_dominant_frequency_to_input_ratio,response_frequency,deployable,True,True,True,0.0200299458975236,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+68,story_2_centroid_to_input_ratio,response_time_or_statistical,deployable,True,True,True,0.2077857647379361,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+69,story_3_dominant_frequency,response_frequency,deployable,True,True,True,0.1899837197222224,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+70,story_3_spectral_centroid,response_frequency,deployable,True,True,True,0.2162181842783421,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+71,story_3_band_energy,response_frequency,deployable,True,True,True,2.050439531883763e+16,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+72,story_3_dominant_frequency_to_input_ratio,response_frequency,deployable,True,True,True,0.0065163712155524,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+73,story_3_centroid_to_input_ratio,response_time_or_statistical,deployable,True,True,True,0.1548025085742454,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+74,story_4_dominant_frequency,response_frequency,deployable,True,True,True,0.1936577322222223,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+75,story_4_spectral_centroid,response_frequency,deployable,True,True,True,0.1247375544052681,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+76,story_4_band_energy,response_frequency,deployable,True,True,True,4.357638569029441e+16,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+77,story_4_dominant_frequency_to_input_ratio,response_frequency,deployable,True,True,True,0.0002177619154602,False,1.0,False,Provisionally response-derived; verify that no generator parameter is used.,False,False
+78,story_4_centroid_to_input_ratio,response_time_or_statistical,deployable,True,True,True,0.1477011144658189,False,1.0,False,Provisionally derived from measured structural responses.,False,False
+79,story_1_ground_correlation,response_correlation,deployable,True,True,True,0.1285733223386336,False,1.0,False,Derived from measured structural responses.,False,False
+80,story_2_ground_correlation,response_correlation,deployable,True,True,True,0.4002612259055145,False,1.0,False,Derived from measured structural responses.,False,False
+81,story_3_ground_correlation,response_correlation,deployable,True,True,True,0.3962671549382478,False,1.0,False,Derived from measured structural responses.,False,False
+82,story_4_ground_correlation,response_correlation,deployable,True,True,True,0.4661937350025233,False,1.0,False,Derived from measured structural responses.,False,False
+83,story_2_story_1_correlation,response_correlation,deployable,True,True,True,0.1616767940024919,False,1.0,False,Derived from measured structural responses.,False,False
+84,story_3_story_2_correlation,response_correlation,deployable,True,True,True,0.2992412854181179,False,1.0,False,Derived from measured structural responses.,False,False
+85,story_4_story_3_correlation,response_correlation,deployable,True,True,True,0.0138652115489478,False,1.0,False,Derived from measured structural responses.,False,False
+86,input_amplitude_g,input_condition,conditional,False,True,True,0.0033763484326931,False,1.0,True,Deployable only if obtained from a measured input signal; not deployable when copied from generator parameters.,False,False
+87,input_frequency_hz,input_condition,conditional,False,True,True,0.1929876929574669,False,1.0,True,Deployable only if obtained from a measured input signal; not deployable when copied from generator parameters.,False,False
+88,input_noise_level,privileged_simulation_metadata,oracle_only,False,False,True,0.0053196655555555,False,1.0,False,Exclude from deployable main model.,False,False
+89,input_frequency_to_healthy_mode1_ratio,input_condition,conditional,False,True,True,0.311290678047347,False,1.0,True,Deployable only if obtained from a measured input signal; not deployable when copied from generator parameters.,False,False
+90,input_frequency_distance_to_healthy_mode1,input_condition,conditional,False,True,True,0.1339527637370036,False,1.0,True,Deployable only if obtained from a measured input signal; not deployable when copied from generator parameters.,False,False
+91,input_mode1_resonance_indicator,response_time_or_statistical,deployable,True,True,True,12.51458669134288,False,1.0,False,Provisionally derived from measured structural responses.,False,False

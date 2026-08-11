@@ -1,0 +1,634 @@
+====================================================================================================
+JCSHM PRIMARY EVIDENCE SCHEMA AUDIT
+====================================================================================================
+
+Training/tuning performed: False
+Experimental files modified: False
+
+====================================================================================================
+descriptor_audit
+====================================================================================================
+File: results/sss_fast_revision/tables/T01_descriptor_audit.csv
+Shape: (92, 14)
+Columns:
+  [00] feature_index
+  [01] feature_name
+  [02] descriptor_family
+  [03] information_status
+  [04] provisional_response_only
+  [05] provisional_with_conditions
+  [06] oracle_full
+  [07] variance
+  [08] near_zero_variance
+  [09] finite_ratio
+  [10] manual_review_required
+  [11] review_note
+  [12] duplicate_feature_name
+  [13] exact_duplicate_numeric_column
+
+First 3 rows:
+ feature_index    feature_name            descriptor_family information_status  provisional_response_only  provisional_with_conditions  oracle_full  variance  near_zero_variance  finite_ratio  manual_review_required                                               review_note  duplicate_feature_name  exact_duplicate_numeric_column
+             0    story_1_mean response_time_or_statistical         deployable                       True                         True         True  0.000460               False           1.0                   False Provisionally derived from measured structural responses.                   False                           False
+             1     story_1_std response_time_or_statistical         deployable                       True                         True         True  1.067596               False           1.0                   False Provisionally derived from measured structural responses.                   False                           False
+             2 story_1_max_abs response_time_or_statistical         deployable                       True                         True         True  6.207255               False           1.0                   False Provisionally derived from measured structural responses.                   False                           False
+
+====================================================================================================
+factorial_mean
+====================================================================================================
+File: results/sss_fast_revision/repeated_factorial_78d_92d_ridge_svr/repeated_factorial_mean_table.csv
+Shape: (7, 5)
+Columns:
+  [00] metric
+  [01] 78D_Ridge
+  [02] 78D_SVR
+  [03] 92D_Ridge
+  [04] 92D_SVR
+
+First 3 rows:
+           metric  78D_Ridge  78D_SVR  92D_Ridge  92D_SVR
+         test_mae   0.044858 0.031450   0.039545 0.023105
+        test_rmse   0.063340 0.050111   0.058384 0.040124
+damaged_entry_mae   0.070889 0.049375   0.063203 0.037808
+
+====================================================================================================
+factorial_effects
+====================================================================================================
+File: results/sss_fast_revision/repeated_factorial_78d_92d_ridge_svr/repeated_factorial_effect_summary.csv
+Shape: (35, 15)
+Columns:
+  [00] metric
+  [01] effect
+  [02] definition
+  [03] n_seeds
+  [04] mean_effect
+  [05] std_effect
+  [06] ci95_low
+  [07] ci95_high
+  [08] negative_seeds
+  [09] positive_seeds
+  [10] mean_relative_improvement_percent
+  [11] one_sample_t_statistic
+  [12] one_sample_t_pvalue
+  [13] wilcoxon_statistic
+  [14] wilcoxon_pvalue
+
+First 3 rows:
+  metric                         effect                definition  n_seeds  mean_effect  std_effect  ci95_low  ci95_high  negative_seeds  positive_seeds  mean_relative_improvement_percent  one_sample_t_statistic  one_sample_t_pvalue  wilcoxon_statistic  wilcoxon_pvalue
+test_mae information_effect_under_ridge 92D_Ridge_minus_78D_Ridge       10    -0.005313    0.000619 -0.005755  -0.004870              10               0                          11.836746              -27.162868         6.019323e-10                 0.0         0.001953
+test_mae   information_effect_under_svr     92D_SVR_minus_78D_SVR       10    -0.008345    0.000925 -0.009007  -0.007684              10               0                          26.478271              -28.543858         3.870235e-10                 0.0         0.001953
+test_mae            model_effect_on_78d   78D_SVR_minus_78D_Ridge       10    -0.013408    0.001021 -0.014139  -0.012678              10               0                          29.898934              -41.521632         1.358783e-11                 0.0         0.001953
+
+====================================================================================================
+factorial_seed_effects
+====================================================================================================
+File: results/sss_fast_revision/repeated_factorial_78d_92d_ridge_svr/repeated_factorial_seed_effects.csv
+Shape: (70, 15)
+Columns:
+  [00] seed
+  [01] metric
+  [02] 78d_ridge
+  [03] 78d_svr
+  [04] 92d_ridge
+  [05] 92d_svr
+  [06] information_effect_under_ridge
+  [07] information_effect_under_svr
+  [08] model_effect_on_78d
+  [09] model_effect_on_92d
+  [10] interaction_difference_in_differences
+  [11] information_improvement_ridge_percent
+  [12] information_improvement_svr_percent
+  [13] model_improvement_78d_percent
+  [14] model_improvement_92d_percent
+
+First 3 rows:
+ seed            metric  78d_ridge  78d_svr  92d_ridge  92d_svr  information_effect_under_ridge  information_effect_under_svr  model_effect_on_78d  model_effect_on_92d  interaction_difference_in_differences  information_improvement_ridge_percent  information_improvement_svr_percent  model_improvement_78d_percent  model_improvement_92d_percent
+    0          test_mae   0.044465 0.031546   0.038491 0.023066                       -0.005974                     -0.008480            -0.012919            -0.015425                              -0.002506                              13.434896                            26.880226                      29.054410                      40.073710
+    0         test_rmse   0.063482 0.049602   0.057342 0.040010                       -0.006141                     -0.009592            -0.013881            -0.017332                              -0.003451                               9.672846                            19.337245                      21.865442                      30.225315
+    0 damaged_entry_mae   0.069898 0.052121   0.061102 0.039720                       -0.008796                     -0.012400            -0.017778            -0.021382                              -0.003604                              12.584031                            23.791194                      25.433595                      34.993380
+
+====================================================================================================
+ridge_svr_damage_bins
+====================================================================================================
+File: results/sss_fast_revision/repeated_split_78d_ridge_svr/repeated_split_damage_bins.csv
+Shape: (80, 10)
+Columns:
+  [00] seed
+  [01] model
+  [02] damage_bin
+  [03] n_entries
+  [04] mae
+  [05] rmse
+  [06] bias
+  [07] mean_true
+  [08] mean_prediction
+  [09] underestimation_ratio
+
+First 3 rows:
+ seed   model damage_bin  n_entries      mae     rmse      bias  mean_true  mean_prediction  underestimation_ratio
+    0 rbf_svr       high        278 0.066538 0.088876 -0.053084   0.274952         0.221868               0.784173
+    0 rbf_svr        low        105 0.027302 0.034999 -0.008111   0.073838         0.065727               0.571429
+    0 rbf_svr     medium        172 0.043969 0.055684 -0.036018   0.152687         0.116669               0.825581
+
+====================================================================================================
+ridge_svr_metric_summary
+====================================================================================================
+File: results/sss_fast_revision/repeated_split_78d_ridge_svr/repeated_split_metric_summary.csv
+Shape: (14, 10)
+Columns:
+  [00] model
+  [01] metric
+  [02] n_seeds
+  [03] mean
+  [04] std
+  [05] median
+  [06] min
+  [07] max
+  [08] ci95_low
+  [09] ci95_high
+
+First 3 rows:
+model            metric  n_seeds     mean      std   median      min      max  ci95_low  ci95_high
+ridge          test_mae       10 0.044858 0.000945 0.044788 0.043432 0.046510  0.044182   0.045535
+ridge         test_rmse       10 0.063340 0.001470 0.063318 0.060369 0.065907  0.062288   0.064392
+ridge damaged_entry_mae       10 0.070889 0.001895 0.070945 0.066810 0.073576  0.069534   0.072244
+
+====================================================================================================
+calibration_statistics
+====================================================================================================
+File: results/sss_fast_revision/repeated_split_asymmetric_calibration_78d/calibration_paired_statistics.csv
+Shape: (10, 16)
+Columns:
+  [00] metric
+  [01] difference_definition
+  [02] n_seeds
+  [03] standard_mean
+  [04] calibrated_mean
+  [05] mean_difference
+  [06] std_difference
+  [07] ci95_difference_low
+  [08] ci95_difference_high
+  [09] calibrated_wins
+  [10] standard_wins
+  [11] ties
+  [12] mean_relative_improvement_percent
+  [13] paired_t_pvalue
+  [14] wilcoxon_statistic
+  [15] wilcoxon_pvalue
+
+First 3 rows:
+   metric     difference_definition  n_seeds  standard_mean  calibrated_mean  mean_difference  std_difference  ci95_difference_low  ci95_difference_high  calibrated_wins  standard_wins  ties  mean_relative_improvement_percent  paired_t_pvalue  wilcoxon_statistic  wilcoxon_pvalue
+ test_mse calibrated_minus_standard       10       0.002515         0.002456        -0.000059        0.000041            -0.000088             -0.000029               10              0     0                           2.348252         0.001392                 0.0         0.001953
+ test_mae calibrated_minus_standard       10       0.031450         0.031004        -0.000446        0.000257            -0.000629             -0.000262               10              0     0                           1.406771         0.000384                 0.0         0.001953
+test_rmse calibrated_minus_standard       10       0.050111         0.049520        -0.000591        0.000408            -0.000884             -0.000299               10              0     0                           1.184091         0.001331                 0.0         0.001953
+
+====================================================================================================
+calibration_test_results
+====================================================================================================
+File: results/sss_fast_revision/repeated_split_asymmetric_calibration_78d/calibration_paired_test_results.csv
+Shape: (10, 44)
+Columns:
+  [00] seed
+  [01] selection_mode
+  [02] selected_alpha
+  [03] eligible_alpha_count
+  [04] standard_test_mse
+  [05] calibrated_test_mse
+  [06] difference_calibrated_minus_standard_test_mse
+  [07] relative_improvement_percent_test_mse
+  [08] standard_test_mae
+  [09] calibrated_test_mae
+  [10] difference_calibrated_minus_standard_test_mae
+  [11] relative_improvement_percent_test_mae
+  [12] standard_test_rmse
+  [13] calibrated_test_rmse
+  [14] difference_calibrated_minus_standard_test_rmse
+  [15] relative_improvement_percent_test_rmse
+  [16] standard_damaged_mae
+  [17] calibrated_damaged_mae
+  [18] difference_calibrated_minus_standard_damaged_mae
+  [19] relative_improvement_percent_damaged_mae
+  [20] standard_zero_mae
+  [21] calibrated_zero_mae
+  [22] difference_calibrated_minus_standard_zero_mae
+  [23] relative_improvement_percent_zero_mae
+  [24] standard_low_mae
+  [25] calibrated_low_mae
+  [26] difference_calibrated_minus_standard_low_mae
+  [27] relative_improvement_percent_low_mae
+  [28] standard_medium_mae
+  [29] calibrated_medium_mae
+  [30] difference_calibrated_minus_standard_medium_mae
+  [31] relative_improvement_percent_medium_mae
+  [32] standard_high_mae
+  [33] calibrated_high_mae
+  [34] difference_calibrated_minus_standard_high_mae
+  [35] relative_improvement_percent_high_mae
+  [36] standard_high_abs_bias
+  [37] calibrated_high_abs_bias
+  [38] difference_calibrated_minus_standard_high_abs_bias
+  [39] relative_improvement_percent_high_abs_bias
+  [40] standard_high_underestimation_ratio
+  [41] calibrated_high_underestimation_ratio
+  [42] difference_calibrated_minus_standard_high_underestimation_ratio
+  [43] relative_improvement_percent_high_underestimation_ratio
+
+First 3 rows:
+ seed selection_mode  selected_alpha  eligible_alpha_count  standard_test_mse  calibrated_test_mse  difference_calibrated_minus_standard_test_mse  relative_improvement_percent_test_mse  standard_test_mae  calibrated_test_mae  difference_calibrated_minus_standard_test_mae  relative_improvement_percent_test_mae  standard_test_rmse  calibrated_test_rmse  difference_calibrated_minus_standard_test_rmse  relative_improvement_percent_test_rmse  standard_damaged_mae  calibrated_damaged_mae  difference_calibrated_minus_standard_damaged_mae  relative_improvement_percent_damaged_mae  standard_zero_mae  calibrated_zero_mae  difference_calibrated_minus_standard_zero_mae  relative_improvement_percent_zero_mae  standard_low_mae  calibrated_low_mae  difference_calibrated_minus_standard_low_mae  relative_improvement_percent_low_mae  standard_medium_mae  calibrated_medium_mae  difference_calibrated_minus_standard_medium_mae  relative_improvement_percent_medium_mae  standard_high_mae  calibrated_high_mae  difference_calibrated_minus_standard_high_mae  relative_improvement_percent_high_mae  standard_high_abs_bias  calibrated_high_abs_bias  difference_calibrated_minus_standard_high_abs_bias  relative_improvement_percent_high_abs_bias  standard_high_underestimation_ratio  calibrated_high_underestimation_ratio  difference_calibrated_minus_standard_high_underestimation_ratio  relative_improvement_percent_high_underestimation_ratio
+    0     calibrated            0.75                     3           0.002460             0.002364                                      -0.000097                               3.934498           0.031546             0.030807                                      -0.000739                               2.343535            0.049602              0.048616                                       -0.000986                                1.986990              0.052121                0.049385                                         -0.002735                                  5.247687           0.022374             0.022525                                       0.000150                              -0.672273          0.027302            0.031275                                      0.003974                            -14.555187             0.043969               0.042300                                        -0.001669                                 3.795286           0.066538             0.060609                                      -0.005929                               8.910454                0.053084                  0.039079                                           -0.014005                                   26.382925                             0.784173                               0.672662                                                        -0.111511                                                14.220183
+    1     calibrated            1.50                     6           0.002368             0.002344                                      -0.000024                               1.026786           0.030666             0.030499                                      -0.000167                               0.545389            0.048666              0.048416                                       -0.000250                                0.514718              0.046471                0.045765                                         -0.000705                                  1.517830           0.023767             0.023834                                       0.000068                              -0.284667          0.033070            0.033775                                      0.000705                             -2.130684             0.042909               0.043159                                         0.000250                                -0.582832           0.054144             0.052260                                      -0.001883                               3.478092                0.039386                  0.031405                                           -0.007981                                   20.263113                             0.735075                               0.660448                                                        -0.074627                                                10.152284
+    2     calibrated            0.75                     3           0.002692             0.002622                                      -0.000070                               2.602224           0.033205             0.032579                                      -0.000626                               1.886567            0.051882              0.051202                                       -0.000679                                1.309688              0.049481                0.046405                                         -0.003076                                  6.216885           0.026395             0.026794                                       0.000399                              -1.510203          0.024812            0.026991                                      0.002180                             -8.785712             0.042289               0.040904                                        -0.001386                                 3.276298           0.062478             0.056540                                      -0.005937                               9.502837                0.049055                  0.035237                                           -0.013818                                   28.168135                             0.762774                               0.678832                                                        -0.083942                                                11.004785
+
+====================================================================================================
+noise_level_summary
+====================================================================================================
+File: results/sss_fast_revision/matched_noise_robustness_clean_trained/noise_level_summary.csv
+Shape: (8, 24)
+Columns:
+  [00] method
+  [01] noise_level
+  [02] noise_percent
+  [03] n_replicates
+  [04] mse_mean
+  [05] mse_std
+  [06] mae_mean
+  [07] mae_std
+  [08] rmse_mean
+  [09] rmse_std
+  [10] damaged_mae_mean
+  [11] damaged_mae_std
+  [12] zero_mae_mean
+  [13] zero_mae_std
+  [14] low_mae_mean
+  [15] low_mae_std
+  [16] medium_mae_mean
+  [17] medium_mae_std
+  [18] high_mae_mean
+  [19] high_mae_std
+  [20] high_abs_bias_mean
+  [21] high_abs_bias_std
+  [22] high_underestimation_mean
+  [23] high_underestimation_std
+
+First 3 rows:
+        method  noise_level  noise_percent  n_replicates  mse_mean  mse_std  mae_mean  mae_std  rmse_mean  rmse_std  damaged_mae_mean  damaged_mae_std  zero_mae_mean  zero_mae_std  low_mae_mean  low_mae_std  medium_mae_mean  medium_mae_std  high_mae_mean  high_mae_std  high_abs_bias_mean  high_abs_bias_std  high_underestimation_mean  high_underestimation_std
+calibrated_svr         0.00              0             1  0.001160 0.000000  0.021677 0.000000   0.034056  0.000000          0.030692         0.000000       0.017658      0.000000      0.023183     0.000000         0.029349        0.000000       0.034523      0.000000            0.002864           0.000000                   0.467153                  0.000000
+calibrated_svr         0.05              5             5  0.005346 0.000149  0.046729 0.000522   0.073114  0.001019          0.057105         0.000951       0.042104      0.000485      0.047725     0.001640         0.056051        0.001469       0.061499      0.001453            0.012824           0.001273                   0.385401                  0.014959
+calibrated_svr         0.10             10             5  0.025557 0.000291  0.119924 0.000963   0.159864  0.000908          0.120875         0.000958       0.119501      0.001164      0.114557     0.003914         0.123569        0.004712       0.121697      0.001623            0.057052           0.003716                   0.261314                  0.011994
+
+====================================================================================================
+noise_directional_summary
+====================================================================================================
+File: results/sss_fast_revision/matched_noise_failure_mechanism/severity_directional_summary.csv
+Shape: (48, 17)
+Columns:
+  [00] method
+  [01] noise_level
+  [02] noise_percent
+  [03] severity
+  [04] n_replicates
+  [05] signed_bias_mean
+  [06] signed_bias_std
+  [07] mae_mean
+  [08] mae_std
+  [09] rmse_mean
+  [10] rmse_std
+  [11] underestimation_ratio_mean
+  [12] underestimation_ratio_std
+  [13] overestimation_ratio_mean
+  [14] overestimation_ratio_std
+  [15] equal_ratio_mean
+  [16] equal_ratio_std
+
+First 3 rows:
+        method  noise_level  noise_percent severity  n_replicates  signed_bias_mean  signed_bias_std  mae_mean  mae_std  rmse_mean  rmse_std  underestimation_ratio_mean  underestimation_ratio_std  overestimation_ratio_mean  overestimation_ratio_std  equal_ratio_mean  equal_ratio_std
+calibrated_svr         0.00              0      all             1          0.010392         0.000000  0.021677 0.000000   0.034056  0.000000                    0.165556                   0.000000                   0.579444                  0.000000          0.255000         0.000000
+calibrated_svr         0.05              5      all             5          0.032077         0.000247  0.046729 0.000522   0.073114  0.001019                    0.131111                   0.002515                   0.660222                  0.004625          0.208667         0.005808
+calibrated_svr         0.10             10      all             5          0.101118         0.001448  0.119924 0.000963   0.159864  0.000908                    0.090889                   0.003182                   0.748000                  0.007593          0.161111         0.004564
+
+====================================================================================================
+noise_bias_reversal
+====================================================================================================
+File: results/sss_fast_revision/matched_noise_failure_mechanism/high_damage_bias_reversal.csv
+Shape: (8, 7)
+Columns:
+  [00] method
+  [01] noise_level
+  [02] noise_percent
+  [03] high_signed_bias
+  [04] bias_sign
+  [05] clean_bias
+  [06] sign_differs_from_clean
+
+First 3 rows:
+      method  noise_level  noise_percent  high_signed_bias bias_sign  clean_bias  sign_differs_from_clean
+standard_svr         0.00              0         -0.021337  negative   -0.021337                    False
+standard_svr         0.05              5         -0.004789  negative   -0.021337                    False
+standard_svr         0.10             10          0.042575  positive   -0.021337                     True
+
+====================================================================================================
+noise_prediction_distribution
+====================================================================================================
+File: results/sss_fast_revision/matched_noise_failure_mechanism/prediction_distribution_summary.csv
+Shape: (48, 23)
+Columns:
+  [00] method
+  [01] noise_level
+  [02] noise_percent
+  [03] severity
+  [04] n_replicates
+  [05] prediction_mean_mean
+  [06] prediction_mean_std
+  [07] prediction_std_mean
+  [08] prediction_std_std
+  [09] prediction_q05_mean
+  [10] prediction_q05_std
+  [11] prediction_q25_mean
+  [12] prediction_q25_std
+  [13] prediction_q50_mean
+  [14] prediction_q50_std
+  [15] prediction_q75_mean
+  [16] prediction_q75_std
+  [17] prediction_q95_mean
+  [18] prediction_q95_std
+  [19] clip_low_ratio_mean
+  [20] clip_low_ratio_std
+  [21] clip_high_ratio_mean
+  [22] clip_high_ratio_std
+
+First 3 rows:
+        method  noise_level  noise_percent severity  n_replicates  prediction_mean_mean  prediction_mean_std  prediction_std_mean  prediction_std_std  prediction_q05_mean  prediction_q05_std  prediction_q25_mean  prediction_q25_std  prediction_q50_mean  prediction_q50_std  prediction_q75_mean  prediction_q75_std  prediction_q95_mean  prediction_q95_std  clip_low_ratio_mean  clip_low_ratio_std  clip_high_ratio_mean  clip_high_ratio_std
+calibrated_svr         0.00              0      all             1              0.071834             0.000000             0.100805            0.000000                  0.0                 0.0             0.000000            0.000000             0.024880            0.000000             0.095520            0.000000             0.306087            0.000000             0.258889            0.000000              0.000000             0.000000
+calibrated_svr         0.05              5      all             5              0.093519             0.000247             0.112470            0.000674                  0.0                 0.0             0.007308            0.001423             0.048261            0.000994             0.146038            0.001994             0.340175            0.003778             0.216333            0.005741              0.004667             0.000497
+calibrated_svr         0.10             10      all             5              0.162560             0.001448             0.144254            0.000626                  0.0                 0.0             0.044211            0.001357             0.127706            0.002420             0.251285            0.002348             0.469759            0.005735             0.189556            0.005752              0.038667             0.001868
+
+====================================================================================================
+noise_descriptor_shift
+====================================================================================================
+File: results/sss_fast_revision/matched_noise_failure_mechanism/descriptor_shift_summary.csv
+Shape: (312, 20)
+Columns:
+  [00] noise_level
+  [01] noise_percent
+  [02] feature_index
+  [03] feature_name
+  [04] n_replicates
+  [05] signed_mean_delta_z_mean
+  [06] signed_mean_delta_z_std
+  [07] mean_abs_delta_z_mean
+  [08] mean_abs_delta_z_std
+  [09] median_abs_delta_z_mean
+  [10] median_abs_delta_z_std
+  [11] rms_delta_z_mean
+  [12] rms_delta_z_std
+  [13] p95_abs_delta_z_mean
+  [14] p95_abs_delta_z_std
+  [15] fraction_abs_delta_z_gt_1_mean
+  [16] fraction_abs_delta_z_gt_1_std
+  [17] fraction_abs_delta_z_gt_2_mean
+  [18] fraction_abs_delta_z_gt_2_std
+  [19] rank_by_mean_abs_shift
+
+First 3 rows:
+ noise_level  noise_percent  feature_index    feature_name  n_replicates  signed_mean_delta_z_mean  signed_mean_delta_z_std  mean_abs_delta_z_mean  mean_abs_delta_z_std  median_abs_delta_z_mean  median_abs_delta_z_std  rms_delta_z_mean  rms_delta_z_std  p95_abs_delta_z_mean  p95_abs_delta_z_std  fraction_abs_delta_z_gt_1_mean  fraction_abs_delta_z_gt_1_std  fraction_abs_delta_z_gt_2_mean  fraction_abs_delta_z_gt_2_std  rank_by_mean_abs_shift
+         0.0              0              0    story_1_mean             1                       0.0                      0.0                    0.0                   0.0                      0.0                     0.0               0.0              0.0                   0.0                  0.0                             0.0                            0.0                             0.0                            0.0                       1
+         0.0              0              1     story_1_std             1                       0.0                      0.0                    0.0                   0.0                      0.0                     0.0               0.0              0.0                   0.0                  0.0                             0.0                            0.0                             0.0                            0.0                       2
+         0.0              0              2 story_1_max_abs             1                       0.0                      0.0                    0.0                   0.0                      0.0                     0.0               0.0              0.0                   0.0                  0.0                             0.0                            0.0                             0.0                            0.0                       3
+
+====================================================================================================
+sensor_layout_results
+====================================================================================================
+File: results/sss_fast_revision/exhaustive_sensor_layout_svr/sensor_layout_results.csv
+Shape: (15, 47)
+Columns:
+  [00] layout_tag
+  [01] sensor_layout
+  [02] sensor_count
+  [03] feature_count
+  [04] feature_fraction_of_full
+  [05] selected_C
+  [06] selected_gamma
+  [07] selected_epsilon
+  [08] val_mse
+  [09] val_mae
+  [10] val_rmse
+  [11] val_bias
+  [12] val_damaged_mae
+  [13] val_zero_mae
+  [14] val_low_mae
+  [15] val_medium_mae
+  [16] val_high_mae
+  [17] val_high_bias
+  [18] val_high_abs_bias
+  [19] val_high_underestimation
+  [20] val_n_zero
+  [21] val_n_low
+  [22] val_n_medium
+  [23] val_n_high
+  [24] test_mse
+  [25] test_mae
+  [26] test_rmse
+  [27] test_bias
+  [28] test_damaged_mae
+  [29] test_zero_mae
+  [30] test_low_mae
+  [31] test_medium_mae
+  [32] test_high_mae
+  [33] test_high_bias
+  [34] test_high_abs_bias
+  [35] test_high_underestimation
+  [36] test_n_zero
+  [37] test_n_low
+  [38] test_n_medium
+  [39] test_n_high
+  [40] dataset_file
+  [41] test_mae_ratio_to_full
+  [42] test_mae_excess_vs_full_percent
+  [43] test_high_mae_ratio_to_full
+  [44] test_high_mae_excess_vs_full_percent
+  [45] test_mae_rank
+  [46] test_high_mae_rank
+
+First 3 rows:
+ layout_tag sensor_layout  sensor_count  feature_count  feature_fraction_of_full  selected_C  selected_gamma  selected_epsilon  val_mse  val_mae  val_rmse  val_bias  val_damaged_mae  val_zero_mae  val_low_mae  val_medium_mae  val_high_mae  val_high_bias  val_high_abs_bias  val_high_underestimation  val_n_zero  val_n_low  val_n_medium  val_n_high  test_mse  test_mae  test_rmse  test_bias  test_damaged_mae  test_zero_mae  test_low_mae  test_medium_mae  test_high_mae  test_high_bias  test_high_abs_bias  test_high_underestimation  test_n_zero  test_n_low  test_n_medium  test_n_high                                                                                                                                                                                                                           dataset_file  test_mae_ratio_to_full  test_mae_excess_vs_full_percent  test_high_mae_ratio_to_full  test_high_mae_excess_vs_full_percent  test_mae_rank  test_high_mae_rank
+       1234       1,2,3,4             4             78                  1.000000      1000.0           0.003              0.03 0.001251 0.021741  0.035373  0.007660         0.030973      0.017847     0.027740        0.027295      0.034502      -0.018405           0.018405                  0.659176        1266         90           177         267  0.001191  0.022047   0.034514   0.006182          0.032111       0.017561      0.021733         0.031251       0.036780       -0.021337            0.021337                   0.682482         1245         109            172          274 /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/data_processed/sss_fast_revision/sensor_layouts_dependency_aware/sensor_layout_1234_clean_descriptors.npz                1.000000                         0.000000                     1.000000                              0.000000              1                   1
+          1             1             1             19                  0.243590      1000.0           0.010              0.04 0.009798 0.069799  0.098985 -0.012447         0.140883      0.039815     0.037415        0.099850      0.202962      -0.201237           0.201237                  0.992509        1266         90           177         267  0.010372  0.071268   0.101843  -0.014032          0.141652       0.039892      0.040464         0.101059       0.207388       -0.205667            0.205667                   0.981752         1245         109            172          274    /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/data_processed/sss_fast_revision/sensor_layouts_dependency_aware/sensor_layout_1_clean_descriptors.npz                3.232534                       223.253370                     5.638602                            463.860237             12                  12
+          2             2             1             17                  0.217949       300.0           0.010              0.04 0.009908 0.071749  0.099538 -0.013823         0.146079      0.040396     0.039297        0.105233      0.209150      -0.209150           0.209150                  1.000000        1266         90           177         267  0.010733  0.073616   0.103602  -0.016041          0.147275       0.040780      0.039129         0.104597       0.217088       -0.217088            0.217088                   1.000000         1245         109            172          274    /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/data_processed/sss_fast_revision/sensor_layouts_dependency_aware/sensor_layout_2_clean_descriptors.npz                3.339043                       233.904295                     5.902332                            490.233182             14                  13
+
+====================================================================================================
+sensor_placement_spread
+====================================================================================================
+File: results/sss_fast_revision/exhaustive_sensor_layout_svr/sensor_placement_spread.csv
+Shape: (4, 9)
+Columns:
+  [00] sensor_count
+  [01] n_layouts
+  [02] best_layout
+  [03] worst_layout
+  [04] best_test_mae
+  [05] worst_test_mae
+  [06] absolute_placement_spread
+  [07] relative_placement_spread_percent
+  [08] high_mae_spread
+
+First 3 rows:
+ sensor_count  n_layouts  best_layout  worst_layout  best_test_mae  worst_test_mae  absolute_placement_spread  relative_placement_spread_percent  high_mae_spread
+            1          4            1             4       0.071268        0.075587                   0.004319                           6.060248         0.021508
+            2          6           12            24       0.054581        0.063799                   0.009218                          16.889404         0.023349
+            3          4          123           124       0.034562        0.043347                   0.008785                          25.419150         0.007305
+
+====================================================================================================
+sensor_count_bootstrap
+====================================================================================================
+File: results/sss_fast_revision/sensor_layout_paired_bootstrap_closure/sensor_count_bootstrap_ci.csv
+Shape: (4, 12)
+Columns:
+  [00] sensor_count
+  [01] n_layouts
+  [02] mae_point
+  [03] mae_bootstrap_mean
+  [04] mae_bootstrap_sd
+  [05] mae_ci_lower
+  [06] mae_ci_upper
+  [07] high_mae_point
+  [08] high_mae_bootstrap_mean
+  [09] high_mae_bootstrap_sd
+  [10] high_mae_ci_lower
+  [11] high_mae_ci_upper
+
+First 3 rows:
+ sensor_count  n_layouts  mae_point  mae_bootstrap_mean  mae_bootstrap_sd  mae_ci_lower  mae_ci_upper  high_mae_point  high_mae_bootstrap_mean  high_mae_bootstrap_sd  high_mae_ci_lower  high_mae_ci_upper
+            1          4   0.073374            0.073405          0.001555      0.070370      0.076476        0.218705                 0.218737               0.002769           0.213454           0.224088
+            2          6   0.058187            0.058203          0.001256      0.055758      0.060674        0.145529                 0.145528               0.003043           0.139532           0.151581
+            3          4   0.040041            0.040052          0.000953      0.038207      0.041954        0.084090                 0.084073               0.002830           0.078643           0.089553
+
+====================================================================================================
+sensor_count_contrasts
+====================================================================================================
+File: results/sss_fast_revision/sensor_layout_paired_bootstrap_closure/sensor_count_step_contrasts.csv
+Shape: (3, 12)
+Columns:
+  [00] from_sensor_count
+  [01] to_sensor_count
+  [02] mae_improvement_point
+  [03] mae_improvement_percent_point
+  [04] mae_ci_lower
+  [05] mae_ci_upper
+  [06] mae_bootstrap_positive_fraction
+  [07] high_mae_improvement_point
+  [08] high_mae_improvement_percent_point
+  [09] high_mae_ci_lower
+  [10] high_mae_ci_upper
+  [11] high_mae_bootstrap_positive_fraction
+
+First 3 rows:
+ from_sensor_count  to_sensor_count  mae_improvement_point  mae_improvement_percent_point  mae_ci_lower  mae_ci_upper  mae_bootstrap_positive_fraction  high_mae_improvement_point  high_mae_improvement_percent_point  high_mae_ci_lower  high_mae_ci_upper  high_mae_bootstrap_positive_fraction
+                 1                2               0.015188                      20.698999      0.013709      0.016736                              1.0                    0.073176                           33.458648           0.068918           0.077712                                   1.0
+                 2                3               0.018145                      31.184753      0.016815      0.019464                              1.0                    0.061440                           42.218008           0.058012           0.064876                                   1.0
+                 3                4               0.017994                      44.938979      0.016535      0.019430                              1.0                    0.047310                           56.261060           0.043087           0.051581                                   1.0
+
+====================================================================================================
+sensor_best_layout_stability
+====================================================================================================
+File: results/sss_fast_revision/sensor_layout_paired_bootstrap_closure/best_layout_bootstrap_stability.csv
+Shape: (14, 5)
+Columns:
+  [00] sensor_count
+  [01] layout_tag
+  [02] feature_count
+  [03] mae_best_fraction
+  [04] high_mae_best_fraction
+
+First 3 rows:
+ sensor_count  layout_tag  feature_count  mae_best_fraction  high_mae_best_fraction
+            1           1             19             0.9634                  0.9972
+            1           3             17             0.0318                  0.0000
+            1           2             17             0.0048                  0.0028
+
+====================================================================================================
+sensor_marginal_edges
+====================================================================================================
+File: results/sss_fast_revision/sensor_layout_paired_bootstrap_closure/marginal_sensor_edge_bootstrap_ci.csv
+Shape: (28, 19)
+Columns:
+  [00] base_layout
+  [01] base_sensor_count
+  [02] added_sensor
+  [03] augmented_layout
+  [04] base_feature_count
+  [05] augmented_feature_count
+  [06] feature_gain
+  [07] mae_improvement_point
+  [08] mae_relative_improvement_percent_point
+  [09] mae_ci_lower
+  [10] mae_ci_upper
+  [11] mae_ci_entirely_positive
+  [12] mae_bootstrap_positive_fraction
+  [13] high_mae_improvement_point
+  [14] high_mae_relative_improvement_percent_point
+  [15] high_mae_ci_lower
+  [16] high_mae_ci_upper
+  [17] high_mae_ci_entirely_positive
+  [18] high_mae_bootstrap_positive_fraction
+
+First 3 rows:
+ base_layout  base_sensor_count  added_sensor  augmented_layout  base_feature_count  augmented_feature_count  feature_gain  mae_improvement_point  mae_relative_improvement_percent_point  mae_ci_lower  mae_ci_upper  mae_ci_entirely_positive  mae_bootstrap_positive_fraction  high_mae_improvement_point  high_mae_relative_improvement_percent_point  high_mae_ci_lower  high_mae_ci_upper  high_mae_ci_entirely_positive  high_mae_bootstrap_positive_fraction
+           1                  1             2                12                  19                       36            17               0.016687                               23.414991      0.014446      0.018933                      True                              1.0                    0.068237                                    32.903190           0.060558           0.076182                           True                                   1.0
+           1                  1             3                13                  19                       31            12               0.013708                               19.233856      0.011282      0.016264                      True                              1.0                    0.069141                                    33.339114           0.061129           0.077578                           True                                   1.0
+           1                  1             4                14                  19                       31            12               0.011452                               16.069336      0.009248      0.013726                      True                              1.0                    0.059638                                    28.756761           0.052555           0.067024                           True                                   1.0
+
+====================================================================================================
+sensor_marginal_summary
+====================================================================================================
+File: results/sss_fast_revision/sensor_layout_paired_bootstrap_closure/marginal_sensor_bootstrap_summary.csv
+Shape: (4, 6)
+Columns:
+  [00] added_sensor
+  [01] n_edges
+  [02] mae_point_positive_fraction
+  [03] mae_ci_positive_fraction
+  [04] high_mae_point_positive_fraction
+  [05] high_mae_ci_positive_fraction
+
+First 3 rows:
+ added_sensor  n_edges  mae_point_positive_fraction  mae_ci_positive_fraction  high_mae_point_positive_fraction  high_mae_ci_positive_fraction
+            1        7                          1.0                       1.0                               1.0                            1.0
+            2        7                          1.0                       1.0                               1.0                            1.0
+            3        7                          1.0                       1.0                               1.0                            1.0
+
+====================================================================================================
+sensor_pairwise_contrasts
+====================================================================================================
+File: results/sss_fast_revision/sensor_layout_paired_bootstrap_closure/within_count_pairwise_layout_contrasts.csv
+Shape: (27, 14)
+Columns:
+  [00] sensor_count
+  [01] layout_A
+  [02] layout_B
+  [03] feature_count_A
+  [04] feature_count_B
+  [05] same_feature_count
+  [06] mae_A_minus_B_point
+  [07] mae_A_minus_B_ci_lower
+  [08] mae_A_minus_B_ci_upper
+  [09] mae_prob_A_lower
+  [10] high_mae_A_minus_B_point
+  [11] high_mae_A_minus_B_ci_lower
+  [12] high_mae_A_minus_B_ci_upper
+  [13] high_mae_prob_A_lower
+
+First 3 rows:
+ sensor_count  layout_A  layout_B  feature_count_A  feature_count_B  same_feature_count  mae_A_minus_B_point  mae_A_minus_B_ci_lower  mae_A_minus_B_ci_upper  mae_prob_A_lower  high_mae_A_minus_B_point  high_mae_A_minus_B_ci_lower  high_mae_A_minus_B_ci_upper  high_mae_prob_A_lower
+            1         1         2               19               17               False            -0.002348               -0.004121               -0.000479            0.9932                 -0.009700                    -0.016317                    -0.002786                 0.9972
+            1         1         3               19               17               False            -0.001758               -0.003539                0.000068            0.9678                 -0.014062                    -0.021006                    -0.006890                 1.0000
+            1         1         4               19               17               False            -0.004319               -0.005849               -0.002786            1.0000                 -0.021508                    -0.026853                    -0.016151                 1.0000
+
+====================================================================================================
+FINAL SCHEMA CHECK
+====================================================================================================
+Expected primary source files: 21
+All source files found: True
+Training/tuning performed: False
+Experimental files modified: False
+Schema inventory: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/tables/source_data/primary_evidence_schema_inventory.json
+
+CHECK PASSED: primary evidence schemas are ready for manuscript data preparation.
