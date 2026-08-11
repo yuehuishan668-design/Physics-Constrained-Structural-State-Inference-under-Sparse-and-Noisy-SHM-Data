@@ -1,0 +1,22 @@
+Preview: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/preview/F03_information_estimator_factorial.png
+PDF: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F03_information_estimator_factorial.pdf
+SVG: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/figures/final/F03_information_estimator_factorial.svg
+
+==========================================================================================
+FIGURE 3 CHECK
+==========================================================================================
+Training performed: False
+Hyperparameter tuning performed: False
+Statistical re-testing performed: False
+Numerical anchors passed: True
+Performance rows used: ['test_mae', 'high_damage_mae', 'high_damage_abs_bias']
+Effect metric used: test_mae
+Factorial effects displayed: 5
+
+78D Ridge MAE: 0.0448582946
+78D SVR MAE: 0.0314500006
+92D Ridge MAE: 0.0395454944
+92D SVR MAE: 0.0231048479
+Interaction: -0.0030323525
+
+OVERALL PASSED: True
