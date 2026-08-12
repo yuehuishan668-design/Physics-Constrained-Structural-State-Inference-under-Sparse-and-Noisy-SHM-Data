@@ -1,0 +1,193 @@
+====================================================================================================
+JCSHM MANUSCRIPT CLAIM-LANGUAGE AUDIT
+====================================================================================================
+
+[universal_claim]
+manuscript/jcshm_reconstruction/drafts/01_INTRODUCTION_CORE.md:390
+RQ1 does NOT ask whether RBF-SVR is universally optimal.
+
+[sensor_optimum]
+manuscript/jcshm_reconstruction/drafts/01_INTRODUCTION_CORE.md:390
+RQ1 does NOT ask whether RBF-SVR is universally optimal.
+
+[sensor_optimum]
+manuscript/jcshm_reconstruction/drafts/01_INTRODUCTION_CORE.md:444
+RQ3 does NOT seek a universal optimal sensor layout.
+
+[field_claim]
+manuscript/jcshm_reconstruction/drafts/05_CONCLUSIONS_CORE.md:15
+> - describe the study as field validated;
+
+[universal_claim]
+manuscript/jcshm_reconstruction/drafts/05_CONCLUSIONS_CORE.md:337
+- that the proposed framework is universally robust;
+
+[universal_claim]
+manuscript/jcshm_reconstruction/drafts/05_CONCLUSIONS_CORE.md:340
+- that every sensor addition is universally beneficial;
+
+[universal_claim]
+manuscript/jcshm_reconstruction/drafts/03_RESULTS_CORE.md:127
+- RBF-SVR is universally superior to linear models.
+
+[universal_claim]
+manuscript/jcshm_reconstruction/drafts/03_RESULTS_CORE.md:1147
+“Adding any sensor always improves structural health monitoring.”
+
+[robustness_claim]
+manuscript/jcshm_reconstruction/drafts/06_ABSTRACT_CORE.md:478
+> The proposed model is robust to measurement noise.
+
+[upper_bound]
+manuscript/jcshm_reconstruction/drafts/06_ABSTRACT_CORE.md:494
+> The 92D model provides the theoretical upper bound.
+
+[proof_claim]
+manuscript/jcshm_reconstruction/drafts/04_DISCUSSION_CORE.md:438
+“saturation was proven to cause the correlation collapse”.
+
+[formal_observability]
+manuscript/jcshm_reconstruction/drafts/04_DISCUSSION_CORE.md:554
+than deriving a classical observability rank condition.
+
+[universal_claim]
+manuscript/jcshm_reconstruction/drafts/04_DISCUSSION_CORE.md:651
+> Every additional sensor is universally beneficial in SHM.
+
+[formal_observability]
+manuscript/jcshm_reconstruction/drafts/04_DISCUSSION_CORE.md:1170
+- proof of formal identifiability;
+
+[universal_claim]
+manuscript/jcshm_reconstruction/revision_notes/25_LITERATURE_BLOCK_3_SENSOR_OBSERVABILITY.md:619
+"We prove that adding sensors always improves SHM."
+
+[formal_observability]
+manuscript/jcshm_reconstruction/revision_notes/25_LITERATURE_BLOCK_3_SENSOR_OBSERVABILITY.md:723
+Do NOT imply derivation of a classical observability rank condition.
+
+[universal_claim]
+manuscript/jcshm_reconstruction/revision_notes/04_NUMERICAL_CLAIM_LOCK.md:426
+- "SVR is universally superior to linear models."
+
+[proof_claim]
+manuscript/jcshm_reconstruction/revision_notes/04_NUMERICAL_CLAIM_LOCK.md:610
+- "the interaction proves a physical causal mechanism";
+
+[universal_claim]
+manuscript/jcshm_reconstruction/revision_notes/04_NUMERICAL_CLAIM_LOCK.md:712
+- "calibration universally improves reliability";
+
+[universal_claim]
+manuscript/jcshm_reconstruction/revision_notes/04_NUMERICAL_CLAIM_LOCK.md:1198
+- "these descriptors are universally noise-sensitive."
+
+[universal_claim]
+manuscript/jcshm_reconstruction/revision_notes/04_NUMERICAL_CLAIM_LOCK.md:1920
+- proves universally;
+
+[proof_claim]
+manuscript/jcshm_reconstruction/revision_notes/04_NUMERICAL_CLAIM_LOCK.md:1920
+- proves universally;
+
+[proof_claim]
+manuscript/jcshm_reconstruction/revision_notes/04_NUMERICAL_CLAIM_LOCK.md:1921
+- guarantees;
+
+[universal_claim]
+manuscript/jcshm_reconstruction/revision_notes/04_NUMERICAL_CLAIM_LOCK.md:1922
+- universally optimal;
+
+[sensor_optimum]
+manuscript/jcshm_reconstruction/revision_notes/04_NUMERICAL_CLAIM_LOCK.md:1922
+- universally optimal;
+
+[field_claim]
+manuscript/jcshm_reconstruction/revision_notes/04_NUMERICAL_CLAIM_LOCK.md:1923
+- field validated;
+
+[upper_bound]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:233
+> theoretical upper bound.
+
+[robustness_claim]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:431
+> The proposed model is robust to measurement noise.
+
+[sensor_optimum]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:504
+S* = optimal sensor layout.
+
+[universal_claim]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:837
+7. the 28-edge lattice is strong empirical evidence but not a universal law.
+
+[first_claim]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:858
+first-ever
+
+[first_claim]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:859
+for the first time
+
+[first_claim]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:860
+unprecedented
+
+[universal_claim]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:861
+universally
+
+[proof_claim]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:862
+proves
+
+[proof_claim]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:863
+guarantees
+
+[sensor_optimum]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:864
+optimal sensor layout
+
+[upper_bound]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:865
+theoretical upper bound
+
+[field_claim]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:867
+field-ready
+
+[field_claim]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:868
+field validated
+
+[field_claim]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:869
+real-world validated
+
+[causal_descriptor]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:870
+causal descriptor
+
+[formal_observability]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:871
+formal identifiability
+
+[formal_observability]
+manuscript/jcshm_reconstruction/revision_notes/26_LITERATURE_INTEGRATION_AND_CLAIM_MATRIX.md:872
+classical observability
+
+[universal_claim]
+manuscript/jcshm_reconstruction/revision_notes/03_FIGURE_TABLE_EVIDENCE_MAP.md:164
+It is not a new machine-learning algorithm and not a universally robust
+
+[universal_claim]
+manuscript/jcshm_reconstruction/revision_notes/03_FIGURE_TABLE_EVIDENCE_MAP.md:627
+Do not call calibration universally reliable.
+
+====================================================================================================
+FLAGGED INSTANCES: 46
+====================================================================================================
+
+NOTE: A flag is not automatically an error. Negated/prohibited examples in CORE files are expected.
