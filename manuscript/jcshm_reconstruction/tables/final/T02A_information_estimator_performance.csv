@@ -1,0 +1,5 @@
+Representation,Estimator,Overall MAE,High-damage MAE,High-damage |bias|,High-damage underestimation
+78D,Ridge,0.0449,0.0947,0.0828,0.874
+78D,RBF-SVR,0.0315,0.0603,0.0474,0.761
+92D,Ridge,0.0395,0.0841,0.0684,0.817
+92D,RBF-SVR,0.0231,0.0443,0.027,0.666

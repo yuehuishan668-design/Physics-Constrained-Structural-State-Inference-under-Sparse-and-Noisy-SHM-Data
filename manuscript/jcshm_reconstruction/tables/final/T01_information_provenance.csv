@@ -1,0 +1,5 @@
+Representation,Dimension,Generator metadata,Exact generator-frequency-derived,Base-input dependent,Structural-response derived,Manuscript role
+92D,92,Yes,Yes,Yes,Yes,Privileged-information reference
+86D legacy,86,No,Yes,Yes,Yes,Historical simulation-informed reference
+78D,78,No,No,Yes,Yes,Primary deployment-oriented representation
+59D,59,No,No,No,Yes,Response-only pressure-test baseline

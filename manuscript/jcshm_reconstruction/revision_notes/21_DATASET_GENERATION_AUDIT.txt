@@ -1,0 +1,1042 @@
+src/experiments/run_physics_feature_ablation.py:7:    1. Create filtered feature datasets for several feature groups.
+src/experiments/run_physics_feature_ablation.py:107:        raise FileNotFoundError(f"Base feature dataset not found: {args.base_features}")
+src/experiments/run_physics_feature_ablation.py:208:    print(f"Filtered feature datasets: {feature_root}")
+src/training/train_physics_sklearn.py:42:def load_feature_dataset(path: Path) -> ArrayDict:
+src/training/train_physics_sklearn.py:129:                min_samples_leaf=leaf,
+src/training/train_physics_sklearn.py:191:    n_samples, n_stories = y_true.shape
+src/training/train_physics_sklearn.py:199:        for i in range(n_samples):
+src/training/train_physics_sklearn.py:348:    arrays = load_feature_dataset(args.features)
+src/training/train_physics_sklearn.py:352:    print(f"Feature dataset: {args.features}")
+src/training/train_mlp.py:60:from torch.utils.data import DataLoader, TensorDataset
+src/training/train_mlp.py:61:# TensorDataset：把输入和标签配对；DataLoader：按 batch 加载数据。
+src/training/train_mlp.py:91:def load_feature_dataset(path: Path) -> Dict[str, np.ndarray]:
+src/training/train_mlp.py:92:    """Load MLP feature dataset. 中文说明：读取 debug_features_mlp.npz。"""
+src/training/train_mlp.py:94:        raise FileNotFoundError(f"Feature dataset not found: {path}")
+src/training/train_mlp.py:97:    dataset = {key: data[key] for key in data.keys()}
+src/training/train_mlp.py:101:        if key not in dataset:
+src/training/train_mlp.py:102:            raise KeyError(f"Required key '{key}' not found. Available keys: {list(dataset.keys())}")
+src/training/train_mlp.py:103:    return dataset
+src/training/train_mlp.py:106:def get_case_ids(dataset: Dict[str, np.ndarray], split: str, n_samples: int) -> np.ndarray:
+src/training/train_mlp.py:110:    if key in dataset:
+src/training/train_mlp.py:111:        return dataset[key].astype(int)
+src/training/train_mlp.py:112:    return np.arange(n_samples, dtype=int)
+src/training/train_mlp.py:122:    dataset = TensorDataset(x_tensor, y_tensor)
+src/training/train_mlp.py:123:    # TensorDataset 会把 x 和 y 按样本一一配对。
+src/training/train_mlp.py:124:    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
+src/training/train_mlp.py:275:    data = load_feature_dataset(Path(args.features))
+src/training/train_lstm.py:25:        2. condition-mode meta：输入结构响应时程 + amplitude_g / frequency_hz / noise_level。
+src/training/train_lstm.py:63:from torch.utils.data import DataLoader, TensorDataset
+src/training/train_lstm.py:64:# DataLoader 用于 batch 训练；TensorDataset 用于封装张量数据。
+src/training/train_lstm.py:112:        raise FileNotFoundError(f"Dataset not found: {path}")
+src/training/train_lstm.py:139:    dataset: Dict[str, np.ndarray],
+src/training/train_lstm.py:145:    Build metadata features: amplitude_g, frequency_hz, noise_level.
+src/training/train_lstm.py:158:    noise_key = f"noise_level_{split}"
+src/training/train_lstm.py:163:        if key not in dataset:
+src/training/train_lstm.py:167:        [dataset[amp_key], dataset[freq_key], dataset[noise_key]],
+src/training/train_lstm.py:170:    # meta 形状为 (n_samples, 3)。
+src/training/train_lstm.py:191:def get_case_ids(dataset: Dict[str, np.ndarray], split: str, n_samples: int) -> np.ndarray:
+src/training/train_lstm.py:197:    if key in dataset:
+src/training/train_lstm.py:199:        return dataset[key].astype(int)
+src/training/train_lstm.py:201:    return np.arange(n_samples, dtype=int)
+src/training/train_lstm.py:216:    # 响应时程张量，形状 (n_samples, seq_len, n_channels)。
+src/training/train_lstm.py:219:    # 标签张量，形状 (n_samples, 4)。
+src/training/train_lstm.py:223:        tensor_dataset = TensorDataset(x_tensor, y_tensor)
+src/training/train_lstm.py:229:        # 元信息张量，形状 (n_samples, 3)。
+src/training/train_lstm.py:231:        tensor_dataset = TensorDataset(x_tensor, meta_tensor, y_tensor)
+src/training/train_lstm.py:234:    return DataLoader(tensor_dataset, batch_size=batch_size, shuffle=shuffle)
+src/training/train_lstm_two_head.py:34:from torch.utils.data import DataLoader, TensorDataset
+src/training/train_lstm_two_head.py:62:        raise FileNotFoundError(f"Dataset not found: {path}")
+src/training/train_lstm_two_head.py:86:    dataset: Dict[str, np.ndarray],
+src/training/train_lstm_two_head.py:92:    Build normalized metadata: amplitude_g, frequency_hz, noise_level.
+src/training/train_lstm_two_head.py:95:    required = [f"amplitude_g_{split}", f"frequency_hz_{split}", f"noise_level_{split}"]
+src/training/train_lstm_two_head.py:97:        if key not in dataset:
+src/training/train_lstm_two_head.py:102:            dataset[f"amplitude_g_{split}"],
+src/training/train_lstm_two_head.py:103:            dataset[f"frequency_hz_{split}"],
+src/training/train_lstm_two_head.py:104:            dataset[f"noise_level_{split}"],
+src/training/train_lstm_two_head.py:118:def get_case_ids(dataset: Dict[str, np.ndarray], split: str, n_samples: int) -> np.ndarray:
+src/training/train_lstm_two_head.py:121:    if key in dataset:
+src/training/train_lstm_two_head.py:122:        return dataset[key].astype(int)
+src/training/train_lstm_two_head.py:123:    return np.arange(n_samples, dtype=int)
+src/training/train_lstm_two_head.py:141:        dataset = TensorDataset(x_tensor, y_tensor, mask_tensor)
+src/training/train_lstm_two_head.py:144:        dataset = TensorDataset(x_tensor, meta_tensor, y_tensor, mask_tensor)
+src/training/train_lstm_two_head.py:146:    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
+src/training/train_lstm_two_head.py:467:    dataset = load_npz(Path(args.data))
+src/training/train_lstm_two_head.py:469:        if key not in dataset:
+src/training/train_lstm_two_head.py:472:    X_train = downsample_sequence(dataset["X_train"].astype(np.float32), args.sequence_stride)
+src/training/train_lstm_two_head.py:473:    X_val = downsample_sequence(dataset["X_val"].astype(np.float32), args.sequence_stride)
+src/training/train_lstm_two_head.py:474:    X_test = downsample_sequence(dataset["X_test"].astype(np.float32), args.sequence_stride)
+src/training/train_lstm_two_head.py:476:    y_train = dataset["y_train"].astype(np.float32)
+src/training/train_lstm_two_head.py:477:    y_val = dataset["y_val"].astype(np.float32)
+src/training/train_lstm_two_head.py:478:    y_test = dataset["y_test"].astype(np.float32)
+src/training/train_lstm_two_head.py:484:    case_id_train = get_case_ids(dataset, "train", X_train.shape[0])
+src/training/train_lstm_two_head.py:485:    case_id_val = get_case_ids(dataset, "val", X_val.shape[0])
+src/training/train_lstm_two_head.py:486:    case_id_test = get_case_ids(dataset, "test", X_test.shape[0])
+src/training/train_lstm_two_head.py:489:        meta_train, meta_mean, meta_std = build_meta_features(dataset, "train")
+src/training/train_lstm_two_head.py:490:        meta_val, _, _ = build_meta_features(dataset, "val", meta_mean, meta_std)
+src/training/train_lstm_two_head.py:491:        meta_test, _, _ = build_meta_features(dataset, "test", meta_mean, meta_std)
+src/training/train_lstm_two_head.py:606:        "original_sequence_length": int(dataset["X_train"].shape[1]),
+src/models/lstm_two_head.py:36:                可选条件变量，如 amplitude_g, frequency_hz, noise_level。
+src/models/lstm.py:22:        Version B: 输入结构响应时程 + 元信息条件变量，例如 amplitude_g、frequency_hz、noise_level。
+src/models/lstm.py:122:            # 如果使用 amplitude_g / frequency_hz / noise_level 等元信息。
+src/evaluation/run_seed_robustness.py:48:def load_feature_dataset(npz_path: Path) -> tuple[np.ndarray, np.ndarray, dict]:
+src/evaluation/run_seed_robustness.py:134:        or lower in {"noise_level", "amplitude_g", "frequency_hz"}
+src/evaluation/run_seed_robustness.py:282:                    max_iter=30000,
+src/evaluation/run_seed_robustness.py:296:            {"n_estimators": 200, "max_depth": 2, "min_samples_leaf": 1},
+src/evaluation/run_seed_robustness.py:297:            {"n_estimators": 300, "max_depth": 2, "min_samples_leaf": 2},
+src/evaluation/run_seed_robustness.py:298:            {"n_estimators": 300, "max_depth": 3, "min_samples_leaf": 2},
+src/evaluation/run_seed_robustness.py:299:            {"n_estimators": 500, "max_depth": 3, "min_samples_leaf": 3},
+src/evaluation/run_seed_robustness.py:305:                f"_depth_{cfg['max_depth']}_leaf_{cfg['min_samples_leaf']}"
+src/evaluation/run_seed_robustness.py:310:                min_samples_leaf=cfg["min_samples_leaf"],
+src/evaluation/run_seed_robustness.py:320:def split_indices(n_samples: int, seed: int, train_ratio: float, val_ratio: float) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+src/evaluation/run_seed_robustness.py:331:    rng = np.random.default_rng(seed)
+src/evaluation/run_seed_robustness.py:332:    perm = rng.permutation(n_samples)
+src/evaluation/run_seed_robustness.py:334:    n_train = int(round(n_samples * train_ratio))
+src/evaluation/run_seed_robustness.py:335:    n_val = int(round(n_samples * val_ratio))
+src/evaluation/run_seed_robustness.py:512:        "## 1. Dataset",
+src/evaluation/run_seed_robustness.py:731:    X, y, meta = load_feature_dataset(args.features)
+src/evaluation/run_seed_robustness.py:750:            n_samples=X.shape[0],
+src/evaluation/run_seed_robustness.py:812:        "n_samples": int(X.shape[0]),
+src/evaluation/plot_debug_dataset.py:3:    src/evaluation/plot_debug_dataset.py
+src/evaluation/plot_debug_dataset.py:6:    Visualize the generated debug dataset before model training.
+src/evaluation/plot_debug_dataset.py:9:    data_processed/debug_dataset.npz
+src/evaluation/plot_debug_dataset.py:12:    results/figures/debug_dataset/
+src/evaluation/plot_debug_dataset.py:15:        dataset_damage_distribution.png
+src/evaluation/plot_debug_dataset.py:16:        dataset_noise_distribution.png
+src/evaluation/plot_debug_dataset.py:17:        dataset_response_amplitude_summary.png
+src/evaluation/plot_debug_dataset.py:43:def load_dataset(path: Path) -> Dict[str, np.ndarray]:
+src/evaluation/plot_debug_dataset.py:45:    Load the debug dataset.
+src/evaluation/plot_debug_dataset.py:48:        读取 data_processed/debug_dataset.npz。
+src/evaluation/plot_debug_dataset.py:53:        raise FileNotFoundError(f"Dataset file not found: {path}")
+src/evaluation/plot_debug_dataset.py:62:def check_required_keys(dataset: Dict[str, np.ndarray]) -> None:
+src/evaluation/plot_debug_dataset.py:73:        if key not in dataset:
+src/evaluation/plot_debug_dataset.py:75:            raise KeyError(f"Required key '{key}' not found. Available keys: {list(dataset.keys())}")
+src/evaluation/plot_debug_dataset.py:78:def select_case_ids(n_samples: int, n_cases: int, seed: int) -> np.ndarray:
+src/evaluation/plot_debug_dataset.py:86:    rng = np.random.default_rng(seed)
+src/evaluation/plot_debug_dataset.py:89:    n_cases = min(n_cases, n_samples)
+src/evaluation/plot_debug_dataset.py:92:    case_ids = rng.choice(np.arange(n_samples), size=n_cases, replace=False)
+src/evaluation/plot_debug_dataset.py:227:    plt.savefig(output_dir / "dataset_damage_distribution.png", dpi=200)
+src/evaluation/plot_debug_dataset.py:234:def plot_noise_distribution(dataset: Dict[str, np.ndarray], output_dir: Path) -> None:
+src/evaluation/plot_debug_dataset.py:239:        如果数据集中有 noise_level，则绘制噪声水平分布。
+src/evaluation/plot_debug_dataset.py:242:    if "noise_level" not in dataset:
+src/evaluation/plot_debug_dataset.py:243:        # 如果没有 noise_level，则跳过。
+src/evaluation/plot_debug_dataset.py:244:        print("Skip noise distribution: key 'noise_level' not found.")
+src/evaluation/plot_debug_dataset.py:247:    noise_level = dataset["noise_level"]
+src/evaluation/plot_debug_dataset.py:253:    plt.hist(noise_level, bins=[-0.01, 0.025, 0.075, 0.15, 0.25])
+src/evaluation/plot_debug_dataset.py:268:    plt.savefig(output_dir / "dataset_noise_distribution.png", dpi=200)
+src/evaluation/plot_debug_dataset.py:304:    plt.savefig(output_dir / "dataset_response_amplitude_summary.png", dpi=200)
+src/evaluation/plot_debug_dataset.py:311:def plot_debug_dataset(dataset_path: Path, output_dir: Path, n_cases: int, seed: int) -> None:
+src/evaluation/plot_debug_dataset.py:319:    dataset = load_dataset(dataset_path)
+src/evaluation/plot_debug_dataset.py:322:    check_required_keys(dataset)
+src/evaluation/plot_debug_dataset.py:325:    X = dataset["X_abs_accel"]
+src/evaluation/plot_debug_dataset.py:326:    # 输入加速度，形状为 (n_samples, n_steps, n_story)。
+src/evaluation/plot_debug_dataset.py:328:    y = dataset["y_damage"]
+src/evaluation/plot_debug_dataset.py:329:    # 损伤标签，形状为 (n_samples, n_story)。
+src/evaluation/plot_debug_dataset.py:331:    dt = float(dataset["dt"])
+src/evaluation/plot_debug_dataset.py:337:    case_ids = select_case_ids(X.shape[0], n_cases, seed)
+src/evaluation/plot_debug_dataset.py:352:    plot_noise_distribution(dataset, output_dir)
+src/evaluation/plot_debug_dataset.py:358:    print("Debug dataset plotting completed.")
+src/evaluation/plot_debug_dataset.py:359:    print(f"Dataset path: {dataset_path}")
+src/evaluation/plot_debug_dataset.py:377:    parser.add_argument("--dataset", type=str, default="data_processed/debug_dataset.npz")
+src/evaluation/plot_debug_dataset.py:378:    # --dataset：输入数据集路径。
+src/evaluation/plot_debug_dataset.py:380:    parser.add_argument("--output-dir", type=str, default="results/figures/debug_dataset")
+src/evaluation/plot_debug_dataset.py:399:    plot_debug_dataset(
+src/evaluation/plot_debug_dataset.py:400:        dataset_path=Path(args.dataset),
+src/evaluation/plot_debug_dataset.py:402:        n_cases=args.n_cases,
+src/evaluation/run_zero_aware_hierarchical.py:56:class DatasetSplit:
+src/evaluation/run_zero_aware_hierarchical.py:159:def load_dataset(features_path: Path, feature_names_path: Path | None = None) -> DatasetSplit:
+src/evaluation/run_zero_aware_hierarchical.py:194:            "for example shape [n_cases, 4]."
+src/evaluation/run_zero_aware_hierarchical.py:205:    return DatasetSplit(
+src/evaluation/run_zero_aware_hierarchical.py:244:    n_cases, n_stories = y_case_story.shape
+src/evaluation/run_zero_aware_hierarchical.py:245:    if X_case.shape[0] != n_cases:
+src/evaluation/run_zero_aware_hierarchical.py:246:        raise ValueError(f"X_case and y_case_story have inconsistent case counts: {X_case.shape[0]} vs {n_cases}")
+src/evaluation/run_zero_aware_hierarchical.py:251:    story_index = np.tile(np.arange(n_stories), reps=n_cases)
+src/evaluation/run_zero_aware_hierarchical.py:264:def make_expanded_split(dataset: DatasetSplit, add_story_onehot: bool = True) -> ExpandedSplit:
+src/evaluation/run_zero_aware_hierarchical.py:274:        dataset.X_train, dataset.y_train, dataset.train_case_id, add_story_onehot=add_story_onehot
+src/evaluation/run_zero_aware_hierarchical.py:277:        dataset.X_val, dataset.y_val, dataset.val_case_id, add_story_onehot=add_story_onehot
+src/evaluation/run_zero_aware_hierarchical.py:280:        dataset.X_test, dataset.y_test, dataset.test_case_id, add_story_onehot=add_story_onehot
+src/evaluation/run_zero_aware_hierarchical.py:477:            min_samples_leaf=2,
+src/evaluation/run_zero_aware_hierarchical.py:485:            min_samples_leaf=2,
+src/evaluation/run_zero_aware_hierarchical.py:518:            min_samples_leaf=2,
+src/evaluation/run_zero_aware_hierarchical.py:525:            min_samples_leaf=2,
+src/evaluation/run_zero_aware_hierarchical.py:832:        "## 2. Dataset and settings",
+src/evaluation/run_zero_aware_hierarchical.py:906:    dataset = load_dataset(Path(args.features), Path(args.feature_names) if args.feature_names else None)
+src/evaluation/run_zero_aware_hierarchical.py:907:    split = make_expanded_split(dataset, add_story_onehot=not args.no_story_onehot)
+src/evaluation/summarize_noise_robustness.py:32:def read_table(table_path: Path, noise_level: float, tag: str) -> pd.DataFrame:
+src/evaluation/summarize_noise_robustness.py:50:        "noise_level": [noise_level] * len(df),
+src/evaluation/summarize_noise_robustness.py:51:        "noise_percent": [noise_level * 100.0] * len(df),
+src/evaluation/summarize_noise_robustness.py:112:    if not (len(args.tables) == len(args.noise_levels) == len(args.tags)):
+src/evaluation/summarize_noise_robustness.py:119:    for table, noise, tag in zip(args.tables, args.noise_levels, args.tags):
+src/evaluation/summarize_noise_robustness.py:123:        rows.append(read_table(table_path, noise_level=noise, tag=tag))
+src/evaluation/summarize_noise_robustness.py:195:    lines.append(f"- Number of noise levels: `{len(args.noise_levels)}`")
+src/evaluation/summarize_noise_robustness.py:196:    lines.append(f"- Noise levels: `{args.noise_levels}`")
+src/evaluation/summarize_noise_robustness.py:197:    lines.append("- Each noise level corresponds to an independently generated controlled simulation dataset.")
+src/evaluation/summarize_noise_robustness.py:225:    lines.append("- Because each noise level uses an independently generated dataset, the trend does not need to be strictly monotonic.")
+src/evaluation/check_damage_dataset_quality.py:2:Check dataset quality before large-scale model training.
+src/evaluation/check_damage_dataset_quality.py:5:This script inspects a raw SHM dataset and, optionally, a normalized split dataset.
+src/evaluation/check_damage_dataset_quality.py:13:python -m src.evaluation.check_damage_dataset_quality \
+src/evaluation/check_damage_dataset_quality.py:14:  --raw-dataset data_processed/debug_plus_500_dataset.npz \
+src/evaluation/check_damage_dataset_quality.py:15:  --split-dataset data_processed/debug_plus_500_split_normalized.npz \
+src/evaluation/check_damage_dataset_quality.py:16:  --output-json results/tables/dataset_quality/debug_plus_500_quality_summary.json
+src/evaluation/check_damage_dataset_quality.py:96:        "n_cases": to_int(y.shape[0]),
+src/evaluation/check_damage_dataset_quality.py:161:def summarize_raw_dataset(path: Path) -> Dict[str, Any]:
+src/evaluation/check_damage_dataset_quality.py:164:    Summarize the raw dataset.
+src/evaluation/check_damage_dataset_quality.py:192:    for key in ["amplitude_g", "frequency_hz", "noise_level", "case_id"]:
+src/evaluation/check_damage_dataset_quality.py:200:def summarize_split_dataset(path: Path) -> Dict[str, Any]:
+src/evaluation/check_damage_dataset_quality.py:203:    Summarize train/val/test split dataset.
+src/evaluation/check_damage_dataset_quality.py:230:        for meta_base in ["amplitude_g", "frequency_hz", "noise_level", "case_id"]:
+src/evaluation/check_damage_dataset_quality.py:248:    n_cases = raw_damage["n_cases"]
+src/evaluation/check_damage_dataset_quality.py:254:    if n_cases < 500:
+src/evaluation/check_damage_dataset_quality.py:255:        flags.append("n_cases_lt_500: dataset is still too small for stable model comparison.")
+src/evaluation/check_damage_dataset_quality.py:282:    parser = argparse.ArgumentParser(description="Check SHM damage dataset quality before large-scale training.")
+src/evaluation/check_damage_dataset_quality.py:283:    parser.add_argument("--raw-dataset", type=Path, required=True, help="Raw dataset npz path.")
+src/evaluation/check_damage_dataset_quality.py:284:    parser.add_argument("--split-dataset", type=Path, default=None, help="Optional split/normalized dataset npz path.")
+src/evaluation/check_damage_dataset_quality.py:300:        "raw": summarize_raw_dataset(args.raw_dataset),
+src/evaluation/check_damage_dataset_quality.py:303:    if args.split_dataset is not None:
+src/evaluation/check_damage_dataset_quality.py:304:        summary["split"] = summarize_split_dataset(args.split_dataset)
+src/evaluation/check_damage_dataset_quality.py:316:    print("Dataset quality check completed.")
+src/evaluation/check_damage_dataset_quality.py:317:    print(f"Raw dataset: {args.raw_dataset}")
+src/evaluation/check_damage_dataset_quality.py:318:    print(f"n_cases: {raw_damage['n_cases']}")
+src/evaluation/run_damage_aware_weighting.py:66:def load_feature_dataset(npz_path: Path) -> Dict[str, np.ndarray]:
+src/evaluation/run_damage_aware_weighting.py:68:    Load feature dataset with flexible key detection.
+src/evaluation/run_damage_aware_weighting.py:109:        raise ValueError("Feature arrays must be 2D: (n_samples, n_features).")
+src/evaluation/run_damage_aware_weighting.py:423:                for min_samples_leaf in [1, 2, 4]:
+src/evaluation/run_damage_aware_weighting.py:427:                        min_samples_leaf=min_samples_leaf,
+src/evaluation/run_damage_aware_weighting.py:433:                            f"random_forest_n_{n_estimators}_depth_{max_depth}_leaf_{min_samples_leaf}",
+src/evaluation/run_damage_aware_weighting.py:519:    n_samples, n_outputs = y_true.shape
+src/evaluation/run_damage_aware_weighting.py:520:    for i in range(n_samples):
+src/evaluation/run_damage_aware_weighting.py:792:    dataset = load_feature_dataset(features_path)
+src/evaluation/run_damage_aware_weighting.py:795:    if dataset["F_train"].shape[1] != len(feature_names):
+src/evaluation/run_damage_aware_weighting.py:797:            f"Feature count mismatch: F_train has {dataset['F_train'].shape[1]} columns, "
+src/evaluation/run_damage_aware_weighting.py:801:    F_train = dataset["F_train"]
+src/evaluation/run_damage_aware_weighting.py:802:    F_val = dataset["F_val"]
+src/evaluation/run_damage_aware_weighting.py:803:    F_test = dataset["F_test"]
+src/evaluation/run_damage_aware_weighting.py:804:    y_train = dataset["y_train"]
+src/evaluation/run_damage_aware_weighting.py:805:    y_val = dataset["y_val"]
+src/evaluation/run_damage_aware_weighting.py:806:    y_test = dataset["y_test"]
+src/evaluation/run_damage_aware_weighting.py:809:    print(f"Feature dataset: {features_path}")
+src/evaluation/run_damage_aware_weighting.py:1090:    parser.add_argument("--features", required=True, help="Path to physics feature dataset NPZ.")
+src/evaluation/run_clean_paired_baseline.py:342:            min_samples_leaf=2,
+src/evaluation/run_clean_paired_baseline.py:406:            min_samples_leaf=2,
+src/evaluation/run_clean_paired_baseline.py:414:            min_samples_leaf=2,
+src/evaluation/run_clean_paired_baseline.py:806:            min_samples_leaf=2,
+src/evaluation/run_clean_paired_baseline.py:837:            min_samples_leaf=2,
+src/evaluation/run_clean_paired_baseline.py:845:            min_samples_leaf=2,
+src/evaluation/run_damage_gated_calibration.py:36:    """One dataset split. 中文：保存一个 train/val/test 划分。"""
+src/evaluation/run_damage_gated_calibration.py:66:def load_dataset(path: Path) -> Dict[str, SplitData]:
+src/evaluation/run_damage_gated_calibration.py:166:            n_estimators=400, max_depth=6, min_samples_leaf=3,
+src/evaluation/run_damage_gated_calibration.py:528:    p.add_argument("--dataset-tag", type=str, default="debug_plus_500")
+src/evaluation/run_damage_gated_calibration.py:545:    print(f"Feature dataset: {args.features}")
+src/evaluation/run_damage_gated_calibration.py:546:    data = load_dataset(args.features)
+src/evaluation/run_case_level_any_damage_diagnosis.py:4:Case-level any-damage diagnosis for the debug_plus_500 structural state dataset.
+src/evaluation/run_case_level_any_damage_diagnosis.py:151:        train: [n_cases_train, n_features]
+src/evaluation/run_case_level_any_damage_diagnosis.py:152:        val:   [n_cases_val, n_features]
+src/evaluation/run_case_level_any_damage_diagnosis.py:153:        test:  [n_cases_test, n_features]
+src/evaluation/run_case_level_any_damage_diagnosis.py:172:                f"Feature key {key} should be a 2D matrix [n_cases, n_features], "
+src/evaluation/run_case_level_any_damage_diagnosis.py:183:        Resolve story damage labels from split dataset.
+src/evaluation/run_case_level_any_damage_diagnosis.py:188:        train: [n_cases_train, n_stories]
+src/evaluation/run_case_level_any_damage_diagnosis.py:189:        val:   [n_cases_val, n_stories]
+src/evaluation/run_case_level_any_damage_diagnosis.py:190:        test:  [n_cases_test, n_stories]
+src/evaluation/run_case_level_any_damage_diagnosis.py:249:        n_cases = y_story.shape[0]
+src/evaluation/run_case_level_any_damage_diagnosis.py:250:        if X.shape[0] == n_cases:
+src/evaluation/run_case_level_any_damage_diagnosis.py:252:        elif X.shape[0] == n_cases * 4:
+src/evaluation/run_case_level_any_damage_diagnosis.py:260:            X_case = X.reshape(n_cases, 4, X.shape[1]).mean(axis=1)
+src/evaluation/run_case_level_any_damage_diagnosis.py:263:                f"Cannot align {split}: feature rows={X.shape[0]}, label cases={n_cases}. "
+src/evaluation/run_case_level_any_damage_diagnosis.py:264:                f"Expected {n_cases} or {n_cases * 4}."
+src/evaluation/run_case_level_any_damage_diagnosis.py:297:            min_samples_leaf=2,
+src/evaluation/run_case_level_any_damage_diagnosis.py:305:            min_samples_leaf=2,
+src/evaluation/run_case_level_any_damage_diagnosis.py:562:    lines.append(f"- Split dataset: `{args.split}`")
+src/evaluation/run_case_level_any_damage_diagnosis.py:588:    parser.add_argument("--split", required=True, type=Path, help="Path to split normalized dataset npz.")
+src/evaluation/diagnose_zero_damage_separability.py:13:  (n_cases, n_stories).
+src/evaluation/diagnose_zero_damage_separability.py:167:        n_cases, n_stories = y.shape
+src/evaluation/diagnose_zero_damage_separability.py:168:        story_idx = np.tile(np.arange(n_stories), n_cases)
+src/evaluation/diagnose_zero_damage_separability.py:180:    n_cases, n_features = X_case.shape
+src/evaluation/diagnose_zero_damage_separability.py:184:    if y_case_story.shape[0] != n_cases:
+src/evaluation/diagnose_zero_damage_separability.py:186:            f"Cannot expand features: X has {n_cases} cases but y has {y_case_story.shape[0]} cases."
+src/evaluation/diagnose_zero_damage_separability.py:191:    story_idx = np.tile(np.arange(n_stories), n_cases)
+src/evaluation/diagnose_zero_damage_separability.py:193:    story_one_hot = np.zeros((n_cases * n_stories, n_stories), dtype=float)
+src/evaluation/diagnose_zero_damage_separability.py:194:    story_one_hot[np.arange(n_cases * n_stories), story_idx] = 1.0
+src/evaluation/diagnose_zero_damage_separability.py:288:def load_aligned_dataset(
+src/evaluation/diagnose_zero_damage_separability.py:389:                        min_samples_leaf=2,
+src/evaluation/diagnose_zero_damage_separability.py:405:                        min_samples_leaf=2,
+src/evaluation/diagnose_zero_damage_separability.py:838:    data, feature_names, meta = load_aligned_dataset(args.features, args.feature_names)
+src/evaluation/diagnose_zero_damage_separability.py:863:    print("Loaded dataset:")
+src/evaluation/diagnose_zero_damage_separability.py:1057:    report.append("## 1. Dataset alignment\n")
+src/evaluation/analyze_dataset_distribution.py:3:    src/evaluation/analyze_dataset_distribution.py
+src/evaluation/analyze_dataset_distribution.py:6:    Diagnose the generated OpenSeesPy dataset before moving to sequence models such as LSTM / TCN.
+src/evaluation/analyze_dataset_distribution.py:9:    data_processed/debug_plus_100_dataset.npz
+src/evaluation/analyze_dataset_distribution.py:12:    results/tables/dataset_distribution/debug_plus_100_distribution_summary.json
+src/evaluation/analyze_dataset_distribution.py:13:    results/tables/dataset_distribution/debug_plus_100_top_response_cases.csv
+src/evaluation/analyze_dataset_distribution.py:14:    results/tables/dataset_distribution/debug_plus_100_case_summary.csv
+src/evaluation/analyze_dataset_distribution.py:16:    results/figures/dataset_distribution/debug_plus_100_damage_distribution_by_story.png
+src/evaluation/analyze_dataset_distribution.py:17:    results/figures/dataset_distribution/debug_plus_100_damaged_story_count.png
+src/evaluation/analyze_dataset_distribution.py:18:    results/figures/dataset_distribution/debug_plus_100_excitation_distribution.png
+src/evaluation/analyze_dataset_distribution.py:19:    results/figures/dataset_distribution/debug_plus_100_noise_distribution.png
+src/evaluation/analyze_dataset_distribution.py:20:    results/figures/dataset_distribution/debug_plus_100_max_response_distribution.png
+src/evaluation/analyze_dataset_distribution.py:21:    results/figures/dataset_distribution/debug_plus_100_frequency_vs_max_response.png
+src/evaluation/analyze_dataset_distribution.py:22:    results/figures/dataset_distribution/debug_plus_100_amplitude_vs_max_response.png
+src/evaluation/analyze_dataset_distribution.py:23:    results/figures/dataset_distribution/debug_plus_100_damage_sum_vs_max_response.png
+src/evaluation/analyze_dataset_distribution.py:24:    results/figures/dataset_distribution/debug_plus_100_damage_heatmap_cases_by_story.png
+src/evaluation/analyze_dataset_distribution.py:27:    This script checks whether the dataset distribution is reasonable before training
+src/evaluation/analyze_dataset_distribution.py:141:            "noise_level",
+src/evaluation/analyze_dataset_distribution.py:148:    # 结构绝对加速度响应，形状：(n_cases, n_steps, n_story)。
+src/evaluation/analyze_dataset_distribution.py:151:    # 损伤标签，形状：(n_cases, n_story)。
+src/evaluation/analyze_dataset_distribution.py:193:        "noise_level": data["noise_level"],
+src/evaluation/analyze_dataset_distribution.py:201:    Compute global dataset summary.
+src/evaluation/analyze_dataset_distribution.py:210:    n_cases = int(y.shape[0])
+src/evaluation/analyze_dataset_distribution.py:255:    unique_noise, noise_counts = np.unique(case_summary["noise_level"], return_counts=True)
+src/evaluation/analyze_dataset_distribution.py:274:        "n_cases": n_cases,
+src/evaluation/analyze_dataset_distribution.py:356:        "noise_level",
+src/evaluation/analyze_dataset_distribution.py:386:                "noise_level": float(case_summary["noise_level"][i]),
+src/evaluation/analyze_dataset_distribution.py:432:        "noise_level",
+src/evaluation/analyze_dataset_distribution.py:462:                "noise_level": float(case_summary["noise_level"][i]),
+src/evaluation/analyze_dataset_distribution.py:631:    noise_level = case_summary["noise_level"]
+src/evaluation/analyze_dataset_distribution.py:634:    unique_levels, counts = np.unique(noise_level, return_counts=True)
+src/evaluation/analyze_dataset_distribution.py:828:    Summarize train/val/test distribution if split dataset is provided.
+src/evaluation/analyze_dataset_distribution.py:844:        "noise_level_train",
+src/evaluation/analyze_dataset_distribution.py:845:        "noise_level_val",
+src/evaluation/analyze_dataset_distribution.py:846:        "noise_level_test",
+src/evaluation/analyze_dataset_distribution.py:873:        noise = split_data[f"noise_level_{split}"]
+src/evaluation/analyze_dataset_distribution.py:883:            "n_samples": int(y.shape[0]),
+src/evaluation/analyze_dataset_distribution.py:909:    dataset_path: Path,
+src/evaluation/analyze_dataset_distribution.py:917:    Run full dataset distribution analysis.
+src/evaluation/analyze_dataset_distribution.py:923:    data = load_npz(dataset_path)
+src/evaluation/analyze_dataset_distribution.py:1034:    print("\nDataset distribution analysis completed.")
+src/evaluation/analyze_dataset_distribution.py:1035:    print(f"Dataset: {dataset_path}")
+src/evaluation/analyze_dataset_distribution.py:1040:    print(f"n_cases: {global_summary['n_cases']}")
+src/evaluation/analyze_dataset_distribution.py:1061:        "--dataset",
+src/evaluation/analyze_dataset_distribution.py:1063:        default="data_processed/debug_plus_100_dataset.npz",
+src/evaluation/analyze_dataset_distribution.py:1085:        default="results/figures/dataset_distribution",
+src/evaluation/analyze_dataset_distribution.py:1092:        default="results/tables/dataset_distribution",
+src/evaluation/analyze_dataset_distribution.py:1127:        dataset_path=Path(args.dataset),
+src/evaluation/run_damage_stratified_analysis.py:95:def load_feature_dataset(path: Path) -> tuple[np.ndarray, np.ndarray, dict]:
+src/evaluation/run_damage_stratified_analysis.py:98:    Load a feature dataset from several possible NPZ layouts.
+src/evaluation/run_damage_stratified_analysis.py:112:        raise FileNotFoundError(f"Feature dataset not found: {path}")
+src/evaluation/run_damage_stratified_analysis.py:205:            "input_noise_level",
+src/evaluation/run_damage_stratified_analysis.py:206:            "noise_level",
+src/evaluation/run_damage_stratified_analysis.py:237:            and not any(meta in name for meta in ("input_noise_level", "amplitude_g", "frequency_hz"))
+src/evaluation/run_damage_stratified_analysis.py:330:                for min_samples_leaf in [1, 2, 5]:
+src/evaluation/run_damage_stratified_analysis.py:335:                                f"depth_{max_depth}_leaf_{min_samples_leaf}"
+src/evaluation/run_damage_stratified_analysis.py:340:                                min_samples_leaf=min_samples_leaf,
+src/evaluation/run_damage_stratified_analysis.py:607:    n_cases, n_stories = y_true.shape
+src/evaluation/run_damage_stratified_analysis.py:608:    for local_case_idx in range(n_cases):
+src/evaluation/run_damage_stratified_analysis.py:918:    lines.append("## 1. Dataset")
+src/evaluation/run_damage_stratified_analysis.py:921:    lines.append(f"- Number of samples: `{metadata.get('n_samples', 'unknown')}`")
+src/evaluation/run_damage_stratified_analysis.py:1094:    F, y, dataset_meta = load_feature_dataset(args.features)
+src/evaluation/run_damage_stratified_analysis.py:1277:        **dataset_meta,
+src/evaluation/run_damage_stratified_analysis.py:1280:        "n_samples": int(F.shape[0]),
+src/evaluation/synthesize_final_evidence.py:143:def load_physics_ablation(project_root: Path, dataset_tag: str) -> tuple[pd.DataFrame, dict[str, Any], Path | None]:
+src/evaluation/synthesize_final_evidence.py:148:            f"results/tables/physics_ablation/{dataset_tag}/ablation_model_comparison.csv",
+src/evaluation/synthesize_final_evidence.py:417:    parser.add_argument("--dataset-tag", type=str, default="debug_plus_500")
+src/evaluation/synthesize_final_evidence.py:425:    physics_df, physics_summary, physics_path = load_physics_ablation(project_root, args.dataset_tag)
+src/evaluation/synthesize_final_evidence.py:427:    paired_report = project_root / f"results/tables/paired_baseline/{args.dataset_tag}/paired_baseline_diagnosis_report.md"
+src/evaluation/synthesize_final_evidence.py:428:    clean_report = project_root / f"results/tables/clean_paired_baseline/{args.dataset_tag}/clean_paired_baseline_report.md"
+src/evaluation/run_story_local_feature_diagnosis.py:279:def build_story_dataset(
+src/evaluation/run_story_local_feature_diagnosis.py:453:            min_samples_leaf=2,
+src/evaluation/run_story_local_feature_diagnosis.py:479:            min_samples_leaf=2,
+src/evaluation/run_story_local_feature_diagnosis.py:617:        X_l, y_l, sid_l, names_l = build_story_dataset(
+src/evaluation/summarize_physics_ablation.py:349:        "- If simple regularized linear models outperform tree models, the current dataset is more consistent with a low-sample, noisy, weakly nonlinear regression setting."
+src/evaluation/run_threshold_gated_calibration.py:67:def load_feature_dataset(npz_path: Path) -> Dict[str, np.ndarray]:
+src/evaluation/run_threshold_gated_calibration.py:240:    n_cases, n_stories = y_2d.shape
+src/evaluation/run_threshold_gated_calibration.py:249:    story_ids = np.tile(np.arange(n_stories), reps=n_cases)
+src/evaluation/run_threshold_gated_calibration.py:256:        case_ids_entry = np.repeat(np.arange(n_cases), repeats=n_stories)
+src/evaluation/run_threshold_gated_calibration.py:313:            min_samples_leaf=2,
+src/evaluation/run_threshold_gated_calibration.py:707:    dataset = load_feature_dataset(args.features)
+src/evaluation/run_threshold_gated_calibration.py:708:    n_original_features = dataset["F_train"].shape[1]
+src/evaluation/run_threshold_gated_calibration.py:715:    print(f"Feature dataset: {args.features}")
+src/evaluation/run_threshold_gated_calibration.py:727:            dataset["F_train"], dataset["y_train"], selected_indices, dataset.get("case_id_train")
+src/evaluation/run_threshold_gated_calibration.py:730:            dataset["F_val"], dataset["y_val"], selected_indices, dataset.get("case_id_val")
+src/evaluation/run_threshold_gated_calibration.py:733:            dataset["F_test"], dataset["y_test"], selected_indices, dataset.get("case_id_test")
+src/evaluation/run_paired_baseline_diagnosis.py:288:def build_paired_dataset(
+src/evaluation/run_paired_baseline_diagnosis.py:299:    Build paired baseline feature dataset.
+src/evaluation/run_paired_baseline_diagnosis.py:420:            min_samples_leaf=2,
+src/evaluation/run_paired_baseline_diagnosis.py:427:            min_samples_leaf=2,
+src/evaluation/run_paired_baseline_diagnosis.py:454:            min_samples_leaf=2,
+src/evaluation/run_paired_baseline_diagnosis.py:462:            min_samples_leaf=2,
+src/evaluation/run_paired_baseline_diagnosis.py:852:    paired_split, y_split, paired_names, input_cols = build_paired_dataset(
+src/evaluation/run_paired_baseline_diagnosis.py:919:    with open(args.output_dir / "paired_baseline_dataset_summary.json", "w", encoding="utf-8") as f:
+src/evaluation/run_paired_baseline_diagnosis.py:927:    print(f"Paired feature dataset: {args.paired_output}")
+src/preprocessing/preprocess_response.py:6:    Preprocess the OpenSeesPy debug dataset before PyTorch training.
+src/preprocessing/preprocess_response.py:9:    data_processed/debug_dataset.npz
+src/preprocessing/preprocess_response.py:20:    6. Save the preprocessed dataset.
+src/preprocessing/preprocess_response.py:50:    input_path: Path = Path("data_processed/debug_dataset.npz")
+src/preprocessing/preprocess_response.py:78:def load_npz_dataset(path: Path, x_key: str, y_key: str) -> Dict[str, np.ndarray]:
+src/preprocessing/preprocess_response.py:80:    Load a .npz dataset and return a normal dictionary.
+src/preprocessing/preprocess_response.py:88:        raise FileNotFoundError(f"Input dataset not found: {path}")
+src/preprocessing/preprocess_response.py:94:    dataset = {key: data[key] for key in data.keys()}
+src/preprocessing/preprocess_response.py:97:    if x_key not in dataset:
+src/preprocessing/preprocess_response.py:99:        raise KeyError(f"Input key '{x_key}' not found. Available keys: {list(dataset.keys())}")
+src/preprocessing/preprocess_response.py:101:    if y_key not in dataset:
+src/preprocessing/preprocess_response.py:103:        raise KeyError(f"Label key '{y_key}' not found. Available keys: {list(dataset.keys())}")
+src/preprocessing/preprocess_response.py:105:    return dataset
+src/preprocessing/preprocess_response.py:118:        raise ValueError(f"X must have shape (n_samples, n_steps, n_channels), got {X.shape}")
+src/preprocessing/preprocess_response.py:122:        raise ValueError(f"y must have shape (n_samples, n_targets), got {y.shape}")
+src/preprocessing/preprocess_response.py:142:    n_samples: int,
+src/preprocessing/preprocess_response.py:163:    rng = np.random.default_rng(seed)
+src/preprocessing/preprocess_response.py:166:    indices = np.arange(n_samples)
+src/preprocessing/preprocess_response.py:169:    rng.shuffle(indices)
+src/preprocessing/preprocess_response.py:172:    n_train = int(round(n_samples * train_ratio))
+src/preprocessing/preprocess_response.py:175:    n_val = int(round(n_samples * val_ratio))
+src/preprocessing/preprocess_response.py:178:    n_test = n_samples - n_train - n_val
+src/preprocessing/preprocess_response.py:231:    dataset: Dict[str, np.ndarray],
+src/preprocessing/preprocess_response.py:234:    n_samples: int,
+src/preprocessing/preprocess_response.py:237:    Subset metadata arrays such as noise_level, case_id, amplitude_g.
+src/preprocessing/preprocess_response.py:243:    if key not in dataset:
+src/preprocessing/preprocess_response.py:247:    arr = dataset[key]
+src/preprocessing/preprocess_response.py:250:    if arr.shape[0] != n_samples:
+src/preprocessing/preprocess_response.py:258:def preprocess_dataset(config: PreprocessConfig) -> None:
+src/preprocessing/preprocess_response.py:266:    dataset = load_npz_dataset(config.input_path, config.x_key, config.y_key)
+src/preprocessing/preprocess_response.py:269:    X = dataset[config.x_key].astype(np.float64)
+src/preprocessing/preprocess_response.py:272:    y = dataset[config.y_key].astype(np.float64)
+src/preprocessing/preprocess_response.py:278:    n_samples = X.shape[0]
+src/preprocessing/preprocess_response.py:282:        n_samples=n_samples,
+src/preprocessing/preprocess_response.py:335:    for key in ["amplitude_g", "frequency_hz", "noise_level", "case_id"]:
+src/preprocessing/preprocess_response.py:338:        train_part = subset_if_sample_level(dataset, key, train_idx, n_samples)
+src/preprocessing/preprocess_response.py:341:        val_part = subset_if_sample_level(dataset, key, val_idx, n_samples)
+src/preprocessing/preprocess_response.py:344:        test_part = subset_if_sample_level(dataset, key, test_idx, n_samples)
+src/preprocessing/preprocess_response.py:360:    print(f"Input dataset: {config.input_path}")
+src/preprocessing/preprocess_response.py:361:    print(f"Output dataset: {config.output_path}")
+src/preprocessing/preprocess_response.py:387:    parser.add_argument("--input", type=str, default="data_processed/debug_dataset.npz")
+src/preprocessing/preprocess_response.py:425:    preprocess_dataset(config)
+src/preprocessing/create_split_normalized_dataset.py:5:This script converts a raw OpenSeesPy-generated dataset into the split-normalized
+src/preprocessing/create_split_normalized_dataset.py:70:    rng = np.random.default_rng(seed)
+src/preprocessing/create_split_normalized_dataset.py:78:        rng.shuffle(idx)
+src/preprocessing/create_split_normalized_dataset.py:101:    rng.shuffle(train_idx)
+src/preprocessing/create_split_normalized_dataset.py:102:    rng.shuffle(val_idx)
+src/preprocessing/create_split_normalized_dataset.py:103:    rng.shuffle(test_idx)
+src/preprocessing/create_split_normalized_dataset.py:110:    n_cases: int,
+src/preprocessing/create_split_normalized_dataset.py:121:    例如 amplitude_g、frequency_hz、noise_level、case_id 等。
+src/preprocessing/create_split_normalized_dataset.py:131:        if arr.ndim >= 1 and arr.shape[0] == n_cases:
+src/preprocessing/create_split_normalized_dataset.py:141:    parser.add_argument("--raw-dataset", required=True, type=Path)
+src/preprocessing/create_split_normalized_dataset.py:149:    if not args.raw_dataset.exists():
+src/preprocessing/create_split_normalized_dataset.py:150:        raise FileNotFoundError(f"Raw dataset not found: {args.raw_dataset}")
+src/preprocessing/create_split_normalized_dataset.py:152:    raw_npz = np.load(args.raw_dataset, allow_pickle=True)
+src/preprocessing/create_split_normalized_dataset.py:170:        raise ValueError(f"Expected X to have shape (n_cases, seq_len, n_channels), got {X.shape}")
+src/preprocessing/create_split_normalized_dataset.py:173:        raise ValueError(f"Expected y to have shape (n_cases, n_stories), got {y.shape}")
+src/preprocessing/create_split_normalized_dataset.py:178:    n_cases = X.shape[0]
+src/preprocessing/create_split_normalized_dataset.py:219:        n_cases=n_cases,
+src/preprocessing/create_split_normalized_dataset.py:227:    # Ensure case_id exists even if the raw dataset did not store it.
+src/preprocessing/create_split_normalized_dataset.py:230:        case_id = np.arange(n_cases, dtype=np.int64)
+src/preprocessing/create_split_normalized_dataset.py:238:    print("Split-normalized dataset saved.")
+src/preprocessing/create_split_normalized_dataset.py:239:    print(f"Raw dataset: {args.raw_dataset}")
+src/preprocessing/extract_features.py:45:def check_split_dataset(data: dict[str, np.ndarray]) -> None:
+src/preprocessing/extract_features.py:56:        raise ValueError(f"{name} must have shape (n_samples, n_steps, n_channels), got {X.shape}")
+src/preprocessing/extract_features.py:68:        X: shape = (n_samples, n_steps, n_channels)
+src/preprocessing/extract_features.py:71:        F: shape = (n_samples, n_channels * 5)
+src/preprocessing/extract_features.py:79:    # mean_feature：每个样本、每层响应的时间均值，形状 (n_samples, n_channels)。
+src/preprocessing/extract_features.py:118:        "noise_level_train", "noise_level_val", "noise_level_test",
+src/preprocessing/extract_features.py:129:    check_split_dataset(data)
+src/preprocessing/create_sensor_masked_dataset.py:2:Create sensor-masked datasets for sensor sparsity stress testing.
+src/preprocessing/create_sensor_masked_dataset.py:66:    n_cases: int,
+src/preprocessing/create_sensor_masked_dataset.py:85:        if arr.ndim >= 1 and arr.shape[0] == n_cases:
+src/preprocessing/create_sensor_masked_dataset.py:99:    parser.add_argument("--raw-dataset", required=True, type=Path)
+src/preprocessing/create_sensor_masked_dataset.py:100:    parser.add_argument("--split-dataset", required=True, type=Path)
+src/preprocessing/create_sensor_masked_dataset.py:107:    raw_npz = np.load(args.raw_dataset, allow_pickle=True)
+src/preprocessing/create_sensor_masked_dataset.py:108:    split_npz = np.load(args.split_dataset, allow_pickle=True)
+src/preprocessing/create_sensor_masked_dataset.py:114:        raise KeyError("Raw dataset must contain X_abs_accel.")
+src/preprocessing/create_sensor_masked_dataset.py:117:        raise KeyError("Raw dataset must contain y_damage.")
+src/preprocessing/create_sensor_masked_dataset.py:123:        raise ValueError(f"Expected X_abs_accel shape (n_cases, n_steps, n_channels), got {X.shape}")
+src/preprocessing/create_sensor_masked_dataset.py:125:    n_cases, n_steps, n_channels = X.shape
+src/preprocessing/create_sensor_masked_dataset.py:130:        raise KeyError("Split dataset must contain train_idx, val_idx, and test_idx.")
+src/preprocessing/create_sensor_masked_dataset.py:136:    # Create masked raw dataset.
+src/preprocessing/create_sensor_masked_dataset.py:137:    # 中文：创建传感器置零后的 raw dataset。
+src/preprocessing/create_sensor_masked_dataset.py:183:        n_cases=n_cases,
+src/preprocessing/create_sensor_masked_dataset.py:193:    print("Sensor-masked dataset created.")
+src/preprocessing/create_sensor_masked_dataset.py:194:    print(f"Input raw: {args.raw_dataset}")
+src/preprocessing/create_sensor_masked_dataset.py:195:    print(f"Input split: {args.split_dataset}")
+src/preprocessing/filter_physics_features.py:8:This script reads a physics-feature dataset, selects or removes columns by
+src/preprocessing/filter_physics_features.py:9:interpretable feature groups, and writes a new .npz feature dataset plus a
+src/preprocessing/filter_physics_features.py:54:        or "noise_level" in n
+src/preprocessing/filter_physics_features.py:241:        raise FileNotFoundError(f"Input feature dataset not found: {input_npz}")
+src/preprocessing/filter_physics_features.py:321:    print(f"Input feature dataset: {args.input}")
+src/preprocessing/filter_physics_features.py:322:    print(f"Output feature dataset: {args.output}")
+src/preprocessing/extract_physics_features.py:77:    """Ensure response array shape is (n_cases, n_steps, n_stories). / 确保响应数组为三维。"""
+src/preprocessing/extract_physics_features.py:87:def ensure_ground_shape(ground: np.ndarray, n_cases: int, n_steps: int) -> np.ndarray:
+src/preprocessing/extract_physics_features.py:88:    """Ensure ground acceleration shape is (n_cases, n_steps). / 确保地面加速度为二维。"""
+src/preprocessing/extract_physics_features.py:101:        ground = np.tile(ground[None, :], (n_cases, 1))
+src/preprocessing/extract_physics_features.py:106:    if ground.shape != (n_cases, n_steps):
+src/preprocessing/extract_physics_features.py:109:        raise ValueError(f"Ground shape mismatch: got {ground.shape}, expected ({n_cases}, {n_steps})")
+src/preprocessing/extract_physics_features.py:204:    noise_level: float,
+src/preprocessing/extract_physics_features.py:334:        float(noise_level),
+src/preprocessing/extract_physics_features.py:342:        "input_noise_level",
+src/preprocessing/extract_physics_features.py:360:def extract_all_features(response: np.ndarray, ground: np.ndarray, amplitude_g: np.ndarray, frequency_hz: np.ndarray, noise_level: np.ndarray, dt: float, healthy_first_frequency_hz: float, min_fft_freq: float, max_fft_freq: float, eps: float) -> Tuple[np.ndarray, List[str]]:
+src/preprocessing/extract_physics_features.py:367:        row, names = extract_one_case_features(response[i], ground[i], amplitude_g[i], frequency_hz[i], noise_level[i], dt, healthy_first_frequency_hz, min_fft_freq, max_fft_freq, eps)
+src/preprocessing/extract_physics_features.py:407:    parser.add_argument("--raw-dataset", type=str, default="data_processed/debug_plus_100_dataset.npz")
+src/preprocessing/extract_physics_features.py:408:    parser.add_argument("--split-dataset", type=str, default="data_processed/debug_plus_100_split_normalized.npz")
+src/preprocessing/extract_physics_features.py:423:    raw_data = load_npz_as_dict(Path(args.raw_dataset))
+src/preprocessing/extract_physics_features.py:424:    split_data = load_npz_as_dict(Path(args.split_dataset))
+src/preprocessing/extract_physics_features.py:430:    n_cases, n_steps, n_stories = response.shape
+src/preprocessing/extract_physics_features.py:435:    ground = ensure_ground_shape(ground, n_cases=n_cases, n_steps=n_steps)
+src/preprocessing/extract_physics_features.py:441:    if y_damage.shape != (n_cases, n_stories):
+src/preprocessing/extract_physics_features.py:442:        raise ValueError(f"Damage label shape mismatch: got {y_damage.shape}, expected ({n_cases}, {n_stories})")
+src/preprocessing/extract_physics_features.py:448:    _, noise_level = pick_first_available(raw_data, ["noise_level"])
+src/preprocessing/extract_physics_features.py:455:    noise_level = np.asarray(noise_level, dtype=np.float64).reshape(-1)
+src/preprocessing/extract_physics_features.py:466:            raise KeyError(f"Required split key '{required_key}' not found in {args.split_dataset}")
+src/preprocessing/extract_physics_features.py:478:        noise_level=noise_level,
+src/preprocessing/extract_physics_features.py:526:        noise_level_train=noise_level[train_idx],
+src/preprocessing/extract_physics_features.py:527:        noise_level_val=noise_level[val_idx],
+src/preprocessing/extract_physics_features.py:528:        noise_level_test=noise_level[test_idx],
+src/preprocessing/extract_physics_features.py:532:    # English: Save feature dataset in the same format expected by train_mlp.py.
+src/preprocessing/extract_physics_features.py:540:        "raw_dataset": str(args.raw_dataset),
+src/preprocessing/extract_physics_features.py:541:        "split_dataset": str(args.split_dataset),
+src/preprocessing/extract_physics_features.py:546:        "n_cases": int(n_cases),
+src/preprocessing/extract_physics_features.py:570:    print(f"Raw dataset: {args.raw_dataset}")
+src/preprocessing/extract_physics_features.py:571:    print(f"Split dataset: {args.split_dataset}")
+src/preprocessing/extract_physics_features.py:575:    print(f"Output feature dataset: {output_path}")
+src/preprocessing/extract_physics_features.py:578:    print(f"n_cases: {n_cases}")
+src/preprocessing/descriptor_sets.py:47:        "input_noise_level",
+src/data_generation/generate_dataset.py:3:    src/data_generation/generate_dataset.py
+src/data_generation/generate_dataset.py:6:    Generate a configurable OpenSeesPy dataset for the next debug-plus stage.
+src/data_generation/generate_dataset.py:9:    data_processed/debug_plus_100_dataset.npz
+src/data_generation/generate_dataset.py:10:    data_processed/debug_plus_100_dataset_index.csv
+src/data_generation/generate_dataset.py:14:    python -m src.data_generation.generate_dataset --n-cases 100 --output-prefix debug_plus_100
+src/data_generation/generate_dataset.py:17:    This script extends the previous 20-case debug dataset to a larger 100-case debug-plus dataset.
+src/data_generation/generate_dataset.py:26:    与 generate_debug_dataset.py 的区别是：
+src/data_generation/generate_dataset.py:91:def parse_noise_levels(value: str) -> List[float]:
+src/data_generation/generate_dataset.py:121:    rng: np.random.Generator,
+src/data_generation/generate_dataset.py:139:    amplitude_g = rng.uniform(amplitude_g_range[0], amplitude_g_range[1])
+src/data_generation/generate_dataset.py:142:    frequency_hz = rng.uniform(frequency_hz_range[0], frequency_hz_range[1])
+src/data_generation/generate_dataset.py:145:    phase = rng.uniform(0.0, 2.0 * np.pi)
+src/data_generation/generate_dataset.py:162:    rng: np.random.Generator,
+src/data_generation/generate_dataset.py:195:    if rng.random() < healthy_probability:
+src/data_generation/generate_dataset.py:203:    n_damaged = int(rng.integers(1, max_damaged_stories + 1))
+src/data_generation/generate_dataset.py:207:    damaged_stories = rng.choice(
+src/data_generation/generate_dataset.py:218:        damage_value = rng.uniform(damage_range[0], damage_range[1])
+src/data_generation/generate_dataset.py:229:    rng: np.random.Generator,
+src/data_generation/generate_dataset.py:231:    noise_level: float,
+src/data_generation/generate_dataset.py:240:    if noise_level <= 0.0:
+src/data_generation/generate_dataset.py:247:    noise_std = noise_level * signal_std
+src/data_generation/generate_dataset.py:250:    noise = rng.normal(
+src/data_generation/generate_dataset.py:267:    noise_level: float,
+src/data_generation/generate_dataset.py:295:        noise_level=np.array(noise_level),
+src/data_generation/generate_dataset.py:302:    Write dataset index CSV.
+src/data_generation/generate_dataset.py:319:        "noise_level",
+src/data_generation/generate_dataset.py:338:def generate_dataset(
+src/data_generation/generate_dataset.py:339:    n_cases: int,
+src/data_generation/generate_dataset.py:356:    Generate the OpenSeesPy dataset.
+src/data_generation/generate_dataset.py:362:    if n_cases <= 0:
+src/data_generation/generate_dataset.py:364:        raise ValueError("n_cases must be positive.")
+src/data_generation/generate_dataset.py:366:    rng = np.random.default_rng(seed)
+src/data_generation/generate_dataset.py:405:    all_noise_level = []
+src/data_generation/generate_dataset.py:417:    for case_id in range(n_cases):
+src/data_generation/generate_dataset.py:420:        damage = create_random_damage(
+src/data_generation/generate_dataset.py:421:            rng=rng,
+src/data_generation/generate_dataset.py:430:            rng=rng,
+src/data_generation/generate_dataset.py:438:        noise_level = float(rng.choice(noise_candidates))
+src/data_generation/generate_dataset.py:464:            rng=rng,
+src/data_generation/generate_dataset.py:466:            noise_level=noise_level,
+src/data_generation/generate_dataset.py:484:                noise_level=noise_level,
+src/data_generation/generate_dataset.py:512:        all_noise_level.append(noise_level)
+src/data_generation/generate_dataset.py:527:                "noise_level": noise_level,
+src/data_generation/generate_dataset.py:539:            f"noise={noise_level:.2f}, "
+src/data_generation/generate_dataset.py:575:        noise_level=np.array(all_noise_level, dtype=np.float64),
+src/data_generation/generate_dataset.py:586:    print("\nDataset generation completed.")
+src/data_generation/generate_dataset.py:587:    print(f"Requested cases: {n_cases}")
+src/data_generation/generate_dataset.py:590:    print(f"Saved processed dataset to: {output_path_processed}")
+src/data_generation/generate_dataset.py:612:    output_path_processed = Path("data_processed") / f"{output_prefix}_dataset.npz"
+src/data_generation/generate_dataset.py:615:    index_csv_path = Path("data_processed") / f"{output_prefix}_dataset_index.csv"
+src/data_generation/generate_dataset.py:676:    parser.add_argument("--noise-levels", type=parse_noise_levels, default=[0.0, 0.05, 0.10, 0.20])
+src/data_generation/generate_dataset.py:709:    generate_dataset(
+src/data_generation/generate_dataset.py:710:        n_cases=args.n_cases,
+src/data_generation/generate_dataset.py:723:        noise_candidates=args.noise_levels,
+src/data_generation/generate_debug_dataset.py:3:    src/data_generation/generate_debug_dataset.py
+src/data_generation/generate_debug_dataset.py:6:    Generate a small debug dataset using the OpenSeesPy 2D frame model.
+src/data_generation/generate_debug_dataset.py:16:    This is NOT the final dataset for the SCI paper.
+src/data_generation/generate_debug_dataset.py:17:    This is only the first debug dataset.
+src/data_generation/generate_debug_dataset.py:47:    rng: np.random.Generator,
+src/data_generation/generate_debug_dataset.py:65:    amplitude_g = rng.uniform(amplitude_g_range[0], amplitude_g_range[1])
+src/data_generation/generate_debug_dataset.py:68:    frequency_hz = rng.uniform(frequency_hz_range[0], frequency_hz_range[1])
+src/data_generation/generate_debug_dataset.py:71:    phase = rng.uniform(0.0, 2.0 * np.pi)
+src/data_generation/generate_debug_dataset.py:87:    rng: np.random.Generator,
+src/data_generation/generate_debug_dataset.py:104:    n_damaged = rng.integers(0, max_damaged_stories + 1)
+src/data_generation/generate_debug_dataset.py:112:    damaged_stories = rng.choice(
+src/data_generation/generate_debug_dataset.py:124:        damage_value = rng.uniform(0.05, 0.35)
+src/data_generation/generate_debug_dataset.py:136:    rng: np.random.Generator,
+src/data_generation/generate_debug_dataset.py:138:    noise_level: float,
+src/data_generation/generate_debug_dataset.py:148:    if noise_level <= 0.0:
+src/data_generation/generate_debug_dataset.py:155:    noise_std = noise_level * signal_std
+src/data_generation/generate_debug_dataset.py:158:    noise = rng.normal(
+src/data_generation/generate_debug_dataset.py:171:def generate_debug_dataset(
+src/data_generation/generate_debug_dataset.py:172:    n_cases: int = 20,
+src/data_generation/generate_debug_dataset.py:177:    output_path_processed: Path = Path("data_processed/debug_dataset.npz"),
+src/data_generation/generate_debug_dataset.py:178:    index_csv_path: Path = Path("data_processed/debug_dataset_index.csv"),
+src/data_generation/generate_debug_dataset.py:181:    Generate a small debug dataset.
+src/data_generation/generate_debug_dataset.py:190:        5. 保存到统一的 debug_dataset.npz。
+src/data_generation/generate_debug_dataset.py:193:    rng = np.random.default_rng(seed)
+src/data_generation/generate_debug_dataset.py:216:    all_noise_level = []
+src/data_generation/generate_debug_dataset.py:225:    for case_id in range(n_cases):
+src/data_generation/generate_debug_dataset.py:228:        damage = create_random_damage(
+src/data_generation/generate_debug_dataset.py:229:            rng=rng,
+src/data_generation/generate_debug_dataset.py:236:            rng=rng,
+src/data_generation/generate_debug_dataset.py:244:        noise_level = float(rng.choice(noise_candidates))
+src/data_generation/generate_debug_dataset.py:269:            rng=rng,
+src/data_generation/generate_debug_dataset.py:271:            noise_level=noise_level,
+src/data_generation/generate_debug_dataset.py:293:            noise_level=np.array(noise_level),
+src/data_generation/generate_debug_dataset.py:305:        all_noise_level.append(noise_level)
+src/data_generation/generate_debug_dataset.py:316:                "noise_level": noise_level,
+src/data_generation/generate_debug_dataset.py:327:            f"noise={noise_level:.2f}"
+src/data_generation/generate_debug_dataset.py:360:        noise_level=np.array(all_noise_level),
+src/data_generation/generate_debug_dataset.py:376:            "noise_level",
+src/data_generation/generate_debug_dataset.py:390:    print("\nDebug dataset generation completed.")
+src/data_generation/generate_debug_dataset.py:391:    print(f"Saved processed dataset to: {output_path_processed}")
+src/data_generation/generate_debug_dataset.py:406:    generate_debug_dataset(
+src/data_generation/generate_debug_dataset.py:407:        n_cases=20,
+scripts/create_q2_main_ablation_figures.py:2:Create paper-ready main ablation figures from T02_main_ablation_3000.csv.
+scripts/create_q2_main_ablation_figures.py:5:This script creates compact paper-ready figures for the main 3000-case ablation
+scripts/create_q2_main_ablation_figures.py:9:本脚本基于已经生成的 3000-case 主消融结果表，生成论文可直接使用的
+scripts/create_q2_main_ablation_figures.py:21:INPUT_CSV = Path("results/paper_ready/q2_fast_track/tables/T02_main_ablation_3000.csv")
+scripts/create_q2_main_ablation_figures.py:73:        title="Main ablation on the 3000-case dataset: top configurations by test MAE",
+scripts/create_q2_main_ablation_figures.py:80:        title="Main ablation on the 3000-case dataset: top configurations by test RMSE",
+scripts/build_paper_ready_package_500.py:412:The feature-ablation experiment shows that the most defensible main configuration is `{main_config}`. This configuration achieved a test MAE of `{main_mae}` and a test RMSE of `{main_rmse}` on the 500-case dataset. Compared with reduced response-feature subsets, the full physics-informed descriptor set provides the strongest empirical support for the value of combining response amplitude, frequency-domain, spatial, correlation, and metadata-related descriptors.
+scripts/jcshm_manuscript/audit_primary_evidence_schemas.py:100:    "noise_level_summary": (
+scripts/jcshm_manuscript/audit_primary_evidence_schemas.py:103:        "noise_level_summary.csv"
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:87:NOISE_LEVELS = [
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:94:NONZERO_NOISE_LEVELS = [
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:575:        for noise_level in (
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:576:            NOISE_LEVELS
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:582:                noise_percent=noise_level,
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:594:                    noise_level
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:783:                    NONZERO_NOISE_LEVELS
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:795:            NONZERO_NOISE_LEVELS
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:820:            columns=NONZERO_NOISE_LEVELS,
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:970:        NOISE_LEVELS
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1050:        NOISE_LEVELS
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1114:        NOISE_LEVELS
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1159:                NONZERO_NOISE_LEVELS
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1165:            NONZERO_NOISE_LEVELS
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1305:    for noise_level in (
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1306:        NOISE_LEVELS
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1311:            noise_percent=noise_level,
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1315:            f"  {noise_level:>2}%:",
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1325:    for noise_level in (
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1326:        NOISE_LEVELS
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1331:            noise_percent=noise_level,
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1335:            f"  {noise_level:>2}%:",
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1345:    for noise_level in (
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1346:        NOISE_LEVELS
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1352:            noise_percent=noise_level,
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1356:            f"  {noise_level:>2}%:",
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1366:    for noise_level in (
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1367:        NOISE_LEVELS
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1373:            noise_percent=noise_level,
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py:1377:            f"  {noise_level:>2}%:",
+scripts/jcshm_manuscript/prepare_jcshm_manuscript_data.py:15:table and figure datasets.
+scripts/jcshm_manuscript/prepare_jcshm_manuscript_data.py:98:    "noise_level_summary":
+scripts/jcshm_manuscript/prepare_jcshm_manuscript_data.py:101:        / "noise_level_summary.csv",
+scripts/jcshm_manuscript/prepare_jcshm_manuscript_data.py:348:    noise_level_summary = read_csv(
+scripts/jcshm_manuscript/prepare_jcshm_manuscript_data.py:349:        "noise_level_summary"
+scripts/jcshm_manuscript/prepare_jcshm_manuscript_data.py:570:        noise_level_summary,
+scripts/jcshm_manuscript/prepare_jcshm_manuscript_data.py:575:        noise_level_summary,
+scripts/jcshm_manuscript/prepare_final_tables.py:1301:        "T03_four_noise_levels"
+scripts/sss_fast_revision/run_78d_asymmetric_calibration_repeated_splits.py:90:    load_full_raw_dataset,
+scripts/sss_fast_revision/run_78d_asymmetric_calibration_repeated_splits.py:96:EXPECTED_CASE_COUNT = 3000
+scripts/sss_fast_revision/run_78d_asymmetric_calibration_repeated_splits.py:756:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_78d_asymmetric_calibration_repeated_splits.py:832:    ) = load_full_raw_dataset(
+scripts/sss_fast_revision/run_78d_asymmetric_calibration_repeated_splits.py:2586:            "reuse the same 3000 simulated cases. "
+scripts/sss_fast_revision/audit_descriptor_sets.py:68:        "noise_level",
+scripts/sss_fast_revision/audit_descriptor_sets.py:279:            "debug_plus_3000_physics_features_mlp.npz"
+scripts/sss_fast_revision/audit_descriptor_sets.py:287:            "debug_plus_3000_physics_feature_names.csv"
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:45:    load_dataset,
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:51:DATASETS = {
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:54:        "debug_plus_3000_oracle_full_features.npz"
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:58:        "debug_plus_3000_legacy_no_meta_features.npz"
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:62:        "debug_plus_3000_"
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:67:        "debug_plus_3000_"
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:72:        "debug_plus_3000_"
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:366:        "--dataset-root",
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:399:        DATASETS.items()
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:401:        dataset_path = (
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:402:            args.dataset_root
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:406:        arrays = load_dataset(
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:407:            dataset_path
+scripts/sss_fast_revision/run_five_set_ridge_comparison.py:595:            "dataset_split": (
+scripts/sss_fast_revision/run_fixed_split_ridge_extended_grid.py:30:    DESCRIPTOR_DATASETS,
+scripts/sss_fast_revision/run_fixed_split_ridge_extended_grid.py:34:    load_dataset,
+scripts/sss_fast_revision/run_fixed_split_ridge_extended_grid.py:186:        "--dataset-root",
+scripts/sss_fast_revision/run_fixed_split_ridge_extended_grid.py:225:    for descriptor_set, relative_path in DESCRIPTOR_DATASETS.items():
+scripts/sss_fast_revision/run_fixed_split_ridge_extended_grid.py:226:        dataset_path = args.dataset_root / relative_path
+scripts/sss_fast_revision/run_fixed_split_ridge_extended_grid.py:227:        arrays = load_dataset(dataset_path)
+scripts/sss_fast_revision/run_fixed_split_ridge_extended_grid.py:387:            "dataset_split": "frozen 2100/450/450",
+scripts/sss_fast_revision/run_78d_svr_local_search.py:42:    load_dataset,
+scripts/sss_fast_revision/run_78d_svr_local_search.py:339:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_78d_svr_local_search.py:362:    arrays = load_dataset(
+scripts/sss_fast_revision/run_78d_svr_local_search.py:807:        "input_dataset": str(
+scripts/sss_fast_revision/run_78d_damage_weighted_svr_validation_pilot.py:499:            "debug_plus_3000_"
+scripts/sss_fast_revision/build_descriptor_datasets.py:2:Build internally consistent descriptor datasets for the SSS revision.
+scripts/sss_fast_revision/build_descriptor_datasets.py:182:def validate_filtered_dataset(
+scripts/sss_fast_revision/build_descriptor_datasets.py:205:            f"Filtered dataset is missing required keys: {missing}"
+scripts/sss_fast_revision/build_descriptor_datasets.py:354:def build_one_dataset(
+scripts/sss_fast_revision/build_descriptor_datasets.py:362:    """Build and validate one descriptor dataset."""
+scripts/sss_fast_revision/build_descriptor_datasets.py:415:    validation = validate_filtered_dataset(
+scripts/sss_fast_revision/build_descriptor_datasets.py:454:            "debug_plus_3000_physics_features_mlp.npz"
+scripts/sss_fast_revision/build_descriptor_datasets.py:463:            "debug_plus_3000_physics_feature_names.csv"
+scripts/sss_fast_revision/build_descriptor_datasets.py:481:            "descriptor_dataset_build_manifest.json"
+scripts/sss_fast_revision/build_descriptor_datasets.py:488:        default="debug_plus_3000",
+scripts/sss_fast_revision/build_descriptor_datasets.py:529:    print("===== SOURCE DATASET =====")
+scripts/sss_fast_revision/build_descriptor_datasets.py:538:        result = build_one_dataset(
+scripts/sss_fast_revision/build_descriptor_datasets.py:603:        "CHECK PASSED: all descriptor datasets "
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:6:Reconstruct the historical 92D physics-guided descriptor dataset
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:7:directly from the original 3000-case raw dataset and verify that the
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:8:current extractor reproduces the frozen AES feature dataset.
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:20:Since the raw dataset contains X_abs_accel, historical descriptors
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:51:EXPECTED_CASES = 3000
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:378:        "RAW3000"
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:384:        "--raw-dataset",
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:399:            "debug_plus_3000_"
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:456:    if args.raw_dataset is None:
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:459:            "Raw dataset path is missing.\n"
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:460:            "Set RAW3000 or pass "
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:461:            "--raw-dataset explicitly."
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:465:        args.raw_dataset
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:555:        "Raw dataset:",
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:726:            "noise_level",
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:741:                f"Raw dataset missing: "
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:784:        noise_level = np.asarray(
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:786:                "noise_level"
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:1007:                noise_level[
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:1011:                    "noise_level_train"
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:1017:                noise_level[
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:1021:                    "noise_level_val"
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:1027:                noise_level[
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:1031:                    "noise_level_test"
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:1080:            "feature dataset."
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:1118:            noise_level=noise_level,
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:1523:        "raw_dataset": str(
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:1526:        "frozen_feature_dataset": str(
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:1799:            "Matched-noise dataset "
+scripts/sss_fast_revision/validate_historical_92d_reproduction.py:1808:            "datasets yet."
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:2:Build exhaustive dependency-aware structural sensor-layout descriptor datasets.
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:386:    # Load canonical clean 78D dataset.
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:422:            f"Clean dataset missing keys: "
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:444:            3000,
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:610:        "Canonical clean dataset:",
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:704:                3000,
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py:1184:            "descriptor datasets were built."
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:59:    load_dataset,
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:117:RF_MIN_SAMPLES_LEAF = [
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:169:HGB_MIN_SAMPLES_LEAF = 20
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:374:        RF_MIN_SAMPLES_LEAF,
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:381:            "min_samples_leaf": (
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:412:                    min_samples_leaf=(
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:505:            "min_samples_leaf": (
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:506:                HGB_MIN_SAMPLES_LEAF
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:539:                        min_samples_leaf=(
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:540:                            HGB_MIN_SAMPLES_LEAF
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:835:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:858:    arrays = load_dataset(
+scripts/sss_fast_revision/run_78d_multimodel_comparison.py:1301:        "input_dataset": str(
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:2:Build an 86-dimensional measured-ground-augmented descriptor dataset.
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:165:def load_source_dataset(
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:168:    """Load and validate the 78-dimensional source dataset."""
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:202:            f"Source dataset is missing keys: {missing}"
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:730:            "debug_plus_3000_"
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:742:            "debug_plus_3000_"
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:754:            "debug_plus_3000_"
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:805:    arrays = load_source_dataset(
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:1038:            "Augmented dataset contains zero-variance features "
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:1128:        "source_dataset": str(args.input),
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:1132:        "output_dataset": str(args.output),
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:1228:        "===== MEASURED-GROUND AUGMENTED DATASET ====="
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py:1334:        "dataset was built and validated."
+scripts/sss_fast_revision/run_structural_response_ols_check.py:33:    load_dataset,
+scripts/sss_fast_revision/run_structural_response_ols_check.py:251:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_structural_response_ols_check.py:272:    arrays = load_dataset(
+scripts/sss_fast_revision/run_structural_response_ols_check.py:472:        "input_dataset": str(args.input),
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:7:dependency-aware clean descriptor datasets.
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:91:EXPECTED_CASES = 3000
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:455:def load_layout_dataset(
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:505:    dataset: dict[str, np.ndarray],
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:521:            dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:715:                    "noise_level"
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:821:    full_dataset = (
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:822:        load_layout_dataset(
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:828:        full_dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:835:        full_dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:842:        full_dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:849:        full_dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:856:        full_dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:981:        dataset_path = resolve_path(
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:990:        dataset = (
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:991:            load_layout_dataset(
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:992:                dataset_path
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:997:            dataset,
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:998:            full_dataset,
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:999:            dataset_path,
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:1003:            dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:1012:            in dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:1018:            dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:1027:            in dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:1035:            dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:1046:                "Manifest/dataset layout "
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:1098:            dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:1105:            dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:1112:            dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:1119:            dataset[
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:1642:                "dataset_file": str(
+scripts/sss_fast_revision/run_exhaustive_sensor_layout_svr.py:1643:                    dataset_path
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:110:def load_dataset(
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:207:                "78D and 92D datasets."
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:852:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:866:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:888:    datasets = {
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:890:            load_dataset(
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:896:            load_dataset(
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:904:        datasets[
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:907:        datasets[
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:923:        datasets[
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:930:        datasets[
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:961:        arrays = datasets[
+scripts/sss_fast_revision/run_78d_92d_ridge_svr_factorial.py:1505:        arrays = datasets[
+scripts/sss_fast_revision/run_sensor_layout_paired_bootstrap_closure.py:619:    rng = np.random.default_rng(
+scripts/sss_fast_revision/run_sensor_layout_paired_bootstrap_closure.py:647:        sampled_indices = rng.integers(
+scripts/sss_fast_revision/verify_descriptor_sets.py:87:            "debug_plus_3000_physics_feature_names.csv"
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:28:consistent with the matched-noise dataset construction protocol.
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:86:EXPECTED_CASES = 3000
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:411:        "noise_level",
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:671:            manifest["noise_level"],
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1657:    condition_noise_levels = []
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1664:                "noise_level",
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1698:        noise_level = float(
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1700:                "noise_level"
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1782:                    "noise_level": (
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1783:                        noise_level
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1788:                                noise_level
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1814:        condition_noise_levels.append(
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1815:            noise_level
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1830:            f"noise={noise_level:.2f}",
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1879:        noise_level,
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1884:                "noise_level",
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1891:            "noise_level": float(
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1892:                noise_level
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1897:                        noise_level
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1952:                "noise_level",
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1959:        / "noise_level_summary.csv"
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:1991:                        "noise_level"
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2007:                "noise_level": float(
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2009:                        "noise_level"
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2078:                "noise_level",
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2103:                "noise_level",
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2114:        noise_level = float(
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2116:                "noise_level"
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2129:                    "noise_level"
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2131:                noise_level,
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2162:            "noise_level": (
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2163:                noise_level
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2167:                    noise_level
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2240:                "noise_level",
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2263:        noise_level,
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2266:        "noise_level"
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2270:            "noise_level": float(
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2271:                noise_level
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2276:                        noise_level
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2295:                    "noise_level",
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2343:            "noise_level"
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2378:        noise_level=np.asarray(
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py:2379:            condition_noise_levels,
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:7:1. matched clean/noisy 78D descriptor datasets;
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:285:        "noise_level",
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:498:        noise_levels = np.asarray(
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:500:                "noise_level"
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:605:            noise_levels,
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:649:            noise_level = float(
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:650:                noise_levels[
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:685:                        "noise_level": (
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:686:                            noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:690:                                noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:732:        noise_level,
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:738:                "noise_level",
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:746:            "noise_level": float(
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:747:                noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:752:                        noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:807:                "noise_level",
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:836:            noise_level = float(
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:837:                noise_levels[
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:872:                        "noise_level": (
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:873:                            noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:877:                                noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:921:        noise_level,
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:927:                "noise_level",
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:935:            "noise_level": float(
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:936:                noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:941:                        noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:996:                "noise_level",
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1107:        noise_level = float(
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1108:            noise_levels[
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1203:                    "noise_level": (
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1204:                        noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1208:                            noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1307:                    "noise_level": (
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1308:                        noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1312:                            noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1386:        noise_level,
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1392:                "noise_level",
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1400:            "noise_level": float(
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1401:                noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1406:                        noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1466:            "noise_level"
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1480:                "noise_level",
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1520:                "noise_level"
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1526:        noise_level,
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1531:                "noise_level",
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1571:                    "noise_level": float(
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1572:                        noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1577:                                noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1617:        noise_level,
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1622:                "noise_level",
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1630:                "noise_level": float(
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1631:                    noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1636:                            noise_level
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1687:                "noise_level",
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1731:                "noise_level"
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1739:                        "noise_level"
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1773:                    "noise_level": float(
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1775:                            "noise_level"
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1959:    for noise_level in [
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1969:                        "noise_level"
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1971:                    noise_level,
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:1985:            f"{int(noise_level * 100)}%"
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py:2039:                    "noise_level"
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:2:Audit raw dataset and historical noise-generation provenance
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:3:before constructing matched clean/noisy datasets.
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:10:1. Keys / shapes / dtypes in the original clean 3000-case dataset.
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:11:2. Keys / shapes in existing historical noise datasets.
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:12:3. Dataset-index columns and first rows.
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:32:    "noise_level",
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:222:        "--clean-dataset",
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:226:            "debug_plus_3000_dataset.npz"
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:235:            "debug_plus_3000_dataset_index.csv"
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:262:        args.clean_dataset,
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:263:        "ORIGINAL CLEAN DATASET",
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:271:        "DATASET INDEX"
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:349:    # Existing noise datasets
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:402:            f"NOISE DATASET: {relative}",
+scripts/sss_fast_revision/audit_paired_noise_provenance.py:457:        "No new noise dataset was generated."
+scripts/sss_fast_revision/run_78d_asymmetric_residual_calibration_validation_pilot.py:445:    n_cases = (
+scripts/sss_fast_revision/run_78d_asymmetric_residual_calibration_validation_pilot.py:470:                n_cases
+scripts/sss_fast_revision/run_78d_asymmetric_residual_calibration_validation_pilot.py:793:            "debug_plus_3000_"
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:2:Build matched clean/noisy descriptor datasets for controlled
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:19:    noise_std  = noise_level * signal_std
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:77:EXPECTED_CASES = 3000
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:81:NOISE_LEVELS = [
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:127:    The canonical 78D dataset is treated as the source of truth
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:331:        NOISE_LEVELS
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:352:    noise_level: float,
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:357:            noise_level
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:363:def deterministic_rng(
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:365:    noise_level: float,
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:369:    Case-level deterministic RNG.
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:379:                noise_level
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:390:    return np.random.default_rng(
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:398:    noise_level: float,
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:405:    Generate a complete 3000-case matched response condition.
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:413:    if noise_level <= 0.0:
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:467:            noise_level
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:471:        rng = deterministic_rng(
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:477:            noise_level=(
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:478:                noise_level
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:485:        noise = rng.normal(
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:529:            noise_level
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:560:        "RAW3000"
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:566:        "--raw-dataset",
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:581:            "debug_plus_3000_"
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:594:            "debug_plus_3000_"
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:622:    if args.raw_dataset is None:
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:625:            "Raw dataset path missing. "
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:626:            "Set RAW3000 or pass "
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:627:            "--raw-dataset."
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:631:        args.raw_dataset
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:714:        "Raw dataset:",
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:732:        NOISE_LEVELS,
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:882:            "noise_level",
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:897:                f"Raw dataset missing: "
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:956:        historical_noise_level = np.asarray(
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:958:                "noise_level"
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1037:            noise_level,
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1047:                noise_level
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1089:            noise_level=(
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1090:                noise_level
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1098:            noise_level
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1114:            noise_level,
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1132:                noise_level=(
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1213:            noise_level
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1226:                historical_noise_level,
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1354:            noise_level=np.asarray(
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1355:                noise_level
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1422:                "noise_level": (
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1423:                    noise_level
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1431:                "n_cases": (
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1519:                    for level in NOISE_LEVELS
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1538:                    "noise_level"
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1548:                "noise_level"
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1553:            "noise_level"
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1573:            in NOISE_LEVELS
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1585:            "descriptor_dataset_build"
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1611:                "noise_level * "
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1618:        "noise_levels": (
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1619:            NOISE_LEVELS
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1627:        "rng_definition": (
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py:1836:            "clean/noisy descriptor datasets "
+scripts/sss_fast_revision/run_78d_svr_final_boundary_check.py:453:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_fixed_split_ridge_baseline.py:35:DESCRIPTOR_DATASETS = {
+scripts/sss_fast_revision/run_fixed_split_ridge_baseline.py:38:        "debug_plus_3000_oracle_full_features.npz"
+scripts/sss_fast_revision/run_fixed_split_ridge_baseline.py:42:        "debug_plus_3000_legacy_no_meta_features.npz"
+scripts/sss_fast_revision/run_fixed_split_ridge_baseline.py:46:        "debug_plus_3000_signal_derived_with_ground_features.npz"
+scripts/sss_fast_revision/run_fixed_split_ridge_baseline.py:50:        "debug_plus_3000_structural_response_only_features.npz"
+scripts/sss_fast_revision/run_fixed_split_ridge_baseline.py:271:def load_dataset(
+scripts/sss_fast_revision/run_fixed_split_ridge_baseline.py:512:        "--dataset-root",
+scripts/sss_fast_revision/run_fixed_split_ridge_baseline.py:541:    for descriptor_set, relative_path in DESCRIPTOR_DATASETS.items():
+scripts/sss_fast_revision/run_fixed_split_ridge_baseline.py:542:        dataset_path = (
+scripts/sss_fast_revision/run_fixed_split_ridge_baseline.py:543:            args.dataset_root
+scripts/sss_fast_revision/run_fixed_split_ridge_baseline.py:547:        arrays = load_dataset(
+scripts/sss_fast_revision/run_fixed_split_ridge_baseline.py:548:            dataset_path
+scripts/sss_fast_revision/run_repeated_factorial_78d_92d_ridge_svr.py:546:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_repeated_factorial_78d_92d_ridge_svr.py:560:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_repeated_factorial_78d_92d_ridge_svr.py:628:    # Canonical dataset alignment
+scripts/sss_fast_revision/run_repeated_factorial_78d_92d_ridge_svr.py:1546:            "reuse the same 3000 simulated cases. "
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:11:- Use all 3000 cases.
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:45:EXPECTED_CASE_COUNT = 3000
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:183:def load_full_raw_dataset(
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:191:    Reconstruct the complete 3000-case raw 78D descriptor matrix.
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:462:        "n_cases"
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:481:    n_cases: int,
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:489:    rng = np.random.default_rng(
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:493:    permutation = rng.permutation(
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:494:        n_cases
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:531:        != n_cases
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:1189:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:1246:    ) = load_full_raw_dataset(
+scripts/sss_fast_revision/run_78d_ridge_svr_repeated_splits.py:2164:        "raw_dataset_loading": (
+scripts/sss_fast_revision/run_78d_92d_svr_repeated_splits.py:46:EXPECTED_CASE_COUNT = 3000
+scripts/sss_fast_revision/run_78d_92d_svr_repeated_splits.py:1179:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_78d_92d_svr_repeated_splits.py:1193:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_78d_92d_svr_repeated_splits.py:2232:            "reuse the same 3000 simulated cases. "
+scripts/sss_fast_revision/run_78d_svr_validation_refinement.py:483:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_78d_svr_validation_refinement.py:929:        "input_dataset": str(
+scripts/sss_fast_revision/run_78d_weighted_svr_repeated_splits.py:80:    load_full_raw_dataset,
+scripts/sss_fast_revision/run_78d_weighted_svr_repeated_splits.py:86:EXPECTED_CASE_COUNT = 3000
+scripts/sss_fast_revision/run_78d_weighted_svr_repeated_splits.py:631:            "debug_plus_3000_"
+scripts/sss_fast_revision/run_78d_weighted_svr_repeated_splits.py:707:    ) = load_full_raw_dataset(
+scripts/sss_fast_revision/run_78d_weighted_svr_repeated_splits.py:2170:            "the same 3000 simulated cases. Effect "
+scripts/check_q2_numerical_consistency.py:107:def check_dataset(lines: List[str]) -> None:
+scripts/check_q2_numerical_consistency.py:108:    lines.append("\n## 1. Dataset and feature summary")
+scripts/check_q2_numerical_consistency.py:110:    q = read_json("T00_dataset_quality_debug_plus_3000.json")
+scripts/check_q2_numerical_consistency.py:111:    f = read_json("T01_physics_feature_summary_debug_plus_3000.json")
+scripts/check_q2_numerical_consistency.py:122:    n_cases = first_available(
+scripts/check_q2_numerical_consistency.py:123:        recursive_find(q, "n_cases"),
+scripts/check_q2_numerical_consistency.py:124:        recursive_find(f, "n_cases"),
+scripts/check_q2_numerical_consistency.py:149:    if n_cases is not None:
+scripts/check_q2_numerical_consistency.py:150:        assert_close("dataset n_cases", n_cases, 3000, lines, tol=0)
+scripts/check_q2_numerical_consistency.py:152:        lines.append("- **WARN** `dataset n_cases` not found; expected 3000.")
+scripts/check_q2_numerical_consistency.py:155:        assert_close("dataset n_stories", n_stories, 4, lines, tol=0)
+scripts/check_q2_numerical_consistency.py:157:        lines.append("- **WARN** `dataset n_stories` not found; expected 4.")
+scripts/check_q2_numerical_consistency.py:187:    df = read_csv("T02_main_ablation_3000.csv")
+scripts/check_q2_numerical_consistency.py:398:        "3000",
+scripts/check_q2_numerical_consistency.py:445:    check_dataset(lines)
+opensees_models/run_dynamic_analysis.py:16:    With UniformExcitation, nodal displacement/velocity/acceleration responses are relative responses.
+opensees_models/run_dynamic_analysis.py:36:        使用 UniformExcitation 时，OpenSees 返回的节点位移、速度、加速度通常是相对响应。
+opensees_models/run_dynamic_analysis.py:81:    This is NOT the final earthquake dataset.
+opensees_models/run_dynamic_analysis.py:355:    ops.pattern("UniformExcitation", 1, 1, "-accel", 1)
+opensees_models/run_dynamic_analysis.py:356:    # `pattern("UniformExcitation", patternTag, dir, "-accel", tsTag)` applies uniform base excitation.
+opensees_models/run_dynamic_analysis.py:357:    # `1` after "UniformExcitation" is the pattern tag.
+opensees_models/run_dynamic_analysis.py:360:    # 中文：`pattern("UniformExcitation", patternTag, dir, "-accel", tsTag)` 用于施加一致支座激励。
+opensees_models/run_dynamic_analysis.py:361:    # 中文：`"UniformExcitation"` 后第一个 `1` 是荷载模式编号；第二个 `1` 表示激励方向为 DOF 1，即水平 x 方向；`"-accel", 1` 表示使用编号为 1 的加速度时间序列。
+opensees_models/run_dynamic_analysis.py:386:    # For uniform support excitation:

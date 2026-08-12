@@ -1,0 +1,30 @@
+==============================================================================================================
+STRUCTURAL MODEL / DATA-GENERATION FILE INVENTORY
+==============================================================================================================
+opensees_models/__init__.py
+opensees_models/frame_base.py
+opensees_models/run_dynamic_analysis.py
+scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py
+scripts/sss_fast_revision/audit_paired_noise_provenance.py
+scripts/sss_fast_revision/build_descriptor_datasets.py
+scripts/sss_fast_revision/build_exhaustive_sensor_layout_descriptor_datasets.py
+scripts/sss_fast_revision/build_matched_noise_descriptor_datasets.py
+scripts/sss_fast_revision/build_measured_ground_augmented_dataset.py
+scripts/sss_fast_revision/run_78d_damage_weighted_svr_validation_pilot.py
+scripts/sss_fast_revision/run_clean_trained_matched_noise_robustness.py
+scripts/sss_fast_revision/run_matched_noise_failure_mechanism_diagnostic.py
+src/data_generation/generate_dataset.py
+src/data_generation/generate_debug_dataset.py
+src/evaluation/analyze_dataset_distribution.py
+src/evaluation/check_damage_dataset_quality.py
+src/evaluation/diagnose_zero_damage_separability.py
+src/evaluation/plot_debug_dataset.py
+src/evaluation/run_case_level_any_damage_diagnosis.py
+src/evaluation/run_damage_aware_weighting.py
+src/evaluation/run_damage_gated_calibration.py
+src/evaluation/run_damage_stratified_analysis.py
+src/evaluation/summarize_noise_robustness.py
+src/preprocessing/create_sensor_masked_dataset.py
+src/preprocessing/create_split_normalized_dataset.py
+
+Total candidate files: 25

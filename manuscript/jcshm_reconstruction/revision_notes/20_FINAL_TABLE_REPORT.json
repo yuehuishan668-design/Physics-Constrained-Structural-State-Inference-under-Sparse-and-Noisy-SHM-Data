@@ -1,0 +1,24 @@
+{
+  "training_performed": false,
+  "hyperparameter_tuning_performed": false,
+  "statistical_retesting_performed": false,
+  "experimental_sources_modified": false,
+  "checks": {
+    "T01_dimensions_92_86_78_59": true,
+    "T02_rows_4_plus_5": true,
+    "T03_four_noise_levels": true,
+    "T04_four_sensor_counts": true,
+    "T04_two_sensor_objective_dependence": true,
+    "S01_all_15_layouts": true,
+    "S01_full_layout_78_descriptors": true
+  },
+  "overall_passed": true,
+  "output_files": [
+    "manuscript/jcshm_reconstruction/tables/final/T01_information_provenance.csv",
+    "manuscript/jcshm_reconstruction/tables/final/T02A_information_estimator_performance.csv",
+    "manuscript/jcshm_reconstruction/tables/final/T02B_factorial_effects_overall_mae.csv",
+    "manuscript/jcshm_reconstruction/tables/final/T03_measurement_noise_failure.csv",
+    "manuscript/jcshm_reconstruction/tables/final/T04_sensor_observability_summary.csv",
+    "manuscript/jcshm_reconstruction/supplementary/tables/S01_complete_sensor_layout_results.csv"
+  ]
+}

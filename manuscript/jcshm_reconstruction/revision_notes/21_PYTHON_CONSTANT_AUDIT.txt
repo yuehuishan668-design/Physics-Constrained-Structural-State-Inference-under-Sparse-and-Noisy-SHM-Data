@@ -1,0 +1,405 @@
+==============================================================================================================
+opensees_models/frame_base.py
+==============================================================================================================
+L0097  n_story = 4
+L0101  n_bay = 2
+L0105  story_height = 3.2
+L0109  bay_width = 6.0
+L0113  E = 200000000000.0
+L0127  A_beam = 0.075
+L0131  I_beam = 0.00048
+L0135  floor_mass = 200000.0
+L0139  tiny_mass_ratio_y = 1e-06
+L0144  tiny_mass_ratio_rot = 1e-09
+L0308  node_tags = {}
+L0407  element_tags = {'columns': [], 'beams': []}
+L0414  ele_tag = 1
+L0559  periods = []
+L0609  healthy_damage = [0.0, 0.0, 0.0, 0.0]
+L0613  damaged_case = [0.0, 0.15, 0.0, 0.25]
+
+==============================================================================================================
+opensees_models/run_dynamic_analysis.py
+==============================================================================================================
+L0401  analysis_failed_at = -1
+L0632  damage = [0.0, 0.15, 0.0, 0.25]
+L0421  previous_floor_disp = 0.0
+
+==============================================================================================================
+src/data_generation/generate_dataset.py
+==============================================================================================================
+L0311  fieldnames = ['case_id', 'case_file', 'damage', 'n_damaged_stories', 'amplitude_g', 'frequency_hz', 'phase', 'noise_level', 'max_abs_accel', 'modal_periods']
+L0381  all_abs_accel = []
+L0384  all_clean_abs_accel = []
+L0387  all_damage = []
+L0390  all_story_drift = []
+L0393  all_ground_accel = []
+L0396  all_amplitude_g = []
+L0399  all_frequency_hz = []
+L0402  all_phase = []
+L0405  all_noise_level = []
+L0408  all_case_id = []
+L0411  metadata_rows = []
+L0414  failed_cases = []
+
+==============================================================================================================
+src/data_generation/generate_debug_dataset.py
+==============================================================================================================
+L0209  all_abs_accel = []
+L0210  all_clean_abs_accel = []
+L0211  all_damage = []
+L0212  all_story_drift = []
+L0213  all_ground_accel = []
+L0214  all_amplitude_g = []
+L0215  all_frequency_hz = []
+L0216  all_noise_level = []
+L0217  all_case_id = []
+L0218  metadata_rows = []
+L0221  noise_candidates = [0.0, 0.05, 0.1, 0.2]
+L0370  fieldnames = ['case_id', 'case_file', 'damage', 'amplitude_g', 'frequency_hz', 'noise_level', 'modal_periods']
+
+==============================================================================================================
+src/evaluation/analyze_dataset_distribution.py
+==============================================================================================================
+L0231  story_damage_mean_damaged_only = []
+L0246  quantiles = [0.0, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99, 1.0]
+L0346  fieldnames = ['case_id', 'max_abs_response', 'rms_response', 'damage_sum', 'damage_max', 'damaged_story_count', 'is_healthy', 'amplitude_g', 'frequency_hz', 'noise_level']
+L0422  fieldnames = ['rank', 'case_id', 'max_abs_response', 'rms_response', 'damage_sum', 'damage_max', 'damaged_story_count', 'amplitude_g', 'frequency_hz', 'noise_level']
+L0834  required = ['y_train', 'y_val', 'y_test', 'amplitude_g_train', 'amplitude_g_val', 'amplitude_g_test', 'frequency_hz_train', 'frequency_hz_val', 'frequency_hz_test', 'noise_level_train', 'noise_level_val', 'noise_level_test']
+
+==============================================================================================================
+src/evaluation/compare_ablation_metrics.py
+==============================================================================================================
+L0031  KNOWN_FEATURE_SETS = {'full', 'no_meta', 'physics_no_meta_core', 'response_frequency', 'response_basic_only', 'response_spatial', 'response_correlation'}
+L0104  metrics_files = []
+L0117  unique = []
+L0118  seen = set()
+L0187  test_metrics = {}
+
+==============================================================================================================
+src/evaluation/compare_all_metrics.py
+==============================================================================================================
+L0017  COMMON_METRIC_NAMES = ['metrics.json', 'mlp_debug_metrics.json', 'lstm_metrics.json', 'two_head_lstm_metrics.json']
+
+==============================================================================================================
+src/evaluation/compare_metrics_table.py
+==============================================================================================================
+L0050  candidates = ['mlp_debug_metrics.json', 'lstm_metrics.json', 'two_head_lstm_metrics.json', 'metrics.json']
+
+==============================================================================================================
+src/evaluation/diagnose_zero_damage_separability.py
+==============================================================================================================
+L0094  preferred_cols = ['feature_name', 'name', 'feature', 'features', 'column', 'column_name']
+L0245  expanded = False
+L0296  expanded_any = False
+L0636  lines = []
+L0751  order = ['zero', 'low', 'medium', 'high']
+L0858  metric_rows = []
+L0859  threshold_tables = []
+L0860  test_probabilities = {}
+L0861  fitted_models = {}
+L0915  selected_test_rows = []
+L0946  et_model_name = 'extra_trees_balanced'
+L1055  report = []
+L0251  expanded = True
+L0964  main_threshold = 0.5
+L0579  effect = 0.0
+L0580  signed_effect = 0.0
+
+==============================================================================================================
+src/evaluation/plot_mlp_predictions.py
+==============================================================================================================
+L0064  story_indices = []
+L0157  width = 0.35
+
+==============================================================================================================
+src/evaluation/run_case_level_any_damage_diagnosis.py
+==============================================================================================================
+L0155  split_to_candidates = {'train': ['F_train', 'features_train', 'X_features_train', 'X_train_features', 'X_train'], 'val': ['F_val', 'features_val', 'X_features_val', 'X_val_features', 'X_val'], 'test': ['F_test', 'features_test', 'X_features_test', 'X_test_features', 'X_test']}
+L0192  split_to_candidates = {'train': ['y_train', 'damage_train', 'Y_train', 'target_train'], 'val': ['y_val', 'damage_val', 'Y_val', 'target_val'], 'test': ['y_test', 'damage_test', 'Y_test', 'target_test']}
+L0242  X_aligned = {}
+L0243  y_case = {}
+L0557  lines = []
+L0629  metric_rows = []
+L0630  selected_rows = []
+L0631  score_test_by_model = {}
+L0674  interpretation = []
+
+==============================================================================================================
+src/evaluation/run_clean_paired_baseline.py
+==============================================================================================================
+L0138  preferred_columns = ['feature_name', 'name', 'features', 'feature', 'column', 'columns']
+L0189  clean_indices = []
+L0221  notes = []
+L0279  baselines = []
+L0316  names = []
+L0615  lines = []
+
+==============================================================================================================
+src/evaluation/run_damage_aware_weighting.py
+==============================================================================================================
+L0054  names = []
+L0074  feature_key_sets = [('F_train', 'F_val', 'F_test'), ('X_train', 'X_val', 'X_test')]
+L0078  y_key_sets = [('y_train', 'y_val', 'y_test'), ('Y_train', 'Y_val', 'Y_test')]
+L0135  metadata_keywords = ['noise', 'amplitude', 'frequency_hz', 'input_frequency', 'input_amplitude', 'case_id', 'seed']
+L0161  spatial_tokens = ['spatial_fraction', '_to_story_', 'ground_amplification', 'to_input_ratio']
+L0176  basic_tokens = ['_mean', '_std', '_max_abs', '_rms', '_peak_to_peak', '_crest_factor', 'ground_max_abs', 'ground_rms']
+L0393  candidates = []
+L0595  lines = []
+L0694  labels = []
+L0822  prediction_paths = {}
+L0865  best_val_diag = {}
+
+==============================================================================================================
+src/evaluation/run_damage_gated_calibration.py
+==============================================================================================================
+L0030  BIN_NAMES = ['zero', 'low', 'medium', 'high']
+L0111  meta_keys = ['input_', 'ground_', 'noise', 'amplitude', 'frequency_hz', 'dt']
+L0113  spatial_keys = ['story_', 'spatial', 'ratio', 'correlation', 'dominant_frequency', 'spectral', 'band_energy', 'centroid']
+L0115  basic_keys = ['_mean', '_std', '_max_abs', '_rms', '_peak_to_peak', '_crest_factor']
+L0550  results = []
+
+==============================================================================================================
+src/evaluation/run_damage_stratified_analysis.py
+==============================================================================================================
+L0743  true_values = []
+L0744  pred_values = []
+L0745  bin_names = []
+L0799  metric_cols = ['n_entries', 'mae', 'rmse', 'bias', 'underestimation_ratio', 'overestimation_ratio', 'mean_true', 'mean_pred']
+L0826  bin_order = {'zero': 0, 'low': 1, 'medium': 2, 'high': 3, 'damaged': 4, 'all': 5}
+L0915  lines = []
+L1107  story_rows = []
+L1108  high_damage_rows = []
+L1109  all_predictions = []
+L0119  split_feature_prefix = 'F'
+L0204  meta_exact_or_suffix = ('input_noise_level', 'noise_level', 'input_amplitude', 'amplitude_g', 'input_frequency', 'frequency_hz', 'ground_motion_id', 'case_id')
+L0214  selected = []
+L0228  tokens = ('mean', 'std', 'max_abs', 'rms', 'peak_to_peak', 'crest_factor')
+L0232  tokens = ('spatial_fraction', 'to_story', 'story_', 'floor')
+L0242  tokens = ('spectral', 'dominant_frequency', 'frequency', 'band_energy', 'centroid')
+L0246  tokens = ('correlation', 'corr')
+L0300  candidates = []
+L0327  candidates = []
+L0349  candidates = []
+L0121  split_feature_prefix = 'X'
+L0216  is_meta = False
+L0219  is_meta = True
+
+==============================================================================================================
+src/evaluation/run_paired_baseline_diagnosis.py
+==============================================================================================================
+L0127  result = {}
+L0201  positive_keywords = ['input', 'ground', 'amplitude', 'frequency', 'freq', 'noise', 'excitation']
+L0211  negative_keywords = ['damage', 'pred', 'target', 'residual', 'story_is']
+L0219  selected = []
+L0277  names = []
+L0344  paired_split = {}
+L0345  matched_ref_split = {}
+L0346  distance_split = {}
+L0559  best_test_auc = -1.0
+L0737  labels = ['zero', 'damaged']
+L0769  lines = []
+
+==============================================================================================================
+src/evaluation/run_seed_robustness.py
+==============================================================================================================
+L0147  basic_tokens = ['_mean', '_std', '_max_abs', '_rms', '_peak_to_peak', '_crest_factor']
+L0746  all_results = []
+L0274  candidates = []
+L0301  candidates = []
+L0500  lines = []
+
+==============================================================================================================
+src/evaluation/run_story_local_feature_diagnosis.py
+==============================================================================================================
+L0129  split_to_candidates = {'train': ['F_train', 'features_train', 'X_features_train', 'X_train_features', 'X_train'], 'val': ['F_val', 'features_val', 'X_features_val', 'X_val_features', 'X_val'], 'test': ['F_test', 'features_test', 'X_features_test', 'X_test_features', 'X_test']}
+L0149  split_to_candidates = {'train': ['y_train', 'damage_train', 'Y_train', 'target_train'], 'val': ['y_val', 'damage_val', 'Y_val', 'target_val'], 'test': ['y_test', 'damage_test', 'Y_test', 'target_test']}
+L0200  global_tokens = ['ground', 'input', 'amplitude', 'frequency_hz', 'noise', 'dt', 'duration']
+L0240  selected = []
+L0305  story_ids = []
+L0566  width = 0.18
+L0613  story_ids = {}
+L0651  reg_rows = []
+L0652  pred_test_by_reg = {}
+L0675  score_test_by_clf = {}
+L0730  interpretation = []
+L0758  lines = []
+L0246  keep = False
+L0251  keep = True
+L0256  keep = True
+L0261  keep = True
+L0266  keep = True
+L0271  keep = True
+
+==============================================================================================================
+src/evaluation/run_threshold_gated_calibration.py
+==============================================================================================================
+L0157  meta_tokens = ['input_', 'noise', 'amplitude', 'frequency_hz', 'case_id', 'dt', 'n_step', 'n_steps', 'sampling']
+L0168  frequency_tokens = ['frequency', 'spectral', 'band_energy', 'centroid', 'dominant']
+L0175  correlation_tokens = ['correlation', 'corr']
+L0179  spatial_tokens = ['spatial', 'rms', 'max_abs', 'crest', 'mean', 'story_', 'to_story', 'ground']
+L0511  order = ['zero', 'low', 'medium', 'high']
+L0534  labels = ['zero', 'low', 'medium', 'high']
+L0712  prediction_tables = {}
+L0199  include = ['mean', 'std', 'rms', 'max', 'max_abs', 'min', 'crest']
+L0868  constraint_note = 'no exact target satisfied; selected by penalty score'
+
+==============================================================================================================
+src/evaluation/run_zero_aware_hierarchical.py
+==============================================================================================================
+L0052  BIN_LABELS = ['zero', 'low', 'medium', 'high']
+L0923  result_rows = []
+L0924  prediction_frames = {}
+
+==============================================================================================================
+src/evaluation/summarize_noise_robustness.py
+==============================================================================================================
+L0190  lines = []
+
+==============================================================================================================
+src/evaluation/summarize_physics_ablation.py
+==============================================================================================================
+L0026  NUMERIC_COLUMNS = ['n_features', 'best_val_mse', 'test_mse', 'test_mae', 'test_rmse', 'negative_prediction_ratio', 'mean_prediction_on_zero_entries', 'mae_on_damaged_entries', 'mean_true_damage', 'mean_pred_damage']
+L0274  lines = []
+L0371  required_columns = ['feature_set', 'estimator', 'test_mae', 'test_rmse']
+
+==============================================================================================================
+src/evaluation/summarize_sensor_sparsity.py
+==============================================================================================================
+L0193  lines = []
+
+==============================================================================================================
+src/evaluation/synthesize_final_evidence.py
+==============================================================================================================
+L0044  metrics = {}
+L0045  current_section = 'global'
+L0089  lines = []
+L0190  metric_like = {'high_mae', 'balanced_accuracy', 'roc_auc', 'test_mae', 'pr_auc', 'high_underestimation_ratio', 'damaged_miss_ratio', 'high_damage_test_mae', 'test_rmse', 'zero_false_alarm_ratio'}
+L0327  lines = []
+L0357  selected_keys = ['best_regression_result__test_mae', 'best_regression_result__high_mae', 'best_regression_result__high_bias_pred_minus_true', 'best_regression_result__high_underestimation_ratio', 'best_zero_vs_damaged_classifier_result__roc_auc', 'best_zero_vs_damaged_classifier_result__zero_false_alarm_ratio']
+L0374  selected_keys = ['best_regression_result__test_mae', 'best_regression_result__high_mae', 'best_regression_result__high_bias_pred_minus_true', 'best_regression_result__high_underestimation_ratio', 'best_zero_vs_damaged_classifier_result__roc_auc', 'best_zero_vs_damaged_classifier_result__balanced_accuracy', 'best_zero_vs_damaged_classifier_result__zero_false_alarm_ratio', 'best_zero_vs_damaged_classifier_result__damaged_miss_ratio']
+
+==============================================================================================================
+src/experiments/run_physics_feature_ablation.py
+==============================================================================================================
+L0116  experiment_dirs = []
+
+==============================================================================================================
+src/models/lstm.py
+==============================================================================================================
+L0143  layers = []
+
+==============================================================================================================
+src/models/lstm_two_head.py
+==============================================================================================================
+L0127  shared_layers = []
+
+==============================================================================================================
+src/models/mlp.py
+==============================================================================================================
+L0058  layers = []
+
+==============================================================================================================
+src/preprocessing/create_sensor_masked_dataset.py
+==============================================================================================================
+L0023  RAW_RESPONSE_KEYS = ['X_abs_accel', 'X_clean_abs_accel', 'story_drift']
+L0138  masked_raw = {}
+
+==============================================================================================================
+src/preprocessing/create_split_normalized_dataset.py
+==============================================================================================================
+L0074  test_parts = []
+
+==============================================================================================================
+src/preprocessing/descriptor_sets.py
+==============================================================================================================
+L0024  ORACLE_FULL = 'oracle_full'
+L0025  LEGACY_NO_META = 'legacy_no_meta'
+L0026  SIGNAL_DERIVED_WITH_GROUND = 'signal_derived_with_ground'
+L0027  STRUCTURAL_RESPONSE_ONLY = 'structural_response_only'
+L0033  GENERATOR_METADATA = 'generator_metadata'
+L0034  GENERATOR_FREQUENCY_DERIVED = 'generator_frequency_derived'
+L0035  MEASURED_GROUND_SIGNAL = 'measured_ground_signal'
+L0036  STRUCTURAL_RESPONSE_SIGNAL = 'structural_response_signal'
+
+==============================================================================================================
+src/preprocessing/extract_features.py
+==============================================================================================================
+L0033  FEATURE_NAMES = ['mean', 'std', 'max', 'min', 'rms']
+L0047  required = ['X_train', 'X_val', 'X_test', 'y_train', 'y_val', 'y_test']
+L0105  names = []
+L0114  optional_keys = ['train_idx', 'val_idx', 'test_idx', 'amplitude_g_train', 'amplitude_g_val', 'amplitude_g_test', 'frequency_hz_train', 'frequency_hz_val', 'frequency_hz_test', 'noise_level_train', 'noise_level_val', 'noise_level_test', 'case_id_train', 'case_id_val', 'case_id_test']
+
+==============================================================================================================
+src/preprocessing/extract_physics_features.py
+==============================================================================================================
+L0215  values = []
+L0218  names = []
+L0362  feature_rows = []
+
+==============================================================================================================
+src/preprocessing/filter_physics_features.py
+==============================================================================================================
+L0202  selected = []
+L0203  selected_names = []
+L0246  required = ['F_train', 'F_val', 'F_test', 'y_train', 'y_val', 'y_test']
+L0207  keep = True
+L0147  name_col = 'feature_name'
+L0215  keep = False
+L0149  name_col = 'name'
+L0219  keep = True
+L0223  keep = False
+
+==============================================================================================================
+src/preprocessing/preprocess_response.py
+==============================================================================================================
+L0056  x_key = 'X_abs_accel'
+L0059  y_key = 'y_damage'
+L0068  test_ratio = 0.15
+L0071  seed = 20260622
+L0074  eps = 1e-08
+
+==============================================================================================================
+src/training/train_lstm.py
+==============================================================================================================
+L0313  total_samples = 0
+L0369  total_samples = 0
+L0417  pred_list = []
+L0516  fieldnames = ['split', 'sample_id', 'case_id']
+L0679  train_losses = []
+L0682  val_losses = []
+L0642  meta_dim = 0
+
+==============================================================================================================
+src/training/train_lstm_two_head.py
+==============================================================================================================
+L0265  total_samples = 0
+L0401  fieldnames = ['split', 'sample_id', 'case_id']
+L0518  history = {'train_total': [], 'val_total': [], 'train_cls': [], 'val_cls': [], 'train_reg': [], 'val_reg': [], 'train_zero': [], 'val_zero': []}
+L0526  best_epoch = 0
+L0528  patience_counter = 0
+L0496  meta_dim = 0
+L0553  patience_counter = 0
+
+==============================================================================================================
+src/training/train_mlp.py
+==============================================================================================================
+L0099  required = ['F_train', 'F_val', 'F_test', 'y_train', 'y_val', 'y_test']
+L0302  train_losses = []
+L0303  val_losses = []
+
+==============================================================================================================
+src/training/train_physics_sklearn.py
+==============================================================================================================
+L0045  required = ['F_train', 'F_val', 'F_test', 'y_train', 'y_val', 'y_test']
+L0057  names = []
+L0165  best_name = ''
+L0168  records = []
+L0192  header = ['split', 'sample_id', 'case_id']
+L0219  score_type = 'not_available'
+L0360  all_metrics = []
+L0223  score_type = 'mean_abs_coefficient'
+L0226  score_type = 'mean_abs_coefficient'
+L0229  score_type = 'tree_feature_importance'
+L0232  score_type = 'tree_feature_importance'
+

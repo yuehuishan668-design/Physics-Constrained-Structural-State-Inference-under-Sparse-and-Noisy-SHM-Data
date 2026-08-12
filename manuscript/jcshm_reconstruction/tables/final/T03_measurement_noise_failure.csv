@@ -1,0 +1,5 @@
+Response noise (%),Noise realizations,Overall MAE,High-damage MAE,High-damage signed bias,High-damage underestimation,High-damage upper clipping
+0,1,0.0220,0.0368,-0.0213,0.682,0.000
+5,5,0.0444 ± 0.0005,0.0582 ± 0.0016,-0.0048,0.500 ± 0.023,0.020 ± 0.004
+10,5,0.1118 ± 0.0009,0.1140 ± 0.0019,+0.0426,0.297 ± 0.011,0.127 ± 0.012
+20,5,0.2839 ± 0.0009,0.2070 ± 0.0028,+0.1285,0.182 ± 0.007,0.641 ± 0.023

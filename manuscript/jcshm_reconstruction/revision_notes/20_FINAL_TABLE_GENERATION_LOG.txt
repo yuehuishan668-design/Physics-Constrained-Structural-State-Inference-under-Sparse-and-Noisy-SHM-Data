@@ -1,0 +1,37 @@
+====================================================================================================
+JCSHM FINAL TABLE PREPARATION
+====================================================================================================
+Training performed: False
+Hyperparameter tuning performed: False
+Statistical re-testing performed: False
+
+====================================================================================================
+FINAL TABLE AUDIT
+====================================================================================================
+T01_dimensions_92_86_78_59: True
+T02_rows_4_plus_5: True
+T03_four_noise_levels: True
+T04_four_sensor_counts: True
+T04_two_sensor_objective_dependence: True
+S01_all_15_layouts: True
+S01_full_layout_78_descriptors: True
+
+====================================================================================================
+GENERATED TABLES
+====================================================================================================
+                                                                                       file  rows  columns
+                manuscript/jcshm_reconstruction/tables/final/T01_information_provenance.csv     4        7
+    manuscript/jcshm_reconstruction/tables/final/T02A_information_estimator_performance.csv     4        6
+        manuscript/jcshm_reconstruction/tables/final/T02B_factorial_effects_overall_mae.csv     5        5
+             manuscript/jcshm_reconstruction/tables/final/T03_measurement_noise_failure.csv     4        7
+          manuscript/jcshm_reconstruction/tables/final/T04_sensor_observability_summary.csv     4        8
+manuscript/jcshm_reconstruction/supplementary/tables/S01_complete_sensor_layout_results.csv    15        8
+
+Training performed: False
+Hyperparameter tuning performed: False
+Statistical re-testing performed: False
+Experimental sources modified: False
+OVERALL PASSED: True
+
+Manifest: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/revision_notes/20_FINAL_TABLE_MANIFEST.csv
+Report: /Users/jerry/Desktop/Physics-Constrained Structural State Inference under Sparse and Noisy SHM Data/paper0-sss-fast-revision/manuscript/jcshm_reconstruction/revision_notes/20_FINAL_TABLE_REPORT.json

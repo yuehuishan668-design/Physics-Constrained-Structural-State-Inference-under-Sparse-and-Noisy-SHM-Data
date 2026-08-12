@@ -1,0 +1,731 @@
+     1	"""
+     2	File location:
+     3	    src/data_generation/generate_dataset.py
+     4	
+     5	Purpose:
+     6	    Generate a configurable OpenSeesPy dataset for the next debug-plus stage.
+     7	
+     8	Default output:
+     9	    data_processed/debug_plus_100_dataset.npz
+    10	    data_processed/debug_plus_100_dataset_index.csv
+    11	    data_raw/opensees_outputs/debug_plus_100_cases/
+    12	
+    13	Recommended first run:
+    14	    python -m src.data_generation.generate_dataset --n-cases 100 --output-prefix debug_plus_100
+    15	
+    16	Research role:
+    17	    This script extends the previous 20-case debug dataset to a larger 100-case debug-plus dataset.
+    18	    The purpose is not yet to produce final paper-scale results. The purpose is to test whether:
+    19	        1. OpenSeesPy can generate more cases stably;
+    20	        2. train/val/test metrics become less random than the 20-case version;
+    21	        3. MLP linear and MLP sigmoid baselines behave more consistently;
+    22	        4. false positives and damage-location errors can be diagnosed on a larger sample.
+    23	
+    24	中文说明：
+    25	    本文件用于生成可配置的数据集。
+    26	    与 generate_debug_dataset.py 的区别是：
+    27	        1. 样本数不再固定为 20；
+    28	        2. 输出文件名可以通过 --output-prefix 控制；
+    29	        3. 支持是否保存每个单独 case；
+    30	        4. 支持控制损伤层数、损伤程度、激励幅值、激励频率和噪声水平；
+    31	        5. 适合生成 100-case debug-plus 数据集。
+    32	"""
+    33	
+    34	from __future__ import annotations
+    35	# 延迟类型注解解析，提高兼容性。
+    36	
+    37	import argparse
+    38	# argparse 用于读取命令行参数，例如 --n-cases、--seed、--output-prefix。
+    39	
+    40	import csv
+    41	# csv 用于保存样本索引表，便于人工检查每个 case 的损伤、激励和噪声信息。
+    42	
+    43	from pathlib import Path
+    44	# Path 用于处理文件路径，比直接使用字符串更安全。
+    45	
+    46	from typing import Dict, List, Sequence
+    47	# Dict、List、Sequence 是类型注解，使函数输入输出更清晰。
+    48	
+    49	import numpy as np
+    50	# numpy 用于随机数、数组计算、保存 .npz 数据集。
+    51	
+    52	from opensees_models.frame_base import FrameConfig
+    53	# FrameConfig 是前面定义的 4 层 2 跨框架配置类。
+    54	
+    55	from opensees_models.run_dynamic_analysis import run_time_history
+    56	# run_time_history 是前面已经验证通过的 OpenSeesPy 动力时程分析函数。
+    57	
+    58	
+    59	def parse_float_pair(value: str) -> tuple[float, float]:
+    60	    """
+    61	    Parse a comma-separated pair of floats.
+    62	
+    63	    Example:
+    64	        "0.05,0.25" -> (0.05, 0.25)
+    65	
+    66	    中文说明：
+    67	        把命令行输入的范围字符串解析成两个浮点数。
+    68	    """
+    69	
+    70	    parts = value.split(",")
+    71	    # 用逗号切分字符串。
+    72	
+    73	    if len(parts) != 2:
+    74	        # 范围必须包含两个数字。
+    75	        raise argparse.ArgumentTypeError(f"Expected two comma-separated values, got: {value}")
+    76	
+    77	    left = float(parts[0])
+    78	    # 第一个数。
+    79	
+    80	    right = float(parts[1])
+    81	    # 第二个数。
+    82	
+    83	    if left >= right:
+    84	        # 左边必须小于右边。
+    85	        raise argparse.ArgumentTypeError(f"Range lower bound must be smaller than upper bound, got: {value}")
+    86	
+    87	    return left, right
+    88	    # 返回二元组。
+    89	
+    90	
+    91	def parse_noise_levels(value: str) -> List[float]:
+    92	    """
+    93	    Parse noise levels from command line.
+    94	
+    95	    Example:
+    96	        "0,0.05,0.1,0.2" -> [0.0, 0.05, 0.1, 0.2]
+    97	
+    98	    中文说明：
+    99	        解析噪声水平候选值。
+   100	    """
+   101	
+   102	    levels = [float(item.strip()) for item in value.split(",") if item.strip() != ""]
+   103	    # 把逗号分隔的字符串转换为浮点数列表。
+   104	
+   105	    if len(levels) == 0:
+   106	        # 至少需要一个噪声水平。
+   107	        raise argparse.ArgumentTypeError("At least one noise level is required.")
+   108	
+   109	    for level in levels:
+   110	        # 检查每个噪声水平。
+   111	
+   112	        if level < 0.0:
+   113	            # 噪声比例不能为负。
+   114	            raise argparse.ArgumentTypeError(f"Noise level must be non-negative, got: {level}")
+   115	
+   116	    return levels
+   117	    # 返回噪声候选列表。
+   118	
+   119	
+   120	def create_random_sine_motion(
+   121	    rng: np.random.Generator,
+   122	    duration: float,
+   123	    dt: float,
+   124	    amplitude_g_range: tuple[float, float],
+   125	    frequency_hz_range: tuple[float, float],
+   126	) -> Dict[str, float | np.ndarray]:
+   127	    """
+   128	    Create one randomized sine ground motion.
+   129	
+   130	    中文说明：
+   131	        生成一个随机正弦地面加速度。
+   132	        当前仍然是 debug-plus 数据集，不是最终论文真实地震波数据集。
+   133	    """
+   134	
+   135	    t = np.arange(0.0, duration, dt)
+   136	    # 创建时间向量。
+   137	    # 例如 duration=20, dt=0.01，则长度为 2000。
+   138	
+   139	    amplitude_g = rng.uniform(amplitude_g_range[0], amplitude_g_range[1])
+   140	    # 随机抽取地面加速度幅值，单位为 g。
+   141	
+   142	    frequency_hz = rng.uniform(frequency_hz_range[0], frequency_hz_range[1])
+   143	    # 随机抽取正弦激励频率，单位为 Hz。
+   144	
+   145	    phase = rng.uniform(0.0, 2.0 * np.pi)
+   146	    # 随机相位，使样本之间不完全对齐。
+   147	
+   148	    accel_g = amplitude_g * np.sin(2.0 * np.pi * frequency_hz * t + phase)
+   149	    # 生成正弦加速度，单位为 g。
+   150	
+   151	    return {
+   152	        "t": t,
+   153	        "accel_g": accel_g,
+   154	        "amplitude_g": float(amplitude_g),
+   155	        "frequency_hz": float(frequency_hz),
+   156	        "phase": float(phase),
+   157	    }
+   158	    # 返回时程和元信息。
+   159	
+   160	
+   161	def create_random_damage(
+   162	    rng: np.random.Generator,
+   163	    n_story: int,
+   164	    max_damaged_stories: int,
+   165	    damage_range: tuple[float, float],
+   166	    healthy_probability: float,
+   167	) -> List[float]:
+   168	    """
+   169	    Create one random story-level stiffness degradation vector.
+   170	
+   171	    中文说明：
+   172	        生成随机损伤向量。
+   173	        当前定义：
+   174	            damage[i] = 第 i+1 层刚度退化比例
+   175	        例如：
+   176	            [0.0, 0.15, 0.0, 0.25]
+   177	        表示第 2 层退化 15%，第 4 层退化 25%。
+   178	    """
+   179	
+   180	    if max_damaged_stories < 0:
+   181	        # 最大损伤层数不能小于 0。
+   182	        raise ValueError("max_damaged_stories must be non-negative.")
+   183	
+   184	    if max_damaged_stories > n_story:
+   185	        # 最大损伤层数不能超过总层数。
+   186	        raise ValueError("max_damaged_stories cannot exceed n_story.")
+   187	
+   188	    if not (0.0 <= healthy_probability <= 1.0):
+   189	        # 健康样本概率必须在 [0, 1]。
+   190	        raise ValueError("healthy_probability must be between 0 and 1.")
+   191	
+   192	    damage = [0.0] * n_story
+   193	    # 初始化为健康结构。
+   194	
+   195	    if rng.random() < healthy_probability:
+   196	        # 按指定概率生成完全健康样本。
+   197	        return damage
+   198	
+   199	    if max_damaged_stories == 0:
+   200	        # 如果最大损伤层数为 0，则只能返回健康样本。
+   201	        return damage
+   202	
+   203	    n_damaged = int(rng.integers(1, max_damaged_stories + 1))
+   204	    # 随机选择损伤层数。
+   205	    # 这里从 1 开始，因为健康样本已经由 healthy_probability 单独控制。
+   206	
+   207	    damaged_stories = rng.choice(
+   208	        np.arange(n_story),
+   209	        size=n_damaged,
+   210	        replace=False,
+   211	    )
+   212	    # 随机选择受损楼层。
+   213	    # replace=False 表示同一个 case 不重复选择同一层。
+   214	
+   215	    for story_index in damaged_stories:
+   216	        # 遍历每个受损楼层。
+   217	
+   218	        damage_value = rng.uniform(damage_range[0], damage_range[1])
+   219	        # 随机生成该层刚度退化比例。
+   220	
+   221	        damage[int(story_index)] = float(damage_value)
+   222	        # 写入 damage 向量。
+   223	
+   224	    return damage
+   225	    # 返回损伤向量。
+   226	
+   227	
+   228	def add_measurement_noise(
+   229	    rng: np.random.Generator,
+   230	    signal: np.ndarray,
+   231	    noise_level: float,
+   232	) -> np.ndarray:
+   233	    """
+   234	    Add Gaussian measurement noise to response signal.
+   235	
+   236	    中文说明：
+   237	        给结构响应加入高斯测量噪声，用于模拟传感器噪声。
+   238	    """
+   239	
+   240	    if noise_level <= 0.0:
+   241	        # 如果噪声水平为 0，直接返回原信号副本。
+   242	        return signal.copy()
+   243	
+   244	    signal_std = np.std(signal)
+   245	    # 计算信号标准差。
+   246	
+   247	    noise_std = noise_level * signal_std
+   248	    # 噪声标准差 = 噪声比例 × 信号标准差。
+   249	
+   250	    noise = rng.normal(
+   251	        loc=0.0,
+   252	        scale=noise_std,
+   253	        size=signal.shape,
+   254	    )
+   255	    # 生成与信号形状相同的高斯噪声。
+   256	
+   257	    return signal + noise
+   258	    # 返回带噪信号。
+   259	
+   260	
+   261	def save_single_case(
+   262	    case_file: Path,
+   263	    response: Dict[str, np.ndarray],
+   264	    clean_abs_accel: np.ndarray,
+   265	    noisy_abs_accel: np.ndarray,
+   266	    motion: Dict[str, float | np.ndarray],
+   267	    noise_level: float,
+   268	) -> None:
+   269	    """
+   270	    Save one raw case file.
+   271	
+   272	    中文说明：
+   273	        保存单个 case 的完整原始数据，便于后续排查异常样本。
+   274	    """
+   275	
+   276	    case_file.parent.mkdir(parents=True, exist_ok=True)
+   277	    # 创建单样本输出目录。
+   278	
+   279	    np.savez_compressed(
+   280	        case_file,
+   281	        damage=response["damage"],
+   282	        ground_accel_mps2=response["ground_accel_mps2"],
+   283	        clean_abs_accel=clean_abs_accel,
+   284	        noisy_abs_accel=noisy_abs_accel,
+   285	        rel_disp=response["rel_disp"],
+   286	        rel_accel=response["rel_accel"],
+   287	        story_drift=response["story_drift"],
+   288	        dt=response["dt"],
+   289	        modal_periods=response["modal_periods"],
+   290	        damping_alpha_m=response["damping_alpha_m"],
+   291	        damping_beta_k_init=response["damping_beta_k_init"],
+   292	        amplitude_g=np.array(motion["amplitude_g"]),
+   293	        frequency_hz=np.array(motion["frequency_hz"]),
+   294	        phase=np.array(motion["phase"]),
+   295	        noise_level=np.array(noise_level),
+   296	    )
+   297	    # 保存 .npz 文件。
+   298	
+   299	
+   300	def write_index_csv(index_csv_path: Path, metadata_rows: List[Dict[str, object]]) -> None:
+   301	    """
+   302	    Write dataset index CSV.
+   303	
+   304	    中文说明：
+   305	        写入样本索引 CSV，方便人工查看每个样本的损伤、激励、噪声、最大响应等信息。
+   306	    """
+   307	
+   308	    index_csv_path.parent.mkdir(parents=True, exist_ok=True)
+   309	    # 创建输出目录。
+   310	
+   311	    fieldnames = [
+   312	        "case_id",
+   313	        "case_file",
+   314	        "damage",
+   315	        "n_damaged_stories",
+   316	        "amplitude_g",
+   317	        "frequency_hz",
+   318	        "phase",
+   319	        "noise_level",
+   320	        "max_abs_accel",
+   321	        "modal_periods",
+   322	    ]
+   323	    # CSV 表头。
+   324	
+   325	    with index_csv_path.open("w", newline="", encoding="utf-8") as f:
+   326	        # 打开 CSV 文件。
+   327	
+   328	        writer = csv.DictWriter(f, fieldnames=fieldnames)
+   329	        # 创建字典写入器。
+   330	
+   331	        writer.writeheader()
+   332	        # 写入表头。
+   333	
+   334	        writer.writerows(metadata_rows)
+   335	        # 写入所有样本元信息。
+   336	
+   337	
+   338	def generate_dataset(
+   339	    n_cases: int,
+   340	    seed: int,
+   341	    duration: float,
+   342	    dt: float,
+   343	    output_dir_raw: Path,
+   344	    output_path_processed: Path,
+   345	    index_csv_path: Path,
+   346	    save_raw_cases: bool,
+   347	    max_damaged_stories: int,
+   348	    healthy_probability: float,
+   349	    damage_range: tuple[float, float],
+   350	    amplitude_g_range: tuple[float, float],
+   351	    frequency_hz_range: tuple[float, float],
+   352	    noise_candidates: Sequence[float],
+   353	    damping_ratio: float,
+   354	) -> None:
+   355	    """
+   356	    Generate the OpenSeesPy dataset.
+   357	
+   358	    中文说明：
+   359	        数据集生成主流程。
+   360	    """
+   361	
+   362	    if n_cases <= 0:
+   363	        # 样本数必须为正。
+   364	        raise ValueError("n_cases must be positive.")
+   365	
+   366	    rng = np.random.default_rng(seed)
+   367	    # 创建随机数生成器。
+   368	    # 固定 seed 可以保证数据集可复现。
+   369	
+   370	    config = FrameConfig()
+   371	    # 使用前面定义的默认 4 层 2 跨框架。
+   372	
+   373	    if save_raw_cases:
+   374	        # 如果需要保存每个单独 case。
+   375	        output_dir_raw.mkdir(parents=True, exist_ok=True)
+   376	        # 创建原始样本目录。
+   377	
+   378	    output_path_processed.parent.mkdir(parents=True, exist_ok=True)
+   379	    # 创建合并数据集输出目录。
+   380	
+   381	    all_abs_accel = []
+   382	    # 保存带噪绝对加速度，作为第一版神经网络输入。
+   383	
+   384	    all_clean_abs_accel = []
+   385	    # 保存无噪绝对加速度。
+   386	
+   387	    all_damage = []
+   388	    # 保存损伤标签。
+   389	
+   390	    all_story_drift = []
+   391	    # 保存层间位移角。
+   392	
+   393	    all_ground_accel = []
+   394	    # 保存地面加速度。
+   395	
+   396	    all_amplitude_g = []
+   397	    # 保存激励幅值。
+   398	
+   399	    all_frequency_hz = []
+   400	    # 保存激励频率。
+   401	
+   402	    all_phase = []
+   403	    # 保存正弦相位。
+   404	
+   405	    all_noise_level = []
+   406	    # 保存噪声水平。
+   407	
+   408	    all_case_id = []
+   409	    # 保存 case_id。
+   410	
+   411	    metadata_rows = []
+   412	    # 保存 CSV 元信息。
+   413	
+   414	    failed_cases = []
+   415	    # 保存失败 case 信息。
+   416	
+   417	    for case_id in range(n_cases):
+   418	        # 循环生成每一个 case。
+   419	
+   420	        damage = create_random_damage(
+   421	            rng=rng,
+   422	            n_story=config.n_story,
+   423	            max_damaged_stories=max_damaged_stories,
+   424	            damage_range=damage_range,
+   425	            healthy_probability=healthy_probability,
+   426	        )
+   427	        # 生成随机损伤向量。
+   428	
+   429	        motion = create_random_sine_motion(
+   430	            rng=rng,
+   431	            duration=duration,
+   432	            dt=dt,
+   433	            amplitude_g_range=amplitude_g_range,
+   434	            frequency_hz_range=frequency_hz_range,
+   435	        )
+   436	        # 生成随机正弦激励。
+   437	
+   438	        noise_level = float(rng.choice(noise_candidates))
+   439	        # 从候选噪声水平中随机选择一个。
+   440	
+   441	        response = run_time_history(
+   442	            damage=damage,
+   443	            ground_accel_g=motion["accel_g"],
+   444	            dt=dt,
+   445	            config=config,
+   446	            damping_ratio=damping_ratio,
+   447	        )
+   448	        # 调用 OpenSeesPy 进行动力时程分析。
+   449	
+   450	        failed_at = int(response["analysis_failed_at"])
+   451	        # 读取分析失败步数。
+   452	        # -1 表示没有失败。
+   453	
+   454	        if failed_at != -1:
+   455	            # 如果分析失败，记录并跳过。
+   456	            failed_cases.append((case_id, failed_at, damage))
+   457	            print(f"Skip case {case_id:04d}: analysis failed at step {failed_at}")
+   458	            continue
+   459	
+   460	        clean_abs_accel = response["abs_accel"]
+   461	        # 无噪绝对加速度。
+   462	
+   463	        noisy_abs_accel = add_measurement_noise(
+   464	            rng=rng,
+   465	            signal=clean_abs_accel,
+   466	            noise_level=noise_level,
+   467	        )
+   468	        # 带噪绝对加速度。
+   469	
+   470	        max_abs_accel = float(np.max(np.abs(noisy_abs_accel)))
+   471	        # 计算该样本最大绝对加速度，用于检查是否有异常响应。
+   472	
+   473	        case_file = output_dir_raw / f"case_{case_id:04d}.npz"
+   474	        # 单 case 文件路径。
+   475	
+   476	        if save_raw_cases:
+   477	            # 如果要求保存每个 case 的完整数据。
+   478	            save_single_case(
+   479	                case_file=case_file,
+   480	                response=response,
+   481	                clean_abs_accel=clean_abs_accel,
+   482	                noisy_abs_accel=noisy_abs_accel,
+   483	                motion=motion,
+   484	                noise_level=noise_level,
+   485	            )
+   486	            # 保存单 case 文件。
+   487	
+   488	        all_abs_accel.append(noisy_abs_accel)
+   489	        # 添加带噪输入。
+   490	
+   491	        all_clean_abs_accel.append(clean_abs_accel)
+   492	        # 添加无噪输入。
+   493	
+   494	        all_damage.append(response["damage"])
+   495	        # 添加损伤标签。
+   496	
+   497	        all_story_drift.append(response["story_drift"])
+   498	        # 添加层间位移角。
+   499	
+   500	        all_ground_accel.append(response["ground_accel_mps2"])
+   501	        # 添加地面加速度。
+   502	
+   503	        all_amplitude_g.append(float(motion["amplitude_g"]))
+   504	        # 添加激励幅值。
+   505	
+   506	        all_frequency_hz.append(float(motion["frequency_hz"]))
+   507	        # 添加激励频率。
+   508	
+   509	        all_phase.append(float(motion["phase"]))
+   510	        # 添加相位。
+   511	
+   512	        all_noise_level.append(noise_level)
+   513	        # 添加噪声水平。
+   514	
+   515	        all_case_id.append(case_id)
+   516	        # 添加 case_id。
+   517	
+   518	        metadata_rows.append(
+   519	            {
+   520	                "case_id": case_id,
+   521	                "case_file": str(case_file) if save_raw_cases else "",
+   522	                "damage": response["damage"].tolist(),
+   523	                "n_damaged_stories": int(np.sum(response["damage"] > 0.0)),
+   524	                "amplitude_g": float(motion["amplitude_g"]),
+   525	                "frequency_hz": float(motion["frequency_hz"]),
+   526	                "phase": float(motion["phase"]),
+   527	                "noise_level": noise_level,
+   528	                "max_abs_accel": max_abs_accel,
+   529	                "modal_periods": response["modal_periods"].tolist(),
+   530	            }
+   531	        )
+   532	        # 添加 CSV 元信息。
+   533	
+   534	        print(
+   535	            f"Generated case {case_id:04d}: "
+   536	            f"damage={np.round(response['damage'], 3)}, "
+   537	            f"amp_g={float(motion['amplitude_g']):.3f}, "
+   538	            f"freq={float(motion['frequency_hz']):.3f}, "
+   539	            f"noise={noise_level:.2f}, "
+   540	            f"max_abs_accel={max_abs_accel:.3f}"
+   541	        )
+   542	        # 打印当前生成进度。
+   543	
+   544	    if len(all_abs_accel) == 0:
+   545	        # 如果全部失败，不能保存数据集。
+   546	        raise RuntimeError("No successful cases were generated. Check model and analysis settings.")
+   547	
+   548	    X_abs_accel = np.stack(all_abs_accel, axis=0)
+   549	    # 合并带噪加速度。
+   550	    # 形状：(n_successful_cases, n_steps, n_story)。
+   551	
+   552	    X_clean_abs_accel = np.stack(all_clean_abs_accel, axis=0)
+   553	    # 合并无噪加速度。
+   554	
+   555	    y_damage = np.stack(all_damage, axis=0)
+   556	    # 合并损伤标签。
+   557	    # 形状：(n_successful_cases, n_story)。
+   558	
+   559	    story_drift = np.stack(all_story_drift, axis=0)
+   560	    # 合并层间位移角。
+   561	
+   562	    ground_accel = np.stack(all_ground_accel, axis=0)
+   563	    # 合并地面加速度。
+   564	
+   565	    np.savez_compressed(
+   566	        output_path_processed,
+   567	        X_abs_accel=X_abs_accel,
+   568	        X_clean_abs_accel=X_clean_abs_accel,
+   569	        y_damage=y_damage,
+   570	        story_drift=story_drift,
+   571	        ground_accel=ground_accel,
+   572	        amplitude_g=np.array(all_amplitude_g, dtype=np.float64),
+   573	        frequency_hz=np.array(all_frequency_hz, dtype=np.float64),
+   574	        phase=np.array(all_phase, dtype=np.float64),
+   575	        noise_level=np.array(all_noise_level, dtype=np.float64),
+   576	        case_id=np.array(all_case_id, dtype=np.int64),
+   577	        dt=np.array(dt, dtype=np.float64),
+   578	        seed=np.array(seed, dtype=np.int64),
+   579	        failed_case_count=np.array(len(failed_cases), dtype=np.int64),
+   580	    )
+   581	    # 保存合并后的数据集。
+   582	
+   583	    write_index_csv(index_csv_path, metadata_rows)
+   584	    # 保存 CSV 索引表。
+   585	
+   586	    print("\nDataset generation completed.")
+   587	    print(f"Requested cases: {n_cases}")
+   588	    print(f"Successful cases: {X_abs_accel.shape[0]}")
+   589	    print(f"Failed cases: {len(failed_cases)}")
+   590	    print(f"Saved processed dataset to: {output_path_processed}")
+   591	    print(f"Saved index CSV to: {index_csv_path}")
+   592	    print(f"Saved raw case directory to: {output_dir_raw if save_raw_cases else 'not saved'}")
+   593	    print(f"X_abs_accel shape: {X_abs_accel.shape}")
+   594	    print(f"y_damage shape: {y_damage.shape}")
+   595	    print(f"Max abs acceleration overall: {float(np.max(np.abs(X_abs_accel))):.6f}")
+   596	    print(f"Damage mean: {float(np.mean(y_damage)):.6f}")
+   597	    print(f"Damage max: {float(np.max(y_damage)):.6f}")
+   598	    # 打印结果摘要。
+   599	
+   600	
+   601	def build_default_paths(output_prefix: str) -> tuple[Path, Path, Path]:
+   602	    """
+   603	    Build default output paths according to output_prefix.
+   604	
+   605	    中文说明：
+   606	        根据输出前缀自动构造数据路径。
+   607	    """
+   608	
+   609	    output_dir_raw = Path("data_raw/opensees_outputs") / f"{output_prefix}_cases"
+   610	    # 原始单 case 输出目录。
+   611	
+   612	    output_path_processed = Path("data_processed") / f"{output_prefix}_dataset.npz"
+   613	    # 合并数据集输出路径。
+   614	
+   615	    index_csv_path = Path("data_processed") / f"{output_prefix}_dataset_index.csv"
+   616	    # 索引 CSV 输出路径。
+   617	
+   618	    return output_dir_raw, output_path_processed, index_csv_path
+   619	
+   620	
+   621	def parse_args() -> argparse.Namespace:
+   622	    """
+   623	    Parse command-line arguments.
+   624	
+   625	    中文说明：
+   626	        解析命令行参数。
+   627	    """
+   628	
+   629	    parser = argparse.ArgumentParser()
+   630	    # 创建参数解析器。
+   631	
+   632	    parser.add_argument("--n-cases", type=int, default=100)
+   633	    # 样本数。当前建议先用 100。
+   634	
+   635	    parser.add_argument("--seed", type=int, default=20260625)
+   636	    # 随机种子。
+   637	
+   638	    parser.add_argument("--duration", type=float, default=20.0)
+   639	    # 每个时程持续时间，单位秒。
+   640	
+   641	    parser.add_argument("--dt", type=float, default=0.01)
+   642	    # 时间步长，单位秒。
+   643	
+   644	    parser.add_argument("--output-prefix", type=str, default="debug_plus_100")
+   645	    # 输出文件前缀。
+   646	
+   647	    parser.add_argument("--output-raw-dir", type=str, default="")
+   648	    # 可选：手动指定原始 case 输出目录。
+   649	
+   650	    parser.add_argument("--output-processed", type=str, default="")
+   651	    # 可选：手动指定合并数据集输出路径。
+   652	
+   653	    parser.add_argument("--index-csv", type=str, default="")
+   654	    # 可选：手动指定索引 CSV 输出路径。
+   655	
+   656	    parser.add_argument("--save-raw-cases", action="store_true")
+   657	    # 是否保存每个单独 case。
+   658	    # 如果不加该参数，则只保存合并数据集和索引 CSV。
+   659	
+   660	    parser.add_argument("--max-damaged-stories", type=int, default=2)
+   661	    # 每个 case 最多损伤几层。
+   662	
+   663	    parser.add_argument("--healthy-probability", type=float, default=0.20)
+   664	    # 完全健康样本概率。
+   665	    # 设为 0.20 表示大约 20% case 是健康结构。
+   666	
+   667	    parser.add_argument("--damage-range", type=parse_float_pair, default=(0.05, 0.35))
+   668	    # 损伤范围。
+   669	
+   670	    parser.add_argument("--amplitude-g-range", type=parse_float_pair, default=(0.05, 0.25))
+   671	    # 输入激励幅值范围，单位 g。
+   672	
+   673	    parser.add_argument("--frequency-hz-range", type=parse_float_pair, default=(0.5, 2.0))
+   674	    # 输入正弦频率范围，单位 Hz。
+   675	
+   676	    parser.add_argument("--noise-levels", type=parse_noise_levels, default=[0.0, 0.05, 0.10, 0.20])
+   677	    # 噪声水平候选值。
+   678	
+   679	    parser.add_argument("--damping-ratio", type=float, default=0.02)
+   680	    # Rayleigh 阻尼目标阻尼比。
+   681	
+   682	    return parser.parse_args()
+   683	    # 返回参数。
+   684	
+   685	
+   686	def main() -> None:
+   687	    """
+   688	    Command-line entry point.
+   689	
+   690	    中文说明：
+   691	        命令行入口。
+   692	    """
+   693	
+   694	    args = parse_args()
+   695	    # 解析命令行参数。
+   696	
+   697	    default_raw_dir, default_processed, default_index_csv = build_default_paths(args.output_prefix)
+   698	    # 根据 output_prefix 构造默认路径。
+   699	
+   700	    output_dir_raw = Path(args.output_raw_dir) if args.output_raw_dir else default_raw_dir
+   701	    # 如果命令行指定了原始输出目录，则使用指定目录；否则使用默认路径。
+   702	
+   703	    output_path_processed = Path(args.output_processed) if args.output_processed else default_processed
+   704	    # 如果命令行指定了合并数据集路径，则使用指定路径；否则使用默认路径。
+   705	
+   706	    index_csv_path = Path(args.index_csv) if args.index_csv else default_index_csv
+   707	    # 如果命令行指定了索引 CSV 路径，则使用指定路径；否则使用默认路径。
+   708	
+   709	    generate_dataset(
+   710	        n_cases=args.n_cases,
+   711	        seed=args.seed,
+   712	        duration=args.duration,
+   713	        dt=args.dt,
+   714	        output_dir_raw=output_dir_raw,
+   715	        output_path_processed=output_path_processed,
+   716	        index_csv_path=index_csv_path,
+   717	        save_raw_cases=args.save_raw_cases,
+   718	        max_damaged_stories=args.max_damaged_stories,
+   719	        healthy_probability=args.healthy_probability,
+   720	        damage_range=args.damage_range,
+   721	        amplitude_g_range=args.amplitude_g_range,
+   722	        frequency_hz_range=args.frequency_hz_range,
+   723	        noise_candidates=args.noise_levels,
+   724	        damping_ratio=args.damping_ratio,
+   725	    )
+   726	    # 执行数据生成。
+   727	
+   728	
+   729	if __name__ == "__main__":
+   730	    main()
+   731	    # 直接运行该文件时执行 main。

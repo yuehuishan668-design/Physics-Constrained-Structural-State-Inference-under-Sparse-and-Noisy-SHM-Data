@@ -1,0 +1,195 @@
+========================================================================================================================
+F04_severity_performance.csv
+========================================================================================================================
+Shape: (80, 10)
+
+Columns:
+[00] seed
+[01] model
+[02] damage_bin
+[03] n_entries
+[04] mae
+[05] rmse
+[06] bias
+[07] mean_true
+[08] mean_prediction
+[09] underestimation_ratio
+
+LOW-CARDINALITY COLUMNS:
+
+seed (n_unique=10):
+[0 1 2 3 4 5 6 7 8 9]
+
+model (n_unique=2):
+<StringArray>
+['rbf_svr', 'ridge']
+Length: 2, dtype: str
+
+damage_bin (n_unique=4):
+<StringArray>
+['high', 'low', 'medium', 'zero']
+Length: 4, dtype: str
+
+FIRST 12 ROWS:
+ seed   model damage_bin  n_entries      mae     rmse      bias  mean_true  mean_prediction  underestimation_ratio
+    0 rbf_svr       high        278 0.066538 0.088876 -0.053084   0.274952         0.221868               0.784173
+    0 rbf_svr        low        105 0.027302 0.034999 -0.008111   0.073838         0.065727               0.571429
+    0 rbf_svr     medium        172 0.043969 0.055684 -0.036018   0.152687         0.116669               0.825581
+    0 rbf_svr       zero       1245 0.022374 0.035519  0.022374   0.000000         0.022374                    NaN
+    0   ridge       high        278 0.093501 0.112613 -0.079978   0.274952         0.194974               0.866906
+    0   ridge        low        105 0.028018 0.035831 -0.002830   0.073838         0.071009               0.609524
+    0   ridge     medium        172 0.057316 0.069930 -0.047631   0.152687         0.105056               0.883721
+    0   ridge       zero       1245 0.033127 0.047020  0.033127   0.000000         0.033127                    NaN
+    1 rbf_svr       high        268 0.054144 0.073997 -0.039386   0.270000         0.230614               0.735075
+    1 rbf_svr        low        108 0.033070 0.047247 -0.001263   0.074522         0.073259               0.546296
+    1 rbf_svr     medium        171 0.042909 0.057975 -0.031795   0.150658         0.118862               0.789474
+    1 rbf_svr       zero       1253 0.023767 0.039750  0.023767   0.000000         0.023767                    NaN
+
+NUMERIC SUMMARY:
+                       count        mean         std        min         25%         50%         75%          max
+seed                    80.0    4.500000    2.890403   0.000000    2.000000    4.500000    7.000000     9.000000
+n_entries               80.0  450.000000  471.125074  79.000000  143.500000  227.500000  521.250000  1269.000000
+mae                     80.0    0.046531    0.021989   0.021317    0.032152    0.038101    0.055860     0.100553
+rmse                    80.0    0.060705    0.024832   0.031550    0.041842    0.051520    0.070189     0.120672
+bias                    80.0   -0.019629    0.036981  -0.090054   -0.045538   -0.017291    0.008601     0.034705
+mean_true               80.0    0.124700    0.101791   0.000000    0.054078    0.112405    0.182015     0.277448
+mean_prediction         80.0    0.105071    0.067995   0.021317    0.054856    0.090163    0.141043     0.241467
+underestimation_ratio   60.0    0.729034    0.127372   0.490741    0.602970    0.771087    0.824527     0.897887
+
+========================================================================================================================
+F04_calibration_effects.csv
+========================================================================================================================
+Shape: (10, 16)
+
+Columns:
+[00] metric
+[01] difference_definition
+[02] n_seeds
+[03] standard_mean
+[04] calibrated_mean
+[05] mean_difference
+[06] std_difference
+[07] ci95_difference_low
+[08] ci95_difference_high
+[09] calibrated_wins
+[10] standard_wins
+[11] ties
+[12] mean_relative_improvement_percent
+[13] paired_t_pvalue
+[14] wilcoxon_statistic
+[15] wilcoxon_pvalue
+
+LOW-CARDINALITY COLUMNS:
+
+metric (n_unique=10):
+<StringArray>
+[                  'test_mse',                   'test_mae',
+                  'test_rmse',                'damaged_mae',
+                   'zero_mae',                    'low_mae',
+                 'medium_mae',                   'high_mae',
+              'high_abs_bias', 'high_underestimation_ratio']
+Length: 10, dtype: str
+
+difference_definition (n_unique=1):
+<StringArray>
+['calibrated_minus_standard']
+Length: 1, dtype: str
+
+n_seeds (n_unique=1):
+[10]
+
+standard_mean (n_unique=10):
+[0.00251455 0.03145    0.05011137 0.04937519 0.02363563 0.03029554
+ 0.04261383 0.06033738 0.0474324  0.76106114]
+
+calibrated_mean (n_unique=10):
+[0.00245592 0.03100445 0.04951996 0.04734734 0.02388156 0.03257398
+ 0.04233557 0.05569575 0.03393411 0.65735524]
+
+mean_difference (n_unique=10):
+[-5.86280492e-05 -4.45547059e-04 -5.91411711e-04 -2.02784456e-03
+  2.45926128e-04  2.27844020e-03 -2.78255233e-04 -4.64163291e-03
+ -1.34982891e-02 -1.03705901e-01]
+
+std_difference (n_unique=10):
+[4.07754035e-05 2.56557259e-04 4.08469879e-04 9.33473685e-04
+ 1.61216436e-04 1.03438639e-03 1.18359110e-03 1.50429385e-03
+ 3.55451461e-03 3.20496629e-02]
+
+ci95_difference_low (n_unique=10):
+[-8.77970156e-05 -6.29077066e-04 -8.83613460e-04 -2.69561141e-03
+  1.30598837e-04  1.53848475e-03 -1.12494530e-03 -5.71773990e-03
+ -1.60410357e-02 -1.26632848e-01]
+
+ci95_difference_high (n_unique=10):
+[-2.94590827e-05 -2.62017052e-04 -2.99209962e-04 -1.36007772e-03
+  3.61253419e-04  3.01839564e-03  5.68434837e-04 -3.56552591e-03
+ -1.09555426e-02 -8.07789530e-02]
+
+calibrated_wins (n_unique=3):
+[10  0  7]
+
+standard_wins (n_unique=3):
+[ 0 10  3]
+
+ties (n_unique=1):
+[0]
+
+mean_relative_improvement_percent (n_unique=10):
+[ 2.34825235  1.40677127  1.18409128  4.05201026 -1.01874841 -7.71089582
+  0.58993253  7.62974596 29.27290328 13.6831354 ]
+
+paired_t_pvalue (n_unique=10):
+[1.39227007e-03 3.84277420e-04 1.33052738e-03 7.31093167e-05
+ 9.41898584e-04 6.57040864e-05 4.76178082e-01 4.38782889e-06
+ 7.65213086e-07 2.95432884e-06]
+
+wilcoxon_statistic (n_unique=2):
+[ 0. 19.]
+
+wilcoxon_pvalue (n_unique=2):
+[0.00195312 0.43164062]
+
+FIRST 12 ROWS:
+                    metric     difference_definition  n_seeds  standard_mean  calibrated_mean  mean_difference  std_difference  ci95_difference_low  ci95_difference_high  calibrated_wins  standard_wins  ties  mean_relative_improvement_percent  paired_t_pvalue  wilcoxon_statistic  wilcoxon_pvalue
+                  test_mse calibrated_minus_standard       10       0.002515         0.002456        -0.000059        0.000041            -0.000088             -0.000029               10              0     0                           2.348252     1.392270e-03                 0.0         0.001953
+                  test_mae calibrated_minus_standard       10       0.031450         0.031004        -0.000446        0.000257            -0.000629             -0.000262               10              0     0                           1.406771     3.842774e-04                 0.0         0.001953
+                 test_rmse calibrated_minus_standard       10       0.050111         0.049520        -0.000591        0.000408            -0.000884             -0.000299               10              0     0                           1.184091     1.330527e-03                 0.0         0.001953
+               damaged_mae calibrated_minus_standard       10       0.049375         0.047347        -0.002028        0.000933            -0.002696             -0.001360               10              0     0                           4.052010     7.310932e-05                 0.0         0.001953
+                  zero_mae calibrated_minus_standard       10       0.023636         0.023882         0.000246        0.000161             0.000131              0.000361                0             10     0                          -1.018748     9.418986e-04                 0.0         0.001953
+                   low_mae calibrated_minus_standard       10       0.030296         0.032574         0.002278        0.001034             0.001538              0.003018                0             10     0                          -7.710896     6.570409e-05                 0.0         0.001953
+                medium_mae calibrated_minus_standard       10       0.042614         0.042336        -0.000278        0.001184            -0.001125              0.000568                7              3     0                           0.589933     4.761781e-01                19.0         0.431641
+                  high_mae calibrated_minus_standard       10       0.060337         0.055696        -0.004642        0.001504            -0.005718             -0.003566               10              0     0                           7.629746     4.387829e-06                 0.0         0.001953
+             high_abs_bias calibrated_minus_standard       10       0.047432         0.033934        -0.013498        0.003555            -0.016041             -0.010956               10              0     0                          29.272903     7.652131e-07                 0.0         0.001953
+high_underestimation_ratio calibrated_minus_standard       10       0.761061         0.657355        -0.103706        0.032050            -0.126633             -0.080779               10              0     0                          13.683135     2.954329e-06                 0.0         0.001953
+
+NUMERIC SUMMARY:
+                                   count       mean        std           min        25%        50%        75%        max
+n_seeds                             10.0  10.000000   0.000000  1.000000e+01  10.000000  10.000000  10.000000  10.000000
+standard_mean                       10.0   0.109883   0.229395  2.514548e-03   0.030584   0.045023   0.049927   0.761061
+calibrated_mean                     10.0   0.097610   0.197252  2.455920e-03   0.031397   0.038135   0.048977   0.657355
+mean_difference                     10.0  -0.012272   0.032425 -1.037059e-01  -0.003988  -0.000518  -0.000114   0.002278
+std_difference                      10.0   0.004113   0.009869  4.077540e-05   0.000295   0.000984   0.001424   0.032050
+ci95_difference_low                 10.0  -0.015214   0.039473 -1.266328e-01  -0.004962  -0.001004  -0.000223   0.001538
+ci95_difference_high                10.0  -0.009330   0.025384 -8.077895e-02  -0.003014  -0.000281   0.000264   0.003018
+calibrated_wins                     10.0   7.700000   4.164666  0.000000e+00   7.750000  10.000000  10.000000  10.000000
+standard_wins                       10.0   2.300000   4.164666  0.000000e+00   0.000000   0.000000   2.250000  10.000000
+ties                                10.0   0.000000   0.000000  0.000000e+00   0.000000   0.000000   0.000000   0.000000
+mean_relative_improvement_percent   10.0   5.143720  10.132037 -7.710896e+00   0.738472   1.877512   6.735312  29.272903
+paired_t_pvalue                     10.0   0.048037   0.150434  7.652131e-07   0.000020   0.000229   0.001233   0.476178
+wilcoxon_statistic                  10.0   1.900000   6.008328  0.000000e+00   0.000000   0.000000   0.000000  19.000000
+wilcoxon_pvalue                     10.0   0.044922   0.135879  1.953125e-03   0.001953   0.001953   0.001953   0.431641
+
+FULL CALIBRATION DATA:
+                    metric     difference_definition  n_seeds  standard_mean  calibrated_mean  mean_difference  std_difference  ci95_difference_low  ci95_difference_high  calibrated_wins  standard_wins  ties  mean_relative_improvement_percent  paired_t_pvalue  wilcoxon_statistic  wilcoxon_pvalue
+                  test_mse calibrated_minus_standard       10       0.002515         0.002456        -0.000059        0.000041            -0.000088             -0.000029               10              0     0                           2.348252     1.392270e-03                 0.0         0.001953
+                  test_mae calibrated_minus_standard       10       0.031450         0.031004        -0.000446        0.000257            -0.000629             -0.000262               10              0     0                           1.406771     3.842774e-04                 0.0         0.001953
+                 test_rmse calibrated_minus_standard       10       0.050111         0.049520        -0.000591        0.000408            -0.000884             -0.000299               10              0     0                           1.184091     1.330527e-03                 0.0         0.001953
+               damaged_mae calibrated_minus_standard       10       0.049375         0.047347        -0.002028        0.000933            -0.002696             -0.001360               10              0     0                           4.052010     7.310932e-05                 0.0         0.001953
+                  zero_mae calibrated_minus_standard       10       0.023636         0.023882         0.000246        0.000161             0.000131              0.000361                0             10     0                          -1.018748     9.418986e-04                 0.0         0.001953
+                   low_mae calibrated_minus_standard       10       0.030296         0.032574         0.002278        0.001034             0.001538              0.003018                0             10     0                          -7.710896     6.570409e-05                 0.0         0.001953
+                medium_mae calibrated_minus_standard       10       0.042614         0.042336        -0.000278        0.001184            -0.001125              0.000568                7              3     0                           0.589933     4.761781e-01                19.0         0.431641
+                  high_mae calibrated_minus_standard       10       0.060337         0.055696        -0.004642        0.001504            -0.005718             -0.003566               10              0     0                           7.629746     4.387829e-06                 0.0         0.001953
+             high_abs_bias calibrated_minus_standard       10       0.047432         0.033934        -0.013498        0.003555            -0.016041             -0.010956               10              0     0                          29.272903     7.652131e-07                 0.0         0.001953
+high_underestimation_ratio calibrated_minus_standard       10       0.761061         0.657355        -0.103706        0.032050            -0.126633             -0.080779               10              0     0                          13.683135     2.954329e-06                 0.0         0.001953
+

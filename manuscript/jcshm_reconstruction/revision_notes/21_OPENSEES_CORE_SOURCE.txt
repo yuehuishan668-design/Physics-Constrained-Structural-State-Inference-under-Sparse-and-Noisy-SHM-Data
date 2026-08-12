@@ -1,0 +1,1350 @@
+====================================================================================================
+FILE: opensees_models/frame_base.py
+====================================================================================================
+     1	"""
+     2	File location:
+     3	    opensees_models/frame_base.py
+     4	
+     5	Purpose:
+     6	    Build a 2D multi-story, multi-bay elastic frame in OpenSeesPy.
+     7	    This is the first finite element model for generating structural response data.
+     8	
+     9	Research role:
+    10	    This file creates the controllable structure used later for:
+    11	    1. healthy response generation,
+    12	    2. stiffness-degradation damage simulation,
+    13	    3. sparse/noisy monitoring data generation,
+    14	    4. physics-constrained state inference experiments.
+    15	
+    16	Important modeling decision:
+    17	    Damage is represented by story-level stiffness degradation:
+    18	        E_i = (1 - d_i) * E
+    19	    where d_i is the damage ratio of story i.
+    20	    Example:
+    21	        d_i = 0.00 means no stiffness degradation.
+    22	        d_i = 0.20 means 20% stiffness degradation.
+    23	
+    24	中文说明：
+    25	    文件位置：
+    26	        opensees_models/frame_base.py
+    27	
+    28	    文件目的：
+    29	        在 OpenSeesPy 中建立一个二维、多层、多跨的弹性框架结构模型。
+    30	        这是后续生成结构响应数据的第一个有限元基础模型。
+    31	
+    32	    研究作用：
+    33	        本文件创建一个可控的结构模型，后续可以用于：
+    34	        1. 生成健康结构响应；
+    35	        2. 模拟刚度退化形式的损伤；
+    36	        3. 生成稀疏和含噪的监测数据；
+    37	        4. 开展物理约束状态识别实验。
+    38	
+    39	    重要建模决定：
+    40	        损伤采用“层级刚度退化”表示：
+    41	            E_i = (1 - d_i) * E
+    42	        其中 d_i 表示第 i 层的损伤比例。
+    43	        例如：
+    44	            d_i = 0.00 表示没有刚度退化；
+    45	            d_i = 0.20 表示该层刚度退化 20%。
+    46	"""
+    47	
+    48	from __future__ import annotations
+    49	# `from __future__ import annotations` postpones type-hint evaluation.
+    50	# It makes type hints more flexible and avoids some circular-reference problems.
+    51	# 中文：这句会延后类型注解的求值，使类型提示更灵活，并减少循环引用导致的问题。
+    52	
+    53	import math
+    54	# `math` provides mathematical constants and functions.
+    55	# Here it is used for pi and square-root-related calculations.
+    56	# 中文：`math` 是 Python 的数学模块，这里主要用于圆周率 `pi` 和平方根等计算。
+    57	
+    58	from dataclasses import dataclass
+    59	# `dataclass` is used to define a clean configuration object.
+    60	# It automatically creates an __init__ method for the class.
+    61	# 中文：`dataclass` 用于简洁地定义配置类，会自动生成类的初始化方法 `__init__`。
+    62	
+    63	from typing import Dict, List, Tuple
+    64	# `Dict`, `List`, and `Tuple` are type hints.
+    65	# They do not change runtime behavior but make the code easier to read and check.
+    66	# 中文：`Dict`、`List`、`Tuple` 是类型提示，不改变运行结果，但能让代码结构更清晰，也方便编辑器或类型检查工具发现问题。
+    67	
+    68	import openseespy.opensees as ops
+    69	# `openseespy.opensees` is the OpenSeesPy command module.
+    70	# `as ops` gives it a shorter alias, so we can write `ops.node(...)` instead of the full module name.
+    71	# 中文：`openseespy.opensees` 是 OpenSeesPy 的核心命令模块；`as ops` 是给它起一个短别名，后续可以写 `ops.node(...)`，不用每次写完整模块名。
+    72	
+    73	
+    74	@dataclass
+    75	class FrameConfig:
+    76	    """
+    77	    Configuration class for the 2D frame.
+    78	
+    79	    Each attribute controls one part of the finite element model.
+    80	    Units:
+    81	        length: m
+    82	        mass: kg
+    83	        force: N
+    84	        stress/modulus: Pa = N/m^2
+    85	
+    86	    中文说明：
+    87	        二维框架结构的配置类。
+    88	
+    89	        每一个属性都控制有限元模型中的一部分参数。
+    90	        单位：
+    91	            长度：m
+    92	            质量：kg
+    93	            力：N
+    94	            应力/弹性模量：Pa = N/m^2
+    95	    """
+    96	
+    97	    n_story: int = 4
+    98	    # `n_story` is the number of stories/floors above the base.
+    99	    # 中文：`n_story` 表示基础以上的结构层数，也就是楼层数量。
+   100	
+   101	    n_bay: int = 2
+   102	    # `n_bay` is the number of horizontal spans.
+   103	    # 中文：`n_bay` 表示水平方向的跨数。
+   104	
+   105	    story_height: float = 3.2
+   106	    # `story_height` is the vertical distance between two adjacent floors, in meters.
+   107	    # 中文：`story_height` 表示相邻两层之间的竖向距离，单位是米。
+   108	
+   109	    bay_width: float = 6.0
+   110	    # `bay_width` is the horizontal span length, in meters.
+   111	    # 中文：`bay_width` 表示每一跨的水平长度，单位是米。
+   112	
+   113	    E: float = 2.0e11
+   114	    # `E` is Young's modulus, in Pa.
+   115	    # 2.0e11 Pa is a typical order of magnitude for steel.
+   116	    # 中文：`E` 是材料的杨氏模量，单位是 Pa；`2.0e11 Pa` 是钢材弹性模量的常见数量级。
+   117	
+   118	    A_col: float = 0.09
+   119	    # `A_col` is the cross-sectional area of columns, in m^2.
+   120	    # 中文：`A_col` 是柱截面面积，单位是 m^2。
+   121	
+   122	    I_col: float = 6.75e-4
+   123	    # `I_col` is the second moment of area of columns, in m^4.
+   124	    # In a 2D frame, this controls bending stiffness E*I.
+   125	    # 中文：`I_col` 是柱截面的惯性矩，单位是 m^4；在二维框架中，它与 `E` 相乘形成弯曲刚度 `E*I`。
+   126	
+   127	    A_beam: float = 0.075
+   128	    # `A_beam` is the cross-sectional area of beams, in m^2.
+   129	    # 中文：`A_beam` 是梁截面面积，单位是 m^2。
+   130	
+   131	    I_beam: float = 4.80e-4
+   132	    # `I_beam` is the second moment of area of beams, in m^4.
+   133	    # 中文：`I_beam` 是梁截面的惯性矩，单位是 m^4，用于控制梁的弯曲刚度。
+   134	
+   135	    floor_mass: float = 2.0e5
+   136	    # `floor_mass` is the total lumped mass assigned to each floor, in kg.
+   137	    # 中文：`floor_mass` 表示每一层楼面分配的总集中质量，单位是 kg。
+   138	
+   139	    tiny_mass_ratio_y: float = 1.0e-6
+   140	    # `tiny_mass_ratio_y` gives a very small vertical mass to avoid numerical singularity in modal analysis.
+   141	    # It has negligible influence on lateral response.
+   142	    # 中文：`tiny_mass_ratio_y` 用于给竖向自由度分配一个极小质量，避免模态分析中的数值奇异；它对水平地震响应的影响可以忽略。
+   143	
+   144	    tiny_mass_ratio_rot: float = 1.0e-9
+   145	    # `tiny_mass_ratio_rot` gives a very small rotational mass to avoid numerical singularity.
+   146	    # It is not meant to represent a calibrated physical rotational inertia.
+   147	    # 中文：`tiny_mass_ratio_rot` 用于给转动自由度分配一个极小质量以提升数值稳定性；它不是经过物理标定的真实转动惯量。
+   148	
+   149	
+   150	def validate_damage(damage: List[float], n_story: int) -> List[float]:
+   151	    """
+   152	    Validate the story-level damage vector.
+   153	
+   154	    Parameters:
+   155	        damage:
+   156	            List of stiffness degradation ratios.
+   157	            Its length must equal the number of stories.
+   158	        n_story:
+   159	            Number of stories in the structure.
+   160	
+   161	    Returns:
+   162	        The validated damage list.
+   163	
+   164	    Raises:
+   165	        ValueError if damage is invalid.
+   166	
+   167	    中文说明：
+   168	        检查层级损伤向量是否合法。
+   169	
+   170	        参数：
+   171	            damage：
+   172	                刚度退化比例列表，长度必须等于结构层数。
+   173	            n_story：
+   174	                结构总层数。
+   175	
+   176	        返回：
+   177	            通过检查后的损伤列表。
+   178	
+   179	        异常：
+   180	            如果损伤向量长度或数值范围不合理，则抛出 ValueError。
+   181	    """
+   182	
+   183	    if len(damage) != n_story:
+   184	        # `len(damage)` counts how many entries are in the damage vector.
+   185	        # It must match `n_story`; otherwise, one story has no damage value or too many values exist.
+   186	        # 中文：`len(damage)` 统计损伤向量中有多少个数值；它必须与 `n_story` 相等，否则会出现某层缺少损伤值或损伤值数量过多的问题。
+   187	        raise ValueError(f"damage must have length {n_story}, but got {len(damage)}.")
+   188	
+   189	    for idx, value in enumerate(damage):
+   190	        # `enumerate(damage)` gives both index and value.
+   191	        # `idx` starts at 0, so story number is idx + 1.
+   192	        # 中文：`enumerate(damage)` 会同时给出索引和值；由于 Python 索引从 0 开始，所以实际楼层编号是 `idx + 1`。
+   193	        if value < 0.0 or value >= 0.95:
+   194	            # Damage must be within a physically reasonable range.
+   195	            # We use value < 0.95 instead of value <= 1.0 because near-zero stiffness can cause instability.
+   196	            # 中文：损伤值必须处于物理上合理的范围内；这里要求小于 0.95 而不是小于等于 1.0，是因为接近零刚度会导致结构模型数值不稳定。
+   197	            raise ValueError(
+   198	                f"damage[{idx}]={value} is invalid. Use 0.0 <= damage < 0.95."
+   199	            )
+   200	
+   201	    return damage
+   202	
+   203	
+   204	def make_node_tag(floor: int, bay: int, n_bay: int) -> int:
+   205	    """
+   206	    Convert a floor-bay coordinate into a unique OpenSees node tag.
+   207	
+   208	    OpenSees identifies nodes by integer tags.
+   209	    This helper creates deterministic tags.
+   210	
+   211	    Example for n_bay = 2:
+   212	        floor 0: nodes 1, 2, 3
+   213	        floor 1: nodes 4, 5, 6
+   214	        floor 2: nodes 7, 8, 9
+   215	
+   216	    中文说明：
+   217	        将“楼层-跨号”坐标转换为唯一的 OpenSees 节点编号。
+   218	
+   219	        OpenSees 使用整数编号识别节点。
+   220	        这个辅助函数用于生成稳定、可重复的节点编号。
+   221	
+   222	        当 n_bay = 2 时：
+   223	            第 0 层：节点 1、2、3
+   224	            第 1 层：节点 4、5、6
+   225	            第 2 层：节点 7、8、9
+   226	    """
+   227	
+   228	    return floor * (n_bay + 1) + bay + 1
+   229	    # `n_bay + 1` is the number of column lines/nodes per floor.
+   230	    # `+ 1` makes the tag start from 1, because OpenSees tags are conventionally positive integers.
+   231	    # 中文：`n_bay + 1` 是每层的柱线数量，也就是每层节点数；最后的 `+ 1` 让节点编号从 1 开始，因为 OpenSees 中的编号通常使用正整数。
+   232	
+   233	
+   234	def build_2d_frame(
+   235	    config: FrameConfig | None = None,
+   236	    damage: List[float] | None = None,
+   237	) -> Dict[str, object]:
+   238	    """
+   239	    Build the 2D frame model in OpenSeesPy.
+   240	
+   241	    Parameters:
+   242	        config:
+   243	            FrameConfig object containing geometry, section, material, and mass parameters.
+   244	        damage:
+   245	            Story-level stiffness degradation vector.
+   246	            Example:
+   247	                [0.0, 0.1, 0.0, 0.2]
+   248	            means:
+   249	                story 1: healthy,
+   250	                story 2: 10% stiffness degradation,
+   251	                story 3: healthy,
+   252	                story 4: 20% stiffness degradation.
+   253	
+   254	    Returns:
+   255	        A dictionary containing node tags and element tags for later response extraction.
+   256	
+   257	    中文说明：
+   258	        在 OpenSeesPy 中建立二维框架模型。
+   259	
+   260	        参数：
+   261	            config：
+   262	                FrameConfig 配置对象，包含几何尺寸、截面、材料和质量参数。
+   263	            damage：
+   264	                层级刚度退化向量。
+   265	                例如：
+   266	                    [0.0, 0.1, 0.0, 0.2]
+   267	                表示：
+   268	                    第 1 层：健康；
+   269	                    第 2 层：刚度退化 10%；
+   270	                    第 3 层：健康；
+   271	                    第 4 层：刚度退化 20%。
+   272	
+   273	        返回：
+   274	            一个字典，包含节点编号和单元编号，方便后续提取结构响应。
+   275	    """
+   276	
+   277	    if config is None:
+   278	        # If the user does not pass a config, use the default 4-story 2-bay frame.
+   279	        # 中文：如果调用函数时没有传入 `config`，就使用默认的 4 层 2 跨框架配置。
+   280	        config = FrameConfig()
+   281	
+   282	    if damage is None:
+   283	        # If no damage vector is given, build a healthy structure.
+   284	        # 中文：如果没有提供损伤向量，就默认建立一个完全健康的结构。
+   285	        damage = [0.0] * config.n_story
+   286	
+   287	    damage = validate_damage(damage, config.n_story)
+   288	    # Validate damage length and value range before building the model.
+   289	    # 中文：在建立模型之前，先检查损伤向量长度和数值范围是否合法。
+   290	
+   291	    ops.wipe()
+   292	    # `ops.wipe()` clears the existing OpenSees model from memory.
+   293	    # This is essential before building a new model, otherwise old nodes/elements may remain.
+   294	    # 中文：`ops.wipe()` 会清空内存中已有的 OpenSees 模型；建立新模型前必须执行，否则旧节点或旧单元可能残留并影响结果。
+   295	
+   296	    ops.model("basic", "-ndm", 2, "-ndf", 3)
+   297	    # `ops.model` starts a new OpenSees model.
+   298	    # `"basic"` means the standard OpenSees basic model builder.
+   299	    # `"-ndm", 2` means number of spatial dimensions = 2.
+   300	    # `"-ndf", 3` means number of degrees of freedom per node = 3.
+   301	    # For a 2D frame, the three nodal DOFs are:
+   302	    #     1 = horizontal translation ux,
+   303	    #     2 = vertical translation uy,
+   304	    #     3 = in-plane rotation rz.
+   305	    # 中文：`ops.model` 用于启动一个新的 OpenSees 模型；`"basic"` 表示使用标准基础模型构建器；`"-ndm", 2` 表示二维空间模型；`"-ndf", 3` 表示每个节点有 3 个自由度。
+   306	    # 中文：对于二维框架，这 3 个节点自由度分别是：1 = 水平平动 ux，2 = 竖向平动 uy，3 = 平面内转动 rz。
+   307	
+   308	    node_tags: Dict[Tuple[int, int], int] = {}
+   309	    # `node_tags` maps (floor, bay) coordinates to OpenSees node tags.
+   310	    # Example: node_tags[(2, 1)] gives the middle node on floor 2.
+   311	    # 中文：`node_tags` 用于把 `(楼层, 跨号)` 坐标映射到 OpenSees 节点编号；例如 `node_tags[(2, 1)]` 表示第 2 层中间柱线处的节点编号。
+   312	
+   313	    for floor in range(config.n_story + 1):
+   314	        # `range(config.n_story + 1)` includes floor 0, which is the base level.
+   315	        # For 4 stories, floors are 0, 1, 2, 3, 4.
+   316	        # 中文：`range(config.n_story + 1)` 包含第 0 层，也就是基础层；如果结构为 4 层，则循环的楼层编号为 0、1、2、3、4。
+   317	
+   318	        y = floor * config.story_height
+   319	        # `y` is the vertical coordinate of the current floor.
+   320	        # 中文：`y` 是当前楼层的竖向坐标。
+   321	
+   322	        for bay in range(config.n_bay + 1):
+   323	            # For 2 bays, there are 3 vertical column lines: bay index 0, 1, 2.
+   324	            # 中文：对于 2 跨框架，会有 3 条竖向柱线，对应跨号索引 0、1、2。
+   325	
+   326	            x = bay * config.bay_width
+   327	            # `x` is the horizontal coordinate of the current column line.
+   328	            # 中文：`x` 是当前柱线的水平坐标。
+   329	
+   330	            tag = make_node_tag(floor, bay, config.n_bay)
+   331	            # `tag` is the unique integer node ID used by OpenSees.
+   332	            # 中文：`tag` 是 OpenSees 用来识别该节点的唯一整数编号。
+   333	
+   334	            ops.node(tag, x, y)
+   335	            # `ops.node(tag, x, y)` creates a node at coordinate (x, y).
+   336	            # `tag` identifies this node in later commands.
+   337	            # 中文：`ops.node(tag, x, y)` 在坐标 `(x, y)` 处创建一个节点；后续命令会通过 `tag` 调用这个节点。
+   338	
+   339	            node_tags[(floor, bay)] = tag
+   340	            # Store the tag so later code can create elements and extract responses.
+   341	            # 中文：把节点编号存入字典，方便后续创建单元和提取结构响应。
+   342	
+   343	    for bay in range(config.n_bay + 1):
+   344	        # Loop over all base nodes.
+   345	        # 中文：循环遍历基础层上的所有节点。
+   346	
+   347	        base_node = node_tags[(0, bay)]
+   348	        # `floor = 0` means the base level.
+   349	        # 中文：`floor = 0` 表示基础层。
+   350	
+   351	        ops.fix(base_node, 1, 1, 1)
+   352	        # `ops.fix(nodeTag, 1, 1, 1)` fixes all 3 DOFs of the base node.
+   353	        # 1 means constrained/fixed; 0 would mean free.
+   354	        # Here:
+   355	        #     ux fixed,
+   356	        #     uy fixed,
+   357	        #     rz fixed.
+   358	        # 中文：`ops.fix(nodeTag, 1, 1, 1)` 表示约束基础节点的 3 个自由度；`1` 表示固定，`0` 表示自由。
+   359	        # 中文：这里固定了水平位移 ux、竖向位移 uy 和转角 rz，因此基础节点为完全固结支座。
+   360	
+   361	    mass_per_node = config.floor_mass / (config.n_bay + 1)
+   362	    # The total floor mass is evenly distributed to all nodes on the same floor.
+   363	    # 中文：将每层总质量平均分配到该层的所有节点上。
+   364	
+   365	    for floor in range(1, config.n_story + 1):
+   366	        # Only above-ground floors receive mass.
+   367	        # The base floor is fixed and does not need dynamic mass.
+   368	        # 中文：只给基础以上的楼层分配质量；基础层已经固定，不需要参与动力响应质量分配。
+   369	
+   370	        for bay in range(config.n_bay + 1):
+   371	            # Loop over all nodes on this floor.
+   372	            # 中文：遍历当前楼层上的所有节点。
+   373	
+   374	            node = node_tags[(floor, bay)]
+   375	            # Get OpenSees node tag.
+   376	            # 中文：获取当前节点对应的 OpenSees 节点编号。
+   377	
+   378	            mx = mass_per_node
+   379	            # `mx` is the horizontal translational mass.
+   380	            # It dominates lateral seismic response.
+   381	            # 中文：`mx` 是水平方向平动质量，它对结构水平地震响应起主要作用。
+   382	
+   383	            my = mass_per_node * config.tiny_mass_ratio_y
+   384	            # `my` is a tiny vertical mass for numerical stability.
+   385	            # It is intentionally much smaller than `mx`.
+   386	            # 中文：`my` 是一个极小的竖向质量，主要用于提高数值稳定性；它被故意设置得远小于 `mx`。
+   387	
+   388	            mr = mass_per_node * config.tiny_mass_ratio_rot
+   389	            # `mr` is a tiny rotational mass for numerical stability.
+   390	            # 中文：`mr` 是一个极小的转动质量，同样用于避免数值奇异或不稳定。
+   391	
+   392	            ops.mass(node, mx, my, mr)
+   393	            # `ops.mass(nodeTag, m1, m2, m3)` assigns nodal mass to the 3 DOFs.
+   394	            # DOF 1: horizontal translation, DOF 2: vertical translation, DOF 3: rotation.
+   395	            # 中文：`ops.mass(nodeTag, m1, m2, m3)` 为节点的 3 个自由度分配质量；DOF 1 是水平平动，DOF 2 是竖向平动，DOF 3 是转动。
+   396	
+   397	    transf_tag = 1
+   398	    # `transf_tag` is the ID of the geometric transformation object.
+   399	    # 中文：`transf_tag` 是几何变换对象的编号，后续单元需要通过这个编号调用对应的几何变换。
+   400	
+   401	    ops.geomTransf("Linear", transf_tag)
+   402	    # `ops.geomTransf("Linear", transfTag)` defines a linear coordinate transformation.
+   403	    # It maps local element coordinates to global coordinates.
+   404	    # `"Linear"` assumes small displacement geometry, suitable for the first elastic model.
+   405	    # 中文：`ops.geomTransf("Linear", transfTag)` 定义线性坐标变换，用于把单元局部坐标转换到整体坐标；`"Linear"` 假设小变形几何，适合当前第一版弹性框架模型。
+   406	
+   407	    element_tags: Dict[str, List[int]] = {
+   408	        "columns": [],
+   409	        "beams": [],
+   410	    }
+   411	    # `element_tags` stores element IDs separately for columns and beams.
+   412	    # 中文：`element_tags` 分别存储柱单元和梁单元的编号，方便后续分类调用。
+   413	
+   414	    ele_tag = 1
+   415	    # `ele_tag` is the unique integer tag for each OpenSees element.
+   416	    # 中文：`ele_tag` 是 OpenSees 中每个单元的唯一整数编号。
+   417	
+   418	    for story in range(1, config.n_story + 1):
+   419	        # Story 1 connects floor 0 to floor 1.
+   420	        # Story 2 connects floor 1 to floor 2, etc.
+   421	        # 中文：第 1 层连接第 0 层和第 1 层；第 2 层连接第 1 层和第 2 层，以此类推。
+   422	
+   423	        d_story = damage[story - 1]
+   424	        # Python list index starts at 0.
+   425	        # Therefore story 1 uses damage[0].
+   426	        # 中文：Python 列表索引从 0 开始，因此第 1 层对应 `damage[0]`。
+   427	
+   428	        E_story = (1.0 - d_story) * config.E
+   429	        # Story stiffness degradation is implemented by reducing Young's modulus E.
+   430	        # This is equivalent to reducing flexural stiffness E*I for all columns in that story.
+   431	        # 中文：层级刚度退化通过降低该层柱子的杨氏模量 `E` 实现；这等价于降低该层柱子的弯曲刚度 `E*I`。
+   432	
+   433	        for bay in range(config.n_bay + 1):
+   434	            # Create one column element on each column line for this story.
+   435	            # 中文：在当前层的每一条柱线上创建一个柱单元。
+   436	
+   437	            node_i = node_tags[(story - 1, bay)]
+   438	            # Bottom node of the column.
+   439	            # 中文：柱单元的底部节点。
+   440	
+   441	            node_j = node_tags[(story, bay)]
+   442	            # Top node of the column.
+   443	            # 中文：柱单元的顶部节点。
+   444	
+   445	            ops.element(
+   446	                "elasticBeamColumn",
+   447	                ele_tag,
+   448	                node_i,
+   449	                node_j,
+   450	                config.A_col,
+   451	                E_story,
+   452	                config.I_col,
+   453	                transf_tag,
+   454	            )
+   455	            # `ops.element` creates a finite element.
+   456	            # `"elasticBeamColumn"` means a linear elastic frame element.
+   457	            # `ele_tag` is the element ID.
+   458	            # `node_i`, `node_j` are the two end nodes.
+   459	            # `config.A_col` is column area A.
+   460	            # `E_story` is degraded Young's modulus E for the current story.
+   461	            # `config.I_col` is column second moment of area I.
+   462	            # `transf_tag` links the element to the geometric transformation.
+   463	            # 中文：`ops.element` 用于创建有限元单元；`"elasticBeamColumn"` 表示线弹性梁柱单元。
+   464	            # 中文：`ele_tag` 是单元编号；`node_i` 和 `node_j` 是单元两端节点；`config.A_col` 是柱截面面积；`E_story` 是当前层退化后的杨氏模量；`config.I_col` 是柱截面惯性矩；`transf_tag` 将该单元与几何变换对象关联起来。
+   465	
+   466	            element_tags["columns"].append(ele_tag)
+   467	            # Save the column element tag.
+   468	            # 中文：保存当前柱单元编号。
+   469	
+   470	            ele_tag += 1
+   471	            # Increment element tag to keep each element ID unique.
+   472	            # 中文：单元编号加 1，确保每个单元都有唯一编号。
+   473	
+   474	    for floor in range(1, config.n_story + 1):
+   475	        # Beam elements are placed at each floor level above the base.
+   476	        # 中文：梁单元布置在基础以上的每一个楼层平面上。
+   477	
+   478	        for bay in range(config.n_bay):
+   479	            # For n_bay = 2, beams connect:
+   480	            # bay 0 -> bay 1, and bay 1 -> bay 2.
+   481	            # 中文：当 `n_bay = 2` 时，梁单元分别连接 bay 0 到 bay 1，以及 bay 1 到 bay 2。
+   482	
+   483	            node_i = node_tags[(floor, bay)]
+   484	            # Left node of the beam.
+   485	            # 中文：梁单元左端节点。
+   486	
+   487	            node_j = node_tags[(floor, bay + 1)]
+   488	            # Right node of the beam.
+   489	            # 中文：梁单元右端节点。
+   490	
+   491	            ops.element(
+   492	                "elasticBeamColumn",
+   493	                ele_tag,
+   494	                node_i,
+   495	                node_j,
+   496	                config.A_beam,
+   497	                config.E,
+   498	                config.I_beam,
+   499	                transf_tag,
+   500	            )
+   501	            # Beam stiffness is not degraded in the first model.
+   502	            # Only story-level column stiffness degradation is used as the damage label.
+   503	            # 中文：第一版模型中梁刚度不进行退化；损伤标签只通过层级柱刚度退化体现。
+   504	
+   505	            element_tags["beams"].append(ele_tag)
+   506	            # Save the beam element tag.
+   507	            # 中文：保存当前梁单元编号。
+   508	
+   509	            ele_tag += 1
+   510	            # Increment element tag.
+   511	            # 中文：单元编号加 1，为下一个单元准备新的唯一编号。
+   512	
+   513	    return {
+   514	        "config": config,
+   515	        "damage": damage,
+   516	        "node_tags": node_tags,
+   517	        "element_tags": element_tags,
+   518	    }
+   519	    # Return model metadata.
+   520	    # This does not return the OpenSees model itself, because OpenSees stores it internally.
+   521	    # 中文：返回模型的元数据，包括配置、损伤向量、节点编号和单元编号。
+   522	    # 中文：这里不直接返回 OpenSees 模型对象，因为 OpenSees 会在其内部状态中保存当前模型。
+   523	
+   524	
+   525	
+   526	def compute_modal_periods(
+   527	    config: FrameConfig | None = None,
+   528	    damage: List[float] | None = None,
+   529	    n_modes: int = 4,
+   530	) -> List[float]:
+   531	    """
+   532	    Build a frame and compute its first modal periods.
+   533	
+   534	    Modal period:
+   535	        T = 2*pi / omega
+   536	    where:
+   537	        lambda = omega^2
+   538	        lambda is the eigenvalue returned by OpenSees.
+   539	
+   540	    中文说明：
+   541	        建立一个框架模型，并计算其前若干阶模态周期。
+   542	
+   543	        模态周期：
+   544	            T = 2*pi / omega
+   545	        其中：
+   546	            lambda = omega^2
+   547	            lambda 是 OpenSees 返回的特征值。
+   548	    """
+   549	
+   550	    build_2d_frame(config=config, damage=damage)
+   551	    # Build the OpenSees finite element model.
+   552	    # 中文：建立 OpenSees 有限元模型。
+   553	
+   554	    eigen_values = ops.eigen(n_modes)
+   555	    # `ops.eigen(n_modes)` solves for the first `n_modes` eigenvalues.
+   556	    # In structural dynamics, eigenvalue lambda = omega^2.
+   557	    # 中文：`ops.eigen(n_modes)` 求解前 `n_modes` 阶特征值；在结构动力学中，特征值 lambda 等于圆频率 omega 的平方。
+   558	
+   559	    periods: List[float] = []
+   560	    # Create an empty list for modal periods.
+   561	    # 中文：创建一个空列表，用于存储各阶模态周期。
+   562	
+   563	    for value in eigen_values:
+   564	        # Loop over each eigenvalue.
+   565	        # 中文：逐个遍历 OpenSees 返回的特征值。
+   566	
+   567	        if value <= 0.0:
+   568	            # Non-positive eigenvalues are physically invalid for this elastic fixed-base model.
+   569	            # They may indicate numerical or modeling problems.
+   570	            # 中文：对于当前弹性固定基础模型，非正特征值在物理上是不合理的，通常说明数值计算或建模存在问题。
+   571	            periods.append(float("nan"))
+   572	            continue
+   573	
+   574	        omega = math.sqrt(value)
+   575	        # `omega` is circular natural frequency, unit rad/s.
+   576	        # 中文：`omega` 是圆频率，单位是 rad/s。
+   577	
+   578	        period = 2.0 * math.pi / omega
+   579	        # `period` is modal period, unit seconds.
+   580	        # 中文：`period` 是模态周期，单位是秒。
+   581	
+   582	        periods.append(period)
+   583	        # Store this period.
+   584	        # 中文：将当前阶模态周期保存到列表中。
+   585	
+   586	    return periods
+   587	
+   588	
+   589	def print_modal_comparison() -> None:
+   590	    """
+   591	    Print modal periods for healthy and damaged structures.
+   592	
+   593	    Expected physical trend:
+   594	        Damaged model should have longer periods than the healthy model,
+   595	        because stiffness degradation reduces natural frequency.
+   596	
+   597	    中文说明：
+   598	        打印健康结构和损伤结构的模态周期，用于快速对比。
+   599	
+   600	        预期物理趋势：
+   601	            损伤结构的周期通常应大于健康结构，
+   602	            因为刚度退化会降低结构自振频率，从而使周期变长。
+   603	    """
+   604	
+   605	    config = FrameConfig()
+   606	    # Create default frame configuration.
+   607	    # 中文：创建默认框架配置。
+   608	
+   609	    healthy_damage = [0.0, 0.0, 0.0, 0.0]
+   610	    # Healthy model: no stiffness degradation.
+   611	    # 中文：健康模型：所有楼层均无刚度退化。
+   612	
+   613	    damaged_case = [0.0, 0.15, 0.0, 0.25]
+   614	    # Example damaged model:
+   615	    # story 2 has 15% stiffness degradation;
+   616	    # story 4 has 25% stiffness degradation.
+   617	    # 中文：示例损伤模型：第 2 层刚度退化 15%，第 4 层刚度退化 25%。
+   618	
+   619	    healthy_periods = compute_modal_periods(config=config, damage=healthy_damage, n_modes=4)
+   620	    # Compute first 4 modal periods for the healthy model.
+   621	    # 中文：计算健康模型的前 4 阶模态周期。
+   622	
+   623	    damaged_periods = compute_modal_periods(config=config, damage=damaged_case, n_modes=4)
+   624	    # Compute first 4 modal periods for the damaged model.
+   625	    # 中文：计算损伤模型的前 4 阶模态周期。
+   626	
+   627	    print("Healthy damage vector:", healthy_damage)
+   628	    print("Healthy modal periods [s]:", healthy_periods)
+   629	
+   630	    print("Damaged damage vector:", damaged_case)
+   631	    print("Damaged modal periods [s]:", damaged_periods)
+   632	
+   633	    print("Check: first damaged period should usually be larger than first healthy period.")
+   634	    # This is a quick sanity check for the damage implementation.
+   635	    # 中文：这是对损伤实现方式的快速合理性检查；通常损伤后的第一周期应大于健康结构的第一周期。
+   636	
+   637	
+   638	if __name__ == "__main__":
+   639	    # `if __name__ == "__main__"` means:
+   640	    # Run the following code only when this file is executed directly as a script.
+   641	    # It will not run when this file is imported by another file.
+   642	    # 中文：`if __name__ == "__main__"` 表示只有当本文件被直接作为脚本运行时，才执行下面的代码；如果本文件被其他文件导入，则不会执行。
+   643	
+   644	    print_modal_comparison()
+   645	    # Run the modal comparison demo.
+   646	    # 中文：运行健康结构与损伤结构的模态周期对比示例。
+
+====================================================================================================
+FILE: opensees_models/run_dynamic_analysis.py
+====================================================================================================
+     1	"""
+     2	File location:
+     3	    opensees_models/run_dynamic_analysis.py
+     4	
+     5	Purpose:
+     6	    Run transient dynamic analysis of the 2D frame created in frame_base.py.
+     7	
+     8	Research role:
+     9	    This file generates one structural response sample:
+    10	        input candidate:
+    11	            floor acceleration time histories
+    12	        label:
+    13	            story-level stiffness degradation vector
+    14	
+    15	Important OpenSees note:
+    16	    With UniformExcitation, nodal displacement/velocity/acceleration responses are relative responses.
+    17	    Therefore this script records both:
+    18	        1. relative floor acceleration from OpenSees,
+    19	        2. approximate absolute floor acceleration = relative floor acceleration + ground acceleration.
+    20	
+    21	中文说明：
+    22	    文件位置：
+    23	        opensees_models/run_dynamic_analysis.py
+    24	
+    25	    文件目的：
+    26	        对 frame_base.py 中创建的二维框架结构进行瞬态动力时程分析。
+    27	
+    28	    研究作用：
+    29	        本文件用于生成一个结构响应样本：
+    30	            可作为模型输入的数据：
+    31	                各楼层加速度时程；
+    32	            可作为标签的数据：
+    33	                层级刚度退化向量。
+    34	
+    35	    重要 OpenSees 说明：
+    36	        使用 UniformExcitation 时，OpenSees 返回的节点位移、速度、加速度通常是相对响应。
+    37	        因此本脚本同时记录：
+    38	            1. OpenSees 输出的楼层相对加速度；
+    39	            2. 近似绝对加速度 = 相对加速度 + 地震动输入加速度。
+    40	"""
+    41	
+    42	from __future__ import annotations
+    43	# Postpone type-hint evaluation for cleaner annotations.
+    44	# 中文：延后类型注解的求值，使函数签名更简洁，也减少类型引用导致的兼容性问题。
+    45	
+    46	from pathlib import Path
+    47	# `Path` provides object-oriented file path operations.
+    48	# It is safer and cleaner than raw string paths.
+    49	# 中文：`Path` 提供面向对象的文件路径操作方式，比直接使用字符串路径更安全、更清晰。
+    50	
+    51	from typing import Dict, List
+    52	# Type hints for dictionaries and lists.
+    53	# 中文：`Dict` 和 `List` 是字典与列表的类型提示，用于增强代码可读性和静态检查能力。
+    54	
+    55	import numpy as np
+    56	# `numpy` is used for arrays, ground motion generation, and saving .npz files.
+    57	# 中文：`numpy` 用于数组计算、地震动生成，以及保存 `.npz` 数据文件。
+    58	
+    59	import matplotlib.pyplot as plt
+    60	# `matplotlib.pyplot` is used to plot response curves for sanity checking.
+    61	# 中文：`matplotlib.pyplot` 用于绘制响应曲线，帮助快速检查分析结果是否合理。
+    62	
+    63	import openseespy.opensees as ops
+    64	# OpenSeesPy command module.
+    65	# 中文：OpenSeesPy 的核心命令模块，后续所有 OpenSees 分析命令都通过 `ops` 调用。
+    66	
+    67	from opensees_models.frame_base import FrameConfig, build_2d_frame, compute_modal_periods
+    68	# Import the frame builder and configuration from the base model file.
+    69	# 中文：从基础模型文件中导入框架配置类、建模函数和模态周期计算函数。
+    70	
+    71	
+    72	def create_sine_ground_motion(
+    73	    duration: float = 20.0,
+    74	    dt: float = 0.01,
+    75	    amplitude_g: float = 0.10,
+    76	    frequency_hz: float = 1.0,
+    77	) -> Dict[str, np.ndarray]:
+    78	    """
+    79	    Create a simple sine-wave ground acceleration for debugging.
+    80	
+    81	    This is NOT the final earthquake dataset.
+    82	    It is only used to test whether the OpenSees model and transient analysis pipeline work.
+    83	
+    84	    Parameters:
+    85	        duration:
+    86	            Total duration, in seconds.
+    87	        dt:
+    88	            Time step, in seconds.
+    89	        amplitude_g:
+    90	            Acceleration amplitude in g.
+    91	        frequency_hz:
+    92	            Sine frequency in Hz.
+    93	
+    94	    Returns:
+    95	        Dictionary with:
+    96	            t: time vector
+    97	            accel_g: ground acceleration in g
+    98	
+    99	    中文说明：
+   100	        创建一个简单的正弦波地面加速度，用于调试。
+   101	
+   102	        这不是最终的地震动数据集。
+   103	        它只是用于测试 OpenSees 模型和瞬态分析流程是否可以正常运行。
+   104	
+   105	        参数：
+   106	            duration：
+   107	                地震动总时长，单位是秒。
+   108	            dt：
+   109	                时间步长，单位是秒。
+   110	            amplitude_g：
+   111	                加速度幅值，单位是 g。
+   112	            frequency_hz：
+   113	                正弦波频率，单位是 Hz。
+   114	
+   115	        返回：
+   116	            一个字典，包含：
+   117	                t：时间向量；
+   118	                accel_g：单位为 g 的地面加速度。
+   119	    """
+   120	
+   121	    t = np.arange(0.0, duration, dt)
+   122	    # `np.arange(start, stop, step)` creates a time vector from 0 to duration with interval dt.
+   123	    # 中文：`np.arange(start, stop, step)` 会按照步长 `dt` 生成从 0 到 `duration` 的时间向量。
+   124	
+   125	    accel_g = amplitude_g * np.sin(2.0 * np.pi * frequency_hz * t)
+   126	    # Sine ground acceleration in unit g.
+   127	    # `2*pi*f*t` is the phase angle of a sine wave.
+   128	    # 中文：这里生成单位为 g 的正弦地面加速度；`2*pi*f*t` 是正弦波的相位角。
+   129	
+   130	    return {
+   131	        "t": t,
+   132	        "accel_g": accel_g,
+   133	    }
+   134	
+   135	
+   136	def add_rayleigh_damping(
+   137	    damping_ratio: float = 0.02,
+   138	    n_modes_for_damping: int = 2,
+   139	) -> Dict[str, float]:
+   140	    """
+   141	    Add Rayleigh damping to the current OpenSees model.
+   142	
+   143	    Damping matrix form:
+   144	        C = alphaM * M + betaKinit * K_initial
+   145	
+   146	    Parameters:
+   147	        damping_ratio:
+   148	            Target damping ratio, commonly 2% or 5% for initial testing.
+   149	        n_modes_for_damping:
+   150	            Use the first two modes to calculate Rayleigh coefficients.
+   151	
+   152	    Returns:
+   153	        Dictionary containing alpha_m and beta_k_init.
+   154	
+   155	    中文说明：
+   156	        为当前 OpenSees 模型添加 Rayleigh 阻尼。
+   157	
+   158	        阻尼矩阵形式：
+   159	            C = alphaM * M + betaKinit * K_initial
+   160	
+   161	        参数：
+   162	            damping_ratio：
+   163	                目标阻尼比，初步测试中常用 2% 或 5%。
+   164	            n_modes_for_damping：
+   165	                用于计算 Rayleigh 阻尼系数的模态阶数，这里通常使用前两阶。
+   166	
+   167	        返回：
+   168	            一个字典，包含质量比例阻尼系数 alpha_m 和初始刚度比例阻尼系数 beta_k_init。
+   169	    """
+   170	
+   171	    eigen_values = ops.eigen(n_modes_for_damping)
+   172	    # Compute eigenvalues of the current model.
+   173	    # We need the first two frequencies to calculate Rayleigh coefficients.
+   174	    # 中文：计算当前模型的特征值；后续需要利用前两阶频率计算 Rayleigh 阻尼系数。
+   175	
+   176	    omega_1 = np.sqrt(eigen_values[0])
+   177	    # First circular frequency, rad/s.
+   178	    # 中文：第一阶圆频率，单位是 rad/s。
+   179	
+   180	    omega_2 = np.sqrt(eigen_values[1])
+   181	    # Second circular frequency, rad/s.
+   182	    # 中文：第二阶圆频率，单位是 rad/s。
+   183	
+   184	    alpha_m = 2.0 * damping_ratio * omega_1 * omega_2 / (omega_1 + omega_2)
+   185	    # Mass-proportional damping coefficient.
+   186	    # 中文：质量比例阻尼系数，对应 Rayleigh 阻尼中的 `alphaM`。
+   187	
+   188	    beta_k_init = 2.0 * damping_ratio / (omega_1 + omega_2)
+   189	    # Initial-stiffness-proportional damping coefficient.
+   190	    # 中文：初始刚度比例阻尼系数，对应 Rayleigh 阻尼中的 `betaKinit`。
+   191	
+   192	    ops.rayleigh(alpha_m, 0.0, beta_k_init, 0.0)
+   193	    # `ops.rayleigh(alphaM, betaK, betaKinit, betaKcomm)` assigns Rayleigh damping.
+   194	    # Here:
+   195	    #     alphaM = alpha_m,
+   196	    #     betaK = 0.0,
+   197	    #     betaKinit = beta_k_init,
+   198	    #     betaKcomm = 0.0.
+   199	    # 中文：`ops.rayleigh(alphaM, betaK, betaKinit, betaKcomm)` 用于给模型施加 Rayleigh 阻尼。
+   200	    # 中文：这里设置 `alphaM = alpha_m`，`betaK = 0.0`，`betaKinit = beta_k_init`，`betaKcomm = 0.0`。
+   201	
+   202	    return {
+   203	        "alpha_m": float(alpha_m),
+   204	        "beta_k_init": float(beta_k_init),
+   205	    }
+   206	
+   207	
+   208	def setup_transient_analysis() -> None:
+   209	    """
+   210	    Define the numerical solver settings for transient dynamic analysis.
+   211	
+   212	    中文说明：
+   213	        定义瞬态动力分析所需的数值求解器设置。
+   214	    """
+   215	
+   216	    ops.constraints("Transformation")
+   217	    # `constraints("Transformation")` defines how constraints are enforced.
+   218	    # It is robust for fixed supports and possible future multi-point constraints.
+   219	    # 中文：`constraints("Transformation")` 定义约束处理方式；它对固定支座以及后续可能加入的多点约束较稳健。
+   220	
+   221	    ops.numberer("RCM")
+   222	    # `numberer("RCM")` uses Reverse Cuthill-McKee numbering.
+   223	    # It reduces matrix bandwidth and can improve efficiency.
+   224	    # 中文：`numberer("RCM")` 使用 Reverse Cuthill-McKee 编号方法，可以减小矩阵带宽并提高求解效率。
+   225	
+   226	    ops.system("BandGeneral")
+   227	    # `system("BandGeneral")` selects a general banded linear equation solver.
+   228	    # 中文：`system("BandGeneral")` 选择通用带状矩阵线性方程求解器。
+   229	
+   230	    ops.test("NormDispIncr", 1.0e-8, 20)
+   231	    # `test` defines the convergence test.
+   232	    # `"NormDispIncr"` checks the norm of displacement increments.
+   233	    # `1.0e-8` is the convergence tolerance.
+   234	    # `20` is the maximum number of iterations per step.
+   235	    # 中文：`test` 定义收敛判据；`"NormDispIncr"` 表示检查位移增量范数；`1.0e-8` 是收敛容差；`20` 是每个时间步允许的最大迭代次数。
+   236	
+   237	    ops.algorithm("Newton")
+   238	    # `algorithm("Newton")` uses Newton-Raphson iterations.
+   239	    # For an elastic model it should be stable.
+   240	    # 中文：`algorithm("Newton")` 使用 Newton-Raphson 迭代算法；对于当前线弹性模型通常应当稳定。
+   241	
+   242	    ops.integrator("Newmark", 0.5, 0.25)
+   243	    # `integrator("Newmark", gamma, beta)` selects Newmark time integration.
+   244	    # gamma = 0.5 and beta = 0.25 are average-acceleration parameters.
+   245	    # This is unconditionally stable for linear systems.
+   246	    # 中文：`integrator("Newmark", gamma, beta)` 选择 Newmark 时间积分方法；`gamma = 0.5`、`beta = 0.25` 是平均加速度法参数；该组合对线性系统无条件稳定。
+   247	
+   248	    ops.analysis("Transient")
+   249	    # `analysis("Transient")` tells OpenSees to perform time-history analysis.
+   250	    # 中文：`analysis("Transient")` 告诉 OpenSees 执行瞬态时程分析。
+   251	
+   252	
+   253	def run_time_history(
+   254	    damage: List[float],
+   255	    ground_accel_g: np.ndarray,
+   256	    dt: float,
+   257	    config: FrameConfig | None = None,
+   258	    damping_ratio: float = 0.02,
+   259	    g: float = 9.81,
+   260	) -> Dict[str, np.ndarray]:
+   261	    """
+   262	    Run time-history analysis for one damage case and one ground motion.
+   263	
+   264	    Parameters:
+   265	        damage:
+   266	            Story-level stiffness degradation vector.
+   267	        ground_accel_g:
+   268	            Ground acceleration array in unit g.
+   269	        dt:
+   270	            Time step of the ground motion.
+   271	        config:
+   272	            Frame configuration.
+   273	        damping_ratio:
+   274	            Target Rayleigh damping ratio.
+   275	        g:
+   276	            Gravitational acceleration used to convert g to m/s^2.
+   277	
+   278	    Returns:
+   279	        Dictionary containing response arrays and metadata.
+   280	
+   281	    中文说明：
+   282	        针对一个损伤工况和一条地震动，执行一次结构时程分析。
+   283	
+   284	        参数：
+   285	            damage：
+   286	                层级刚度退化向量。
+   287	            ground_accel_g：
+   288	                单位为 g 的地面加速度数组。
+   289	            dt：
+   290	                地震动时间步长。
+   291	            config：
+   292	                框架结构配置。
+   293	            damping_ratio：
+   294	                目标 Rayleigh 阻尼比。
+   295	            g：
+   296	                重力加速度，用于将 g 单位转换为 m/s^2。
+   297	
+   298	        返回：
+   299	            一个字典，包含响应数组和元数据。
+   300	    """
+   301	
+   302	    if config is None:
+   303	        # Use default frame if no config is provided.
+   304	        # 中文：如果未提供结构配置，则使用默认框架配置。
+   305	        config = FrameConfig()
+   306	
+   307	    model_info = build_2d_frame(config=config, damage=damage)
+   308	    # Build the OpenSees model for this damage case.
+   309	    # 中文：针对当前损伤工况建立 OpenSees 模型。
+   310	
+   311	    node_tags = model_info["node_tags"]
+   312	    # Extract node tag mapping, so we can record floor responses.
+   313	    # 中文：提取节点编号映射，后续才能根据楼层和跨号记录楼层响应。
+   314	
+   315	    modal_periods = compute_modal_periods(config=config, damage=damage, n_modes=4)
+   316	    # Compute modal periods for sanity checking.
+   317	    # Note: compute_modal_periods rebuilds the model, so we rebuild again below before transient analysis.
+   318	    # 中文：计算模态周期，用于基本合理性检查。
+   319	    # 中文：注意：`compute_modal_periods` 会重新建立模型，因此在真正进行瞬态分析前，下面需要再次重建模型，避免分析状态被改变。
+   320	
+   321	    model_info = build_2d_frame(config=config, damage=damage)
+   322	    # Rebuild the model after modal analysis.
+   323	    # This avoids any analysis state contamination.
+   324	    # 中文：在模态分析后重新建立模型，避免模态分析留下的状态污染后续瞬态分析。
+   325	
+   326	    node_tags = model_info["node_tags"]
+   327	    # Re-extract node tags from the rebuilt model.
+   328	    # 中文：从重新建立的模型中再次提取节点编号映射。
+   329	
+   330	    damping_info = add_rayleigh_damping(damping_ratio=damping_ratio)
+   331	    # Add Rayleigh damping to the current model.
+   332	    # 中文：为当前模型添加 Rayleigh 阻尼。
+   333	
+   334	    ground_accel_mps2 = ground_accel_g * g
+   335	    # Convert ground acceleration from g to m/s^2.
+   336	    # 中文：将地面加速度从 g 单位转换为 m/s^2。
+   337	
+   338	    ops.timeSeries(
+   339	        "Path",
+   340	        1,
+   341	        "-dt",
+   342	        dt,
+   343	        "-values",
+   344	        *ground_accel_mps2.tolist(),
+   345	    )
+   346	    # `timeSeries("Path", tag, "-dt", dt, "-values", values...)` defines a time-dependent input series.
+   347	    # `"Path"` means the input is a sequence of values over time.
+   348	    # `1` is the time-series tag.
+   349	    # `"-dt", dt` defines the time interval between consecutive values.
+   350	    # `"-values"` means the following numbers are the time-series values.
+   351	    # `*ground_accel_mps2.tolist()` expands the Python list into separate OpenSees arguments.
+   352	    # 中文：`timeSeries("Path", tag, "-dt", dt, "-values", values...)` 定义随时间变化的输入序列。
+   353	    # 中文：`"Path"` 表示输入是一串按时间排列的数值；`1` 是时间序列编号；`"-dt", dt` 定义相邻输入值之间的时间间隔；`"-values"` 后面跟随具体输入值；`*ground_accel_mps2.tolist()` 会把 Python 列表展开为 OpenSees 可接收的多个参数。
+   354	
+   355	    ops.pattern("UniformExcitation", 1, 1, "-accel", 1)
+   356	    # `pattern("UniformExcitation", patternTag, dir, "-accel", tsTag)` applies uniform base excitation.
+   357	    # `1` after "UniformExcitation" is the pattern tag.
+   358	    # The next `1` is the excitation direction: DOF 1 = horizontal x direction.
+   359	    # `"-accel", 1` means acceleration time series with tag 1 is used.
+   360	    # 中文：`pattern("UniformExcitation", patternTag, dir, "-accel", tsTag)` 用于施加一致支座激励。
+   361	    # 中文：`"UniformExcitation"` 后第一个 `1` 是荷载模式编号；第二个 `1` 表示激励方向为 DOF 1，即水平 x 方向；`"-accel", 1` 表示使用编号为 1 的加速度时间序列。
+   362	
+   363	    setup_transient_analysis()
+   364	    # Configure solver, convergence test, integrator, and analysis type.
+   365	    # 中文：配置求解器、收敛判据、时间积分方法和分析类型。
+   366	
+   367	    n_steps = len(ground_accel_mps2)
+   368	    # Number of time steps in the input motion.
+   369	    # 中文：输入地震动的时间步总数。
+   370	
+   371	    n_story = config.n_story
+   372	    # Number of stories, used to define output array width.
+   373	    # 中文：结构层数，用于确定输出数组的列数。
+   374	
+   375	    rel_disp = np.zeros((n_steps, n_story), dtype=np.float64)
+   376	    # Relative floor horizontal displacement array.
+   377	    # Shape: [time_step, story_index].
+   378	    # 中文：楼层相对水平位移数组；数组形状为 `[时间步, 楼层索引]`。
+   379	
+   380	    rel_accel = np.zeros((n_steps, n_story), dtype=np.float64)
+   381	    # Relative floor horizontal acceleration array from OpenSees.
+   382	    # 中文：OpenSees 输出的楼层相对水平加速度数组。
+   383	
+   384	    abs_accel = np.zeros((n_steps, n_story), dtype=np.float64)
+   385	    # Approximate absolute floor acceleration array.
+   386	    # For uniform support excitation:
+   387	    # absolute acceleration ≈ relative acceleration + ground acceleration.
+   388	    # 中文：近似楼层绝对加速度数组。
+   389	    # 中文：对于一致支座激励，绝对加速度约等于相对加速度加上地面输入加速度。
+   390	
+   391	    story_drift = np.zeros((n_steps, n_story), dtype=np.float64)
+   392	    # Story drift ratio array.
+   393	    # story_drift[:, i] = interstory displacement / story height.
+   394	    # 中文：层间位移角数组；`story_drift[:, i]` 等于第 i 层的层间位移除以层高。
+   395	
+   396	    mid_bay = config.n_bay // 2
+   397	    # Use the middle column line as the representative floor response location.
+   398	    # For a 2-bay frame, mid_bay = 1.
+   399	    # 中文：选择中间柱线作为代表性楼层响应位置；对于 2 跨框架，`mid_bay = 1`。
+   400	
+   401	    analysis_failed_at = -1
+   402	    # If analysis succeeds, keep -1.
+   403	    # If it fails, store the failed step index.
+   404	    # 中文：如果分析成功，则保持为 `-1`；如果分析失败，则记录失败发生的时间步索引。
+   405	
+   406	    for step in range(n_steps):
+   407	        # Loop through each time step.
+   408	        # 中文：逐个时间步进行动力分析。
+   409	
+   410	        ok = ops.analyze(1, dt)
+   411	        # `ops.analyze(1, dt)` advances the transient analysis by one time step of size dt.
+   412	        # `ok = 0` means success; nonzero means failure.
+   413	        # 中文：`ops.analyze(1, dt)` 表示让瞬态分析向前推进 1 个时间步，时间步长为 `dt`；`ok = 0` 表示成功，非零表示失败。
+   414	
+   415	        if ok != 0:
+   416	            # Stop if numerical analysis fails.
+   417	            # 中文：如果数值分析失败，则停止循环，避免继续记录无效结果。
+   418	            analysis_failed_at = step
+   419	            break
+   420	
+   421	        previous_floor_disp = 0.0
+   422	        # Base displacement is zero in the relative coordinate system.
+   423	        # 中文：在相对坐标体系中，基础位移视为 0。
+   424	
+   425	        for story in range(1, n_story + 1):
+   426	            # Loop over stories 1 to n_story.
+   427	            # 中文：从第 1 层到第 `n_story` 层逐层提取响应。
+   428	
+   429	            node = node_tags[(story, mid_bay)]
+   430	            # Select the middle node at this floor.
+   431	            # 中文：选择当前楼层中间柱线处的节点作为代表节点。
+   432	
+   433	            ux = ops.nodeDisp(node, 1)
+   434	            # `ops.nodeDisp(node, 1)` returns horizontal displacement at DOF 1.
+   435	            # 中文：`ops.nodeDisp(node, 1)` 返回该节点 DOF 1 方向的水平位移。
+   436	
+   437	            ax_rel = ops.nodeAccel(node, 1)
+   438	            # `ops.nodeAccel(node, 1)` returns relative horizontal acceleration at DOF 1.
+   439	            # 中文：`ops.nodeAccel(node, 1)` 返回该节点 DOF 1 方向的相对水平加速度。
+   440	
+   441	            rel_disp[step, story - 1] = ux
+   442	            # Store relative displacement for this story.
+   443	            # 中文：将当前楼层的相对位移存入数组。
+   444	
+   445	            rel_accel[step, story - 1] = ax_rel
+   446	            # Store relative acceleration for this story.
+   447	            # 中文：将当前楼层的相对加速度存入数组。
+   448	
+   449	            abs_accel[step, story - 1] = ax_rel + ground_accel_mps2[step]
+   450	            # Approximate absolute acceleration by adding ground acceleration.
+   451	            # 中文：通过“相对加速度 + 当前时间步地面加速度”近似得到楼层绝对加速度。
+   452	
+   453	            interstory_disp = ux - previous_floor_disp
+   454	            # Interstory displacement = current floor displacement - lower floor displacement.
+   455	            # 中文：层间位移等于当前楼层位移减去下层楼层位移。
+   456	
+   457	            story_drift[step, story - 1] = interstory_disp / config.story_height
+   458	            # Story drift ratio = interstory displacement / story height.
+   459	            # 中文：层间位移角等于层间位移除以层高。
+   460	
+   461	            previous_floor_disp = ux
+   462	            # Update lower-floor displacement for the next story.
+   463	            # 中文：更新“下层楼层位移”，供下一层计算层间位移时使用。
+   464	
+   465	    if analysis_failed_at >= 0:
+   466	        # If the analysis failed, truncate arrays to successful steps only.
+   467	        # 中文：如果分析中途失败，则只保留失败前已经成功完成的时间步数据。
+   468	        rel_disp = rel_disp[:analysis_failed_at]
+   469	        rel_accel = rel_accel[:analysis_failed_at]
+   470	        abs_accel = abs_accel[:analysis_failed_at]
+   471	        story_drift = story_drift[:analysis_failed_at]
+   472	        ground_accel_mps2 = ground_accel_mps2[:analysis_failed_at]
+   473	
+   474	    return {
+   475	        "damage": np.array(damage, dtype=np.float64),
+   476	        "ground_accel_mps2": ground_accel_mps2,
+   477	        "rel_disp": rel_disp,
+   478	        "rel_accel": rel_accel,
+   479	        "abs_accel": abs_accel,
+   480	        "story_drift": story_drift,
+   481	        "dt": np.array(dt, dtype=np.float64),
+   482	        "modal_periods": np.array(modal_periods, dtype=np.float64),
+   483	        "damping_alpha_m": np.array(damping_info["alpha_m"], dtype=np.float64),
+   484	        "damping_beta_k_init": np.array(damping_info["beta_k_init"], dtype=np.float64),
+   485	        "analysis_failed_at": np.array(analysis_failed_at, dtype=np.int64),
+   486	    }
+   487	
+   488	
+   489	def save_response_npz(response: Dict[str, np.ndarray], output_path: Path) -> None:
+   490	    """
+   491	    Save one response sample as a compressed .npz file.
+   492	
+   493	    .npz is convenient because it stores multiple NumPy arrays in one file.
+   494	
+   495	    中文说明：
+   496	        将一个响应样本保存为压缩的 `.npz` 文件。
+   497	
+   498	        `.npz` 很适合本项目，因为它可以在一个文件中同时存储多个 NumPy 数组。
+   499	    """
+   500	
+   501	    output_path.parent.mkdir(parents=True, exist_ok=True)
+   502	    # Create the parent folder if it does not exist.
+   503	    # 中文：如果输出文件所在的父文件夹不存在，则自动创建。
+   504	
+   505	    np.savez_compressed(output_path, **response)
+   506	    # `np.savez_compressed(path, **response)` saves dictionary values into a compressed .npz file.
+   507	    # Each dictionary key becomes one array name inside the file.
+   508	    # 中文：`np.savez_compressed(path, **response)` 会把字典中的各个数组保存到压缩 `.npz` 文件中；字典的每个键会成为文件内部的数组名称。
+   509	
+   510	
+   511	def plot_sanity_check(response: Dict[str, np.ndarray], output_dir: Path) -> None:
+   512	    """
+   513	    Plot response curves to verify whether the model output is reasonable.
+   514	
+   515	    中文说明：
+   516	        绘制响应曲线，用于快速判断模型输出是否合理。
+   517	    """
+   518	
+   519	    output_dir.mkdir(parents=True, exist_ok=True)
+   520	    # Create figure output folder if needed.
+   521	    # 中文：如果图片输出文件夹不存在，则自动创建。
+   522	
+   523	    dt = float(response["dt"])
+   524	    # Convert NumPy scalar dt to Python float.
+   525	    # 中文：将 NumPy 标量形式的 `dt` 转换为普通 Python 浮点数，方便后续计算。
+   526	
+   527	    n_steps = response["abs_accel"].shape[0]
+   528	    # Number of successful analysis steps.
+   529	    # 中文：成功完成分析的时间步数量。
+   530	
+   531	    t = np.arange(n_steps) * dt
+   532	    # Recreate time vector.
+   533	    # 中文：根据时间步数量和时间步长重新生成时间向量。
+   534	
+   535	    roof_index = response["abs_accel"].shape[1] - 1
+   536	    # Last column corresponds to roof floor.
+   537	    # 中文：数组最后一列对应结构顶层，也就是屋面楼层。
+   538	
+   539	    plt.figure(figsize=(9, 4))
+   540	    # Create a new figure.
+   541	    # 中文：创建一张新的绘图窗口，尺寸为 9×4 英寸。
+   542	
+   543	    plt.plot(t, response["ground_accel_mps2"], label="Ground acceleration")
+   544	    # Plot ground acceleration.
+   545	    # 中文：绘制输入地面加速度时程曲线。
+   546	
+   547	    plt.xlabel("Time [s]")
+   548	    # X-axis label.
+   549	    # 中文：设置 x 轴标签为时间，单位是秒。
+   550	
+   551	    plt.ylabel("Acceleration [m/s²]")
+   552	    # Y-axis label.
+   553	    # 中文：设置 y 轴标签为加速度，单位是 m/s²。
+   554	
+   555	    plt.title("Input ground acceleration")
+   556	    # Figure title.
+   557	    # 中文：设置图题为输入地面加速度。
+   558	
+   559	    plt.legend()
+   560	    # Show legend.
+   561	    # 中文：显示图例。
+   562	
+   563	    plt.tight_layout()
+   564	    # Adjust layout to prevent label clipping.
+   565	    # 中文：自动调整图像布局，避免坐标轴标签或标题被裁剪。
+   566	
+   567	    plt.savefig(output_dir / "ground_acceleration.png", dpi=200)
+   568	    # Save the figure as a PNG file.
+   569	    # 中文：将图像保存为 PNG 文件，分辨率为 200 dpi。
+   570	
+   571	    plt.close()
+   572	    # Close figure to release memory.
+   573	    # 中文：关闭当前图像，释放内存，避免后续绘图互相干扰。
+   574	
+   575	    plt.figure(figsize=(9, 4))
+   576	    # Create another figure.
+   577	    # 中文：创建另一张新的绘图窗口。
+   578	
+   579	    plt.plot(t, response["abs_accel"][:, roof_index], label="Roof absolute acceleration")
+   580	    # Plot roof absolute acceleration.
+   581	    # 中文：绘制屋面楼层的绝对加速度时程曲线。
+   582	
+   583	    plt.xlabel("Time [s]")
+   584	    # X-axis label.
+   585	    # 中文：设置 x 轴标签为时间，单位是秒。
+   586	
+   587	    plt.ylabel("Acceleration [m/s²]")
+   588	    # Y-axis label.
+   589	    # 中文：设置 y 轴标签为加速度，单位是 m/s²。
+   590	
+   591	    plt.title("Roof absolute acceleration")
+   592	    # Figure title.
+   593	    # 中文：设置图题为屋面绝对加速度。
+   594	
+   595	    plt.legend()
+   596	    # Show legend.
+   597	    # 中文：显示图例。
+   598	
+   599	    plt.tight_layout()
+   600	    # Adjust layout.
+   601	    # 中文：自动调整图像布局。
+   602	
+   603	    plt.savefig(output_dir / "roof_absolute_acceleration.png", dpi=200)
+   604	    # Save the figure.
+   605	    # 中文：保存屋面绝对加速度图像。
+   606	
+   607	    plt.close()
+   608	    # Close the figure.
+   609	    # 中文：关闭当前图像窗口，释放绘图资源。
+   610	
+   611	
+   612	def demo_one_case() -> None:
+   613	    """
+   614	    Run one complete demo:
+   615	        1. create artificial ground motion,
+   616	        2. run damaged-frame time-history analysis,
+   617	        3. save .npz response,
+   618	        4. save sanity-check figures.
+   619	
+   620	    中文说明：
+   621	        运行一个完整的示例流程：
+   622	            1. 创建人工地震动；
+   623	            2. 对损伤框架进行时程分析；
+   624	            3. 保存 `.npz` 响应数据；
+   625	            4. 保存用于合理性检查的图像。
+   626	    """
+   627	
+   628	    config = FrameConfig()
+   629	    # Use the default 4-story 2-bay frame.
+   630	    # 中文：使用默认的 4 层 2 跨框架配置。
+   631	
+   632	    damage = [0.0, 0.15, 0.0, 0.25]
+   633	    # Example damage vector.
+   634	    # This is the label for this simulated sample.
+   635	    # 中文：示例损伤向量；它就是该仿真样本对应的标签。
+   636	
+   637	    motion = create_sine_ground_motion(
+   638	        duration=20.0,
+   639	        dt=0.01,
+   640	        amplitude_g=0.10,
+   641	        frequency_hz=1.0,
+   642	    )
+   643	    # Create artificial sine ground acceleration for debugging.
+   644	    # 中文：创建用于调试的人工正弦地面加速度。
+   645	
+   646	    response = run_time_history(
+   647	        damage=damage,
+   648	        ground_accel_g=motion["accel_g"],
+   649	        dt=0.01,
+   650	        config=config,
+   651	        damping_ratio=0.02,
+   652	    )
+   653	    # Run transient dynamic analysis.
+   654	    # 中文：执行瞬态动力时程分析。
+   655	
+   656	    output_path = Path("data_raw/opensees_outputs/demo_damage_case.npz")
+   657	    # Define where to save the response data.
+   658	    # 中文：定义响应数据的保存位置。
+   659	
+   660	    save_response_npz(response, output_path)
+   661	    # Save response to disk.
+   662	    # 中文：将响应数据保存到磁盘。
+   663	
+   664	    plot_sanity_check(response, Path("results/figures"))
+   665	    # Save response plots.
+   666	    # 中文：保存响应曲线图，用于结果检查。
+   667	
+   668	    print("Saved response to:", output_path)
+   669	    # Print output data path.
+   670	    # 中文：打印输出数据文件路径。
+   671	
+   672	    print("Damage label:", response["damage"])
+   673	    # Print damage vector.
+   674	    # 中文：打印损伤标签向量。
+   675	
+   676	    print("Modal periods [s]:", response["modal_periods"])
+   677	    # Print modal periods.
+   678	    # 中文：打印模态周期。
+   679	
+   680	    print("Absolute acceleration shape:", response["abs_accel"].shape)
+   681	    # Expected shape: [number_of_time_steps, number_of_stories].
+   682	    # For 20 seconds and dt=0.01, expected time steps ≈ 2000, stories = 4.
+   683	    # 中文：打印绝对加速度数组的形状；预期格式为 `[时间步数量, 结构层数]`。
+   684	    # 中文：对于 20 秒、`dt = 0.01` 的输入，理论时间步约为 2000，结构层数为 4。
+   685	
+   686	    print("Analysis failed at step:", int(response["analysis_failed_at"]))
+   687	    # -1 means no failure.
+   688	    # 中文：打印分析失败发生的时间步；`-1` 表示没有失败。
+   689	
+   690	
+   691	if __name__ == "__main__":
+   692	    # Execute demo only when this file is run as a module/script.
+   693	    # 中文：只有当本文件被直接作为模块或脚本运行时，才执行下面的示例分析。
+   694	
+   695	    demo_one_case()
+   696	    # Run one dynamic analysis sample.
+   697	    # 中文：运行一个动力分析样本。

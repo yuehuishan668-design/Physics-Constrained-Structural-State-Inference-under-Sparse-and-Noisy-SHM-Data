@@ -1,0 +1,6 @@
+Effect,Overall MAE reduction,Paired 95% CI,Relative improvement (%),Beneficial direction / 10 splits
+Information effect | Ridge,0.005313,"[0.004870, 0.005755]",11.8,10/10
+Information effect | RBF-SVR,0.008345,"[0.007684, 0.009007]",26.5,10/10
+Estimator effect | 78D,0.013408,"[0.012678, 0.014139]",29.9,10/10
+Estimator effect | 92D,0.016441,"[0.015939, 0.016942]",41.6,10/10
+Interaction,0.003032,"[0.002210, 0.003855]",,10/10
