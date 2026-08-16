@@ -16,18 +16,24 @@ This reads tracked CSV evidence only. It does not train or tune a model.
 python scripts/build_manuscript_outputs.py
 ```
 
-The wrapper calls these existing deterministic scripts:
+The wrapper uses the tracked manuscript-source CSVs under
+`manuscript/jcshm_reconstruction/figures/data/` and the tracked frozen metric
+evidence, then calls these existing deterministic scripts:
 
-1. `scripts/jcshm_manuscript/prepare_jcshm_manuscript_data.py`
-2. `scripts/jcshm_manuscript/prepare_final_tables.py`
-3. `scripts/jcshm_manuscript/figures/plot_F03_factorial.py`
-4. `scripts/jcshm_manuscript/figures/plot_F04_severity_calibration.py`
-5. `scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py`
-6. `scripts/jcshm_manuscript/figures/plot_F06_sensor_layout_observability.py`
-7. `scripts/jcshm_manuscript/figures/plot_F07_sensor_subset_lattice.py`
-8. `scripts/verify_manuscript_results.py`
+1. `scripts/jcshm_manuscript/prepare_final_tables.py`
+2. `scripts/jcshm_manuscript/figures/plot_F03_factorial.py`
+3. `scripts/jcshm_manuscript/figures/plot_F04_severity_calibration.py`
+4. `scripts/jcshm_manuscript/figures/plot_F05_noise_failure_mechanism.py`
+5. `scripts/jcshm_manuscript/figures/plot_F06_sensor_layout_observability.py`
+6. `scripts/jcshm_manuscript/figures/plot_F07_sensor_subset_lattice.py`
+7. `scripts/verify_manuscript_results.py`
 
-The historical internal directory name is retained to preserve provenance. Level B performs no training. Figs. 1–2 are conceptual/vector objects and are not rebuilt from model training.
+The earlier `prepare_jcshm_manuscript_data.py` provenance-conversion step is
+not part of the submission-only Level B path because its upstream descriptor
+audit source is not distributed in this Git snapshot; its resulting
+manuscript-source CSVs are tracked instead. The historical internal directory
+name is retained to preserve provenance. Level B performs no training. Figs.
+1–2 are conceptual/vector objects and are not rebuilt from model training.
 
 ## Smoke test
 
@@ -126,4 +132,3 @@ Stop and document the discrepancy before changing anything if a rerun disagrees 
 - P4: `results/sss_fast_revision/exhaustive_sensor_layout_svr/`
 - P5: `results/sss_fast_revision/sensor_layout_paired_bootstrap_closure/`
 - Manuscript products: `manuscript/jcshm_reconstruction/figures/` and `tables/`
-

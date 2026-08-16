@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -11,7 +12,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 STEPS = [
-    "scripts/jcshm_manuscript/prepare_jcshm_manuscript_data.py",
     "scripts/jcshm_manuscript/prepare_final_tables.py",
     "scripts/jcshm_manuscript/figures/plot_F03_factorial.py",
     "scripts/jcshm_manuscript/figures/plot_F04_severity_calibration.py",
@@ -27,7 +27,11 @@ def main() -> int:
     print("Training performed: False")
     print("Hyperparameter tuning performed: False")
     print("Figures 1–2: retained conceptual/vector sources; not rebuilt here")
+    print("Input layer: tracked manuscript-source CSVs and frozen metric evidence")
     print()
+
+    child_env = os.environ.copy()
+    child_env.setdefault("MPLBACKEND", "Agg")
 
     for relative in STEPS:
         path = ROOT / relative
@@ -38,6 +42,7 @@ def main() -> int:
             [sys.executable, str(path)],
             cwd=ROOT,
             check=False,
+            env=child_env,
         )
         if completed.returncode != 0:
             print(f"[FAIL] {relative}: exit {completed.returncode}")
@@ -50,4 +55,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
