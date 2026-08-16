@@ -1,9 +1,8 @@
-openseespy
-numpy
-matplotlib
-pyyaml
-scipy
-jupyter
+numpy==2.5.1
 pandas==3.0.5
+scipy==1.18.0
 scikit-learn==1.9.0
 matplotlib==3.11.1
+openseespy==3.8.0.0
+PyYAML==6.0.3
+joblib==1.5.3

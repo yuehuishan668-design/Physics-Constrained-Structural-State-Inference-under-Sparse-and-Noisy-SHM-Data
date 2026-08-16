@@ -1,1 +1,8 @@
-
+name: schm-repro
+channels:
+  - conda-forge
+dependencies:
+  - python=3.13.6
+  - pip
+  - pip:
+      - -r requirements.txt

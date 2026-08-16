@@ -254,6 +254,10 @@ opensees_models/**/*.out
 *.pkl
 *.pickle
 
+# SCHM reproducibility scratch products
+.reproduction_work/
+reproduction_outputs/
+
 
 # ============================================================
 # Generated fast-revision experiment artifacts
