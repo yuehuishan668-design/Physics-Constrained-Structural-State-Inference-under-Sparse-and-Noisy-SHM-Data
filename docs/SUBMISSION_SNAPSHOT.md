@@ -7,11 +7,19 @@
 - Scientific source branch: `paper0-jcshm-manuscript`
 - Submission branch: `paper0-schm-submission`
 - Scientific base commit: `c78af2c5`
-- Submission commit SHA: **TO BE FILLED AFTER FINAL HUMAN-APPROVED COMMIT**
+- Archived release tag: `schm-submission-v1.0.0`
+- Archived release commit: `e1c89dc9fb54fd7cf777b16c0746f15138324885`
+- Zenodo DOI: `10.5281/zenodo.21967188`
+- Zenodo record: `https://doi.org/10.5281/zenodo.21967188`
 - Packaging date: 2026-08-16
-- Planned human-approved tag: `schm-submission-v1.0.0`
 
-No tag, GitHub Release, archive DOI, or public data deposit was created during automated packaging.
+The submission snapshot was released on GitHub as
+`schm-submission-v1.0.0` and archived on Zenodo under DOI
+`10.5281/zenodo.21967188`.
+
+The release/tag remains the immutable scientific submission snapshot.
+Subsequent commits on `paper0-schm-submission` are metadata-only unless
+explicitly documented otherwise.
 
 ## Scientific freeze status
 
@@ -54,9 +62,7 @@ Level A verifies frozen evidence without training. The smoke test checks executi
 - Large NPZ arrays are not tracked in Git and must be regenerated or supplied locally.
 - Evidence is simulation based and limited to one structural topology.
 - P5 intervals are conditional and edge-wise; no family-wise correction was applied.
-- External release metadata and DOI information remain pending human publication actions.
 
 ## Data policy and license
 
 Processed evidence needed for fast verification is tracked. Large regenerable arrays remain ignored. Code and documentation are provided under the MIT License.
-

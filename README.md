@@ -3,6 +3,8 @@
 Yuehui Shan — Department of Civil and Environmental Engineering, The Hong Kong Polytechnic University
 ORCID: [0009-0001-8184-3311](https://orcid.org/0009-0001-8184-3311)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21967188.svg)](https://doi.org/10.5281/zenodo.21967188)
+
 This branch is the submission snapshot associated with the manuscript prepared for **Structural Control and Health Monitoring (SCHM)**. The scientific experiments are frozen. The repository packages the existing evidence and code for audit and reproduction; it does not retune models or revise reported results.
 
 ## Scientific scope
@@ -38,8 +40,14 @@ The real script and evidence paths are listed in [`docs/EXPERIMENT_MAP.md`](docs
 - Submission branch: `paper0-schm-submission`
 - Scientific source branch: `paper0-jcshm-manuscript`
 - Scientific base commit: `c78af2c5`
-- Planned human-approved tag: `schm-submission-v1.0.0`
-- Tag, GitHub Release, archive DOI, and public data deposit have **not** been created by the packaging workflow.
+- Archived release tag: `schm-submission-v1.0.0`
+- Archived release commit: `e1c89dc9fb54fd7cf777b16c0746f15138324885`
+- GitHub Release: `SCHM Submission Reproducibility Snapshot v1.0.0`
+- Zenodo archive DOI: `10.5281/zenodo.21967188`
+
+The immutable release tag and Zenodo archive remain fixed to the archived
+submission snapshot. This branch may contain later metadata-only updates,
+such as DOI links, without changing the archived scientific release.
 
 ## Quick verification
 
@@ -103,6 +111,12 @@ The raw 3000-case arrays and intermediate NPZ files are intentionally excluded f
 
 Tracked evidence includes split/provenance metadata, processed metric tables, noise summaries, layout results, bootstrap summaries, and figure-source data. Large response, descriptor, prediction, and bootstrap arrays are regenerated locally and remain ignored. See [`docs/DATA_DICTIONARY.md`](docs/DATA_DICTIONARY.md).
 
+The immutable submission release is archived on Zenodo at
+https://doi.org/10.5281/zenodo.21967188. Large raw and intermediate
+simulation arrays are not part of the Git/Zenodo snapshot and are regenerated
+from the supplied OpenSeesPy scripts, frozen configurations, and fixed random
+seeds.
+
 ## Expected numerical anchors
 
 Exact stored values and their manuscript display precision are listed in [`docs/NUMERICAL_ANCHORS.md`](docs/NUMERICAL_ANCHORS.md).
@@ -128,6 +142,11 @@ The historical internal path `scripts/jcshm_manuscript/` is retained for provena
 ## Citation
 
 Citation metadata are provided in [`CITATION.cff`](CITATION.cff). Article DOI, volume, issue, and page metadata remain unset because they do not yet exist.
+
+Shan, Y. (2026). *Reproducibility package for Descriptor Observability and
+Failure Mechanisms of Physics-Guided Structural Damage Inference under Sparse
+and Noisy Sensing* (`schm-submission-v1.0.0`). Zenodo.
+https://doi.org/10.5281/zenodo.21967188
 
 ## License
 

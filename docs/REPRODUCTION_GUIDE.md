@@ -1,5 +1,7 @@
 # Reproduction guide
 
+Archived submission snapshot: https://doi.org/10.5281/zenodo.21967188
+
 Run commands from the repository root. Stop if any script produces a value outside the frozen anchors; do not change code, seeds, grids, descriptors, or manuscript values to force agreement.
 
 ## Level A — fast manuscript verification

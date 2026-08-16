@@ -1,13 +1,16 @@
 cff-version: 1.2.0
-message: "If you use this submission snapshot, please cite the associated manuscript and this repository."
-title: "Reproducibility package for descriptor observability and failure mechanisms of physics-guided structural damage inference under sparse and noisy sensing"
+message: "If you use this submission snapshot, please cite the associated manuscript and this archived reproducibility package."
+title: "Reproducibility package for Descriptor Observability and Failure Mechanisms of Physics-Guided Structural Damage Inference under Sparse and Noisy Sensing"
 type: software
-version: schm-submission-v1.0.0
+version: "schm-submission-v1.0.0"
+doi: "10.5281/zenodo.21967188"
+date-released: "2026-08-16"
 authors:
   - family-names: Shan
     given-names: Yuehui
     orcid: "https://orcid.org/0009-0001-8184-3311"
 repository-code: "https://github.com/yuehuishan668-design/Physics-Constrained-Structural-State-Inference-under-Sparse-and-Noisy-SHM-Data"
+url: "https://doi.org/10.5281/zenodo.21967188"
 license: MIT
 preferred-citation:
   type: article
@@ -17,4 +20,3 @@ preferred-citation:
       given-names: Yuehui
       orcid: "https://orcid.org/0009-0001-8184-3311"
   journal: "Structural Control and Health Monitoring"
-

@@ -9,10 +9,11 @@ Date: 2026-08-16 (Asia/Shanghai)
 - Scientific base commit: `c78af2c5d024a86071e8f6afb50f3661ae8f01fb`.
 - Submission repository branch: `paper0-schm-submission`.
 - Tested pre-report packaging commit: `b793755d86725468e96d595227bc870e17addf2a`.
-- Planned human-approved tag: `schm-submission-v1.0.0`.
-- No push, tag, GitHub Release, archive, or DOI was created during packaging.
+- Archived release tag: `schm-submission-v1.0.0`.
+- Archived release commit: `e1c89dc9fb54fd7cf777b16c0746f15138324885`.
+- GitHub Release: `SCHM Submission Reproducibility Snapshot v1.0.0`.
+- Zenodo DOI: `10.5281/zenodo.21967188`.
 - The source repository was not modified. Its two pre-existing untracked files remain there: `environment_submission.txt` and the internal literature note. The environment record was deliberately copied into the submission repository as `requirements-lock.txt`; the internal literature note was deliberately excluded.
-- The final submission commit cannot be self-recorded inside this report because committing the report changes that SHA. Record the human-approved final commit and tag in the release/archive metadata.
 
 ## B. Files added
 
@@ -107,12 +108,12 @@ The rebuilt plots matched all data and numerical checks, but their PDF creation 
 - P4: all 15 layouts, the 78-descriptor full layout, full-layout MAE, objective-dependent best two-sensor layouts, and equal-dimensional checks passed.
 - P5: all 28 admissible additions were detected; 28/28 were beneficial for both overall and high-damage MAE under the frozen edge-wise bootstrap analysis.
 
-## G. Unresolved external release items and limits
+## G. External release status and limits
 
-- No Zenodo or other archive DOI exists yet.
-- No public GitHub Release or version tag exists yet.
-- The complete 3000-case raw/intermediate NPZ arrays are not stored in Git; their prerequisites and regeneration sequence are documented.
-- A full 3000-case scientific rerun was not performed during packaging. Packaging verification used frozen evidence, deterministic output reconstruction, and a small execution-only smoke test.
+- The submission snapshot is archived on Zenodo under DOI `10.5281/zenodo.21967188`.
+- The corresponding GitHub release is tagged `schm-submission-v1.0.0`.
+- The complete 3000-case raw/intermediate NPZ arrays remain excluded from Git and Zenodo; their regeneration path is documented.
+- A full 3000-case scientific rerun was not performed during packaging.
 - The existing repository history and large tracked historical output tree were preserved rather than destructively reorganized.
 - The study remains simulation-only and retains the scientific limitations stated in the manuscript and README.
 
